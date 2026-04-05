@@ -1,19 +1,21 @@
-import { globalIgnores } from 'eslint/config'
+import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import importPlugin from 'eslint-plugin-import'
 import prettier from 'eslint-config-prettier'
 
-export default [
-  ...(Array.isArray(nextVitals) ? nextVitals : [nextVitals]),
-  ...(Array.isArray(nextTs) ? nextTs : [nextTs]),
-  prettier,
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  ...prettier,
+  // Custom rules
   {
     plugins: {
       import: importPlugin,
     },
+
     rules: {
-      // 1. Disallow console.log (allow warn + error)
+      // 1. Disallow console.log (allow warn + error if needed)
       'no-console': ['error', { allow: ['warn', 'error'] }],
 
       // 2. Enforce consistent import ordering
@@ -43,11 +45,14 @@ export default [
           vars: 'all',
           args: 'after-used',
           ignoreRestSiblings: true,
-          argsIgnorePattern: '^_',
+          argsIgnorePattern: '^_', // allow intentional unused args
         },
       ],
     },
   },
 
+  // Override default ignores of eslint-config-next
   globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
-]
+])
+
+export default eslintConfig
