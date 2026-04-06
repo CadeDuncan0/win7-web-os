@@ -1,8 +1,8 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
-import importPlugin from 'eslint-plugin-import'
 import prettier from 'eslint-config-prettier'
+import importPlugin from 'eslint-plugin-import'
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -16,7 +16,8 @@ const eslintConfig = defineConfig([
 
     rules: {
       // 1. Disallow console.log (allow warn + error if needed)
-      'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-console': ['error'],
+      curly: ['error', 'all'],
 
       // 2. Enforce consistent import ordering
       'import/order': [
