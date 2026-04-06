@@ -7,7 +7,7 @@ import prettier from 'eslint-config-prettier'
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  ...prettier,
+  prettier,
   // Custom rules
   {
     plugins: {
