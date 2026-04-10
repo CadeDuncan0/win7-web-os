@@ -10,6 +10,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@apollo/client": "^4.1.7",
     "@reduxjs/toolkit": "^2.11.2",
     "@supabase/supabase-js": "^2.101.1",
     "next": "16.2.2",
