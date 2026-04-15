@@ -56,15 +56,11 @@ For every task execution, you are forbidden from generating code in a vacuum. Yo
 
 #### 🧠 Engineering Context & Rationale
 
-[Provide the FAANG-level reasoning for the architectural and syntactical decisions about to be made. Explain industry best practices.]
+[Provide the FAANG-level reasoning for the architectural and syntactical decisions about to be made. Explain industry best practices. Use examples, tables, and diagrams to help demonstrate.]
 
 #### 🛠️ Step-by-Step Implementation
 
-[Provide the exact CLI commands, file creations, and environmental setups required. Assume limited prior knowledge of the specific tooling.]
-
-#### 📝 Code & Configuration
-
-[Provide the code blocks. Implement the TODO Protocol here to leave intentional gaps for the Junior Engineer.]
+[Provide the exact CLI commands, file creations, and environmental setups required. Assume limited prior knowledge of the specific tooling. Provide the code blocks. Implement the TODO Protocol here to leave intentional gaps for the Junior Engineer.]
 
 #### 🛡️ Challenge & Review
 
