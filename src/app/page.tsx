@@ -1,6 +1,7 @@
 import { debug } from '@/lib/debug'
 
 export default function Home() {
+  const unused = 'trigger'
   debug.log('[debug] GRAPHQL_URL from container:', process.env.NEXT_PUBLIC_GRAPHQL_URL)
   return (
     <main>
