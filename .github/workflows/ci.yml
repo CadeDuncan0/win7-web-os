@@ -7,9 +7,9 @@ name: CI
 # push to main → runs after merge, verifying the post-merge state.
 on:
   pull_request:
-    branches: [main]
+    branches: [main, 'Phase*']
   push:
-    branches: [main]
+    branches: [main, 'Phase*']
 
 # Concurrency control: if a new commit is pushed to the same PR branch
 # while a previous run is still executing, cancel the older run.
@@ -79,16 +79,10 @@ jobs:
       # This is the functional integration test: if the app cannot build,
       # nothing downstream matters. `next build` runs type-checking,
       # route analysis, and bundle generation — a comprehensive check.
-      #
-      # TODO: Pass the three NEXT_PUBLIC_ secrets below via the `env:`
-      # block. Reference secrets using the ${{ secrets.SECRET_NAME }}
-      # syntax. Required: NEXT_PUBLIC_SUPABASE_URL,
-      # NEXT_PUBLIC_SUPABASE_ANON_KEY, NEXT_PUBLIC_GRAPHQL_URL.
-      # Do NOT hardcode values. Do NOT reference environment files.
+
       - name: Build Next.js
         run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_GRAPHQL_URL: ${{ secrets.NEXT_PUBLIC_GRAPHQL_URL }}
-          # [TODO]:
