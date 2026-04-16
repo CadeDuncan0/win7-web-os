@@ -1,3 +1,5 @@
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { ReactNode } from 'react'
 
 import ApolloProviderWrapper from '@/components/providers/ApolloProvider'
@@ -10,6 +12,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ReduxProviderWrapper>
           <ApolloProviderWrapper>{children}</ApolloProviderWrapper>
         </ReduxProviderWrapper>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
