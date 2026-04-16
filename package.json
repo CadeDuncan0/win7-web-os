@@ -40,11 +40,10 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "npx eslint --fix --max-warnings=0",
-      "npx prettier --write"
+      "npx eslint --fix --max-warnings=0"
     ],
-    "*.css": [
-      "npx prettier --write"
+    "*": [
+      "npx prettier --write ."
     ]
   }
 }
