@@ -1,0 +1,45 @@
+# Human-readable workflow name shown in the Actions tab.
+name: Post-Deploy Smoke Test
+
+# Triggers: run after code lands on main (which Vercel has deployed),
+# and allow manual triggering from the Actions tab for on-demand checks.
+# workflow_dispatch is the GitHub mechanism for "run this workflow now"
+# from the UI — useful when verifying a fix without pushing a new commit.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Concurrency: don't run multiple smoke tests for the same branch in parallel.
+# If three commits land to main in quick succession, only the latest smoke test
+# matters — the earlier ones are checking stale deployments anyway.
+concurrency:
+  group: deploy-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-test:
+    name: Verify Production URL
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1 — Wait for Vercel to finish deploying.
+      # A naive implementation curls the URL immediately and catches a
+      # stale deployment (the previous commit's build) or a 503 while
+      # Vercel is mid-deploy. A short sleep is the crude fix. A robust
+      # fix uses Vercel's deployment status API or a GitHub Action like
+      # patrickedqvist/wait-for-vercel-preview. For this phase, a sleep
+      # is acceptable because Hobby-tier builds are consistently sub-120s.
+      - name: Wait for Vercel deployment
+        run: sleep 120
+
+      # Step 2 — Hit the production URL and assert a 200 response.
+      # curl --fail turns any non-2xx status into a non-zero exit code,
+      # which fails the workflow. --silent suppresses progress output.
+      # --show-error surfaces the actual error message on failure.
+      # --location follows redirects (Vercel may redirect HTTP → HTTPS).
+
+      - name: Smoke test production URL
+        run: |
+          curl --fail --silent --show-error --location \
+            "${{ vars.PROD_URL }}"

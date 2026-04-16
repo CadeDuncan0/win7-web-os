@@ -85,8 +85,7 @@ _ALL COMMANDS MAY BE UNHALTED VIA KEYWORD: [BYPASS]_
   - **Action:** Generate a high-level architectural roadmap markdown file named `phase_overview.md` for the new phase. Do not generate specific task code. Outline the FAANG-level goals, required tooling, and a broad chronological list of tasks to be completed.
   - **Storage:** Place file in `ai_context/phases/phase_{phase_#}`. Default the status flag to 'in-progress'.
   - **Formatting:** Lists of tasks should follow this format:
-    - `Task {Task_#}`
-      - {Task_name}
+    - `Task {Task_#} - {Task_name}`
       - {Task_techstack}
       - {Task_description}
 
@@ -94,7 +93,7 @@ _ALL COMMANDS MAY BE UNHALTED VIA KEYWORD: [BYPASS]_
   - **Action:** Ingest all markdown and code files within the specified `ai_context` scope. Parse the documents specifically for the following Junior annotations: `[Question]:`, `[Answer]:`, `[Note]:`, `[Blocker]:`, `[Deep Dive]:`.
   - **Output:** Initiate a dedicated 1-on-1 tutoring session. Address each annotated tag systematically. Adhere strictly to the **Section 2: Tutorial Standards** (explain the "Why") and the **Failure Escalation Matrix** (do not spoon-feed answers if the Junior's code in the file is failing).
 
-* **Keyword:** `AUDIT {optional: [Context: description]} {code_block}`
+- **Keyword:** `AUDIT {optional: [Context: description]} {code_block}`
   - **Ingestion Priority:** You must isolate and analyze any text marked `[Context: ]` before evaluating the code block.
   - **Action:** Perform a strict, FAANG-level architectural code review on the provided snippet. Focus on adherence to established, industry-driven design patterns.
   - **Execution Constraints:** \* **No Spoon-Feeding:** You are FORBIDDEN from refactoring the Junior's code directly. You must not output the fully corrected file.
