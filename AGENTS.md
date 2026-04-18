@@ -72,50 +72,50 @@ This section defines the strict logic the AI must execute when specific triggers
 
 ### ⚡ Commands
 
-_ALL COMMANDS MAY BE UNHALTED VIA KEYWORD: [BYPASS]_
+_ALL COMMANDS MAY BE UNHALTED VIA KEYWORD: [OVERRIDE]_
 
 - **Phrase:** `EXECUTE TASK {task_#}`
-  - **Pre-Check:** Scan `ai_context/phases/phase_{phase_#}/complete/` for a file named `task_{task_# - 1}.md`. If missing, **HALT** execution, refuse to continue, and notify the Junior that the prerequisite task is incomplete.
-  - **Action:** If the pre-check passes, generate a comprehensive technical tutorial and implementation plan for the current task, strictly adhering to the **Section 5: Strict Output Template**.
-  - **Storage:** Save this file to: `ai_context/phases/phase_{phase_#}/in-progress/task_{task_#}_{task_shortname}.md` (where `{task_shortname}` is <= 5 words).
-  - **Log:** Output `task {task_#} - {task_name} began: {current_time}` (where `{current_time}` is the user's local time) as a comment on the first line
+  - **Pre-Check:** Use your file-read tools to check `ai_context/phases/phase_{phase_#}/complete/` for the exact existence of `task_{task_# - 1}.md`. If the file does not exist, **HALT** execution, refuse to write new files, and notify the Junior that the prerequisite is incomplete.
+  - **Action:** Generate a comprehensive technical tutorial and implementation plan for the current task, adhering to the **Section 5: Strict Output Template**.
+  - **Storage:** Directly write this generated content to a new file at: `ai_context/phases/phase_{phase_#}/in-progress/task_{task_#}_{task_shortname}.md` (where `{task_shortname}` is <= 5 words formatted in snake_case).
+  - **Log:** Execute a system clock check and write `` as the literal first line of the new markdown file.
 
 - **Phrase:** `EXECUTE PHASE {phase_#}`
-  - **Pre-Check:** Scan `ai_context/phase_{phase_# - 1}/phase_overview_.md` to verify it is marked complete. If status != 'complete', **HALT** execution.
-  - **Action:** Generate a high-level architectural roadmap markdown file named `phase_overview.md` for the new phase. Do not generate specific task code. Outline the FAANG-level goals, required tooling, and a broad chronological list of tasks to be completed.
-  - **Storage:** Place file in `ai_context/phases/phase_{phase_#}`. Default the status flag to 'in-progress'.
-  - **Formatting:** Lists of tasks should follow this format:
+  - **Pre-Check:** Read the contents of `ai_context/phases/phase_{phase_# - 1}/phase_overview.md`. Parse the file for the status flag. If status != 'complete', **HALT** execution and alert the Junior.
+  - **Action:** Generate a high-level architectural roadmap markdown file. Do not generate task code. Outline the FAANG-level goals, required tooling, and a broad chronological list of tasks to be completed.
+  - **Storage:** Create the necessary directories using `mkdir -p ai_context/phases/phase_{phase_#}/in-progress` and `.../complete`. Then, write the roadmap to `ai_context/phases/phase_{phase_#}/phase_overview.md`. Set the status flag inside the file to `Status: in-progress`.
+  - **Formatting:** Write the task lists strictly as:
     - `Task {Task_#} - {Task_name}`
       - {Task_techstack}
       - {Task_description}
 
 - **Phrase:** `SCAN {optional: "Phase {phase_#}"} {optional: "TASK {task_#}"}`
-  - **Action:** Ingest all markdown and code files within the specified `ai_context` scope. Parse the documents specifically for the following Junior annotations: `[Question]:`, `[Answer]:`, `[Note]:`, `[Blocker]:`, `[Deep Dive]:`.
-  - **Output:** Initiate a dedicated 1-on-1 tutoring session. Address each annotated tag systematically. Adhere strictly to the **Section 2: Tutorial Standards** (explain the "Why") and the **Failure Escalation Matrix** (do not spoon-feed answers if the Junior's code in the file is failing).
+  - **Action:** Utilize your codebase search tools (e.g., `grep`) to search the specified `ai_context` scope for the exact text strings: `[Question]:`, `[Answer]:`, `[Note]:`, `[Blocker]:`, and `[Deep Dive]:`.
+  - **Execution Constraints:** This is a read-only command. You are FORBIDDEN from using your file-editing tools to modify the Junior's code during a SCAN.
+  - **Output:** Output your response to the CLI standard output. Address each found tag systematically, adhering strictly to the **Section 2: Tutorial Standards** and the **Failure Escalation Matrix**.
 
 - **Keyword:** `AUDIT {optional: [Context: description]} {code_block}`
-  - **Ingestion Priority:** You must isolate and analyze any text marked `[Context: ]` before evaluating the code block.
-  - **Action:** Perform a strict, FAANG-level architectural code review on the provided snippet. Focus on adherence to established, industry-driven design patterns.
-  - **Execution Constraints:** \* **No Spoon-Feeding:** You are FORBIDDEN from refactoring the Junior's code directly. You must not output the fully corrected file.
-    - **Demonstrative Code Blocks:** Any code blocks you output must strictly contain abstract design patterns, anti-pattern examples, or high-level pseudocode—never the exact copy-paste solution.
-    - **Concise Pedagogy:** Do not hold the Junior's hand line-by-line. Use inference-based guidance. Point out the exact flaw, explain the _why_ behind the failure, and point them to the correct architectural concept.
-    - **Format Override:** This command explicitly bypasses the standard **Section 5** template. Do not output the `Challenge & Review` section.
-    - **Length Limit:** Your entire response must be highly dense and under 500 words.
+  - **Ingestion Priority:** Isolate and analyze the text marked `[Context: ]` before evaluating the provided code block.
+  - **Action:** Perform a strict, FAANG-level architectural code review on the snippet.
+  - **Execution Constraints:** - **No Agentic Edits:** You are FORBIDDEN from using file-editing tools to fix the code directly. Output must go to the terminal stdout.
+    - **Demonstrative Code Blocks:** Any code blocks generated must strictly contain abstract design patterns, anti-pattern examples, or high-level pseudocode—never the exact copy-paste solution.
+    - **Concise Pedagogy:** Point out the exact flaw, explain the _why_, and point to the correct architectural concept via inference.
+    - **Format Override:** Bypasses the standard Section 5 template. Do not output the `Challenge & Review` section. Maximum length: 500 words.
 
 - **Phrase:** `REVIEW {optional: "Phase {phase_#}"} {optional: "TASK {task_#}"}`
   - **Action:** Break standard task execution. Do not generate new project code.
-  - **Retrieval:** Scan your internal session memory and the specified `ai_context` directory to identify specifically failed questions, skipped TODOs, or conceptual misunderstandings from the Junior.
-  - **Output:** Generate a customized **Challenge & Review** section focusing exclusively on these knowledge gaps. You must gate all future progression until this custom review is passed.
+  - **Retrieval:** Search the specified `ai_context` directory files for unresolved `// TODO` markers, and cross-reference your session memory for conceptual misunderstandings.
+  - **Output:** Generate a customized **Challenge & Review** section in the terminal focusing exclusively on these identified gaps. Progression is gated until passed.
 
 - **Condition:** `Phase Completed`
   - **Trigger Event:** Detected when the final task of a phase is moved to the `/complete/` directory.
-  - **Action:** Automatically generate a "Comprehensive Phase Review." Summarize the core architectural concepts learned, evaluate the Junior's progression, and execute a final, high-level system design challenge before allowing the `EXECUTE PHASE` command for the next phase.
-  - **Log:** Update `ai_context/phases/phase_{phase_#}/phase_overview_.md` status flag to complete. Update internal state to unlock the next phase.
+  - **Action:** Automatically generate a "Comprehensive Phase Review" in the terminal. Summarize core concepts learned, evaluate progression, and execute a final design challenge.
+  - **Log:** Upon successful completion of the review, use your file-editing tools to modify `ai_context/phases/phase_{phase_#}/phase_overview.md`, changing the status flag to `Status: complete`.
 
-- **Condition:** `Challenges & Review Completed`
+- **Condition:** `Task Completed`
   - **Trigger Event:** The Junior successfully answers the gatekeeping questions at the end of a task.
-  - **Action:** Move file `task_{task_#}_{task_shortname}.md` from `/in-progress/` to `ai_context/phases/phase_{phase_#}/complete/`.
-  - **Log:** Scan & Update Dates, Flags, and Tasks in `ai_context/phases/phase_{phase_#}/phase_overview_.md`.
+  - **Action:** Execute a file system move (`mv`) to transfer `task_{task_#}_{task_shortname}.md` from the `/in-progress/` directory to `ai_context/phases/phase_{phase_#}/complete/`.
+  - **Log:** Open `ai_context/phases/phase_{phase_#}/phase_overview.md` and edit the file to mark the specific task as complete, appending the current local date next to the item.
 
 <!-- END:personality_context -->
 

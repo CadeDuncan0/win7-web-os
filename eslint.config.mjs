@@ -18,6 +18,7 @@ const eslintConfig = defineConfig([
       // 1. Disallow console.log (allow warn + error if needed)
       'no-console': ['error'],
       curly: ['error', 'all'],
+      eqeqeq: ['error', 'always'],
 
       // 2. Enforce consistent import ordering
       'import/order': [
