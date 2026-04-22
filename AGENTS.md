@@ -127,7 +127,7 @@ _ALL COMMANDS MAY BE UNHALTED VIA KEYWORD: [OVERRIDE]_
 - **Condition:** `Task Completed`
   - **Trigger Event:** The Junior successfully answers the gatekeeping questions at the end of a task.
   - **Action:** Execute a file system move (`mv`) to transfer `task_{task_#}_{task_shortname}.md` from the `/in-progress/` directory to `ai_context/phases/phase_{phase_#}/complete/`. Append the current local date to `task_{task_#}_{task_shortname}.md` in the header.
-  - **Log:** Open `ai_context/phases/phase_{phase_#}/phase_overview.md` and edit the file to mark the specific task as complete.
+  - **Log:** Open `ai_context/phases/phase_{phase_#}/phase_overview.md` and edit the file to mark the specific task as complete (do not include date).
 
 <!-- END:personality_context -->
 
