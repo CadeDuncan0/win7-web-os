@@ -1,26 +1,165 @@
-@import 'tailwindcss';
+/* =====================================================================
+   Aero Glass Design Token System
+   ---------------------------------------------------------------------
+   Layer 1 (PRIMITIVE) — raw values, no semantics. Define once, never
+                         consumed directly by component stylesheets.
+   Layer 2 (SEMANTIC)  — intent. Each token references a primitive.
+                         Components consume ONLY this layer.
+   Layer 3 (COMPONENT) — lives in CSS Module files, not here.
+   ===================================================================== */
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  /* ─── PRIMITIVE: Color — Aero Blue Scale ───────────────────────── */
+  /* Anchored at #0078D7 — the canonical Windows 7 accent. The 300 rung
+     (#5eaefd) is the brighter highlight used for hover glows; the 700
+     rung (#003399) is the deep navy used for active/selected text. */
+  --color-aero-50: #eaf4fe;
+  --color-aero-100: #cce8ff;
+  --color-aero-300: #5eaefd;
+  --color-aero-500: #0078d7;
+  --color-aero-700: #003399;
+
+  /* ─── PRIMITIVE: Color — Neutral Scale ─────────────────────────── */
+  --color-neutral-0: #ffffff;
+  --color-neutral-100: #f4f6f9;
+  --color-neutral-300: #c8cdd5;
+  --color-neutral-500: #6b7280;
+  --color-neutral-700: #2a2f36;
+  --color-neutral-900: #0f1115;
+
+  /* ─── PRIMITIVE: Color — Glass Translucents ────────────────────── */
+  /* rgba (not hex) — backdrop-filter requires alpha to composite the
+     blurred backdrop against the surface tint. Hex values would paint
+     a solid wash and defeat the frosted effect entirely. */
+  /* Real Aero glass is overwhelmingly WHITE with thin alpha — not blue.
+     The blue impression comes from the wallpaper bleeding through. The
+     -strong variant is the taskbar/active-surface tint (saturated navy
+     with high alpha) — used sparingly. */
+  --color-glass-tint-light: rgba(255, 255, 255, 0.15);
+  --color-glass-tint-strong: rgba(60, 100, 150, 0.8);
+  --color-glass-highlight: rgba(255, 255, 255, 0.55);
+  --color-glass-border-inner: rgba(255, 255, 255, 0.3);
+  --color-glass-border-outer: rgba(0, 0, 0, 0.18);
+
+  /* ─── PRIMITIVE: Spacing — 4px base grid ───────────────────────── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  /* ─── PRIMITIVE: Radius ────────────────────────────────────────── */
+  /* Aero corners are soft, not rounded. Reference values from
+     real Win7 chrome: icons 3px, context menu 2px, start menu 5px,
+     widgets 8px. Avoid modern 12–16px. */
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 8px;
+
+  /* ─── PRIMITIVE: Blur strengths ────────────────────────────────── */
+  /* Aero blur is subtle — real Win7 surfaces blur in the 5–12px range,
+     not the 20px+ commonly shown in modern "frosted glass" demos. */
+  --blur-sm: 5px;
+  --blur-md: 10px;
+  --blur-lg: 16px;
+
+  /* ─── PRIMITIVE: Type sizes ────────────────────────────────────── */
+  /* Spec is in pt (Title 16pt / Heading 13pt / Body 12pt).
+     Conversion at 16px root: 1pt = 1.333px → 12pt = 1rem.
+     Defined in rem so user font-size scaling continues to work. */
+  --font-size-100: 1rem; /* 12pt — body */
+  --font-size-200: 1.083rem; /* 13pt — heading */
+  --font-size-300: 1.333rem; /* 16pt — title */
+
+  /* ─── PRIMITIVE: Type families ─────────────────────────────────── */
+  --font-family-serif: Georgia, 'Times New Roman', serif;
+  --font-family-sans: Arial, Helvetica, sans-serif;
+
+  /* ─── PRIMITIVE: Shadow layers ─────────────────────────────────── */
+  /* Aero windows are NEVER a single drop shadow — they composite
+     three: a tight contact shadow, a soft mid shadow, and a wide
+     ambient shadow. The focused state adds an outer aero glow. */
+  --shadow-close: 0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.2);
+  --shadow-ambient: 0 15px 40px rgba(0, 0, 0, 0.45);
+  --shadow-glow-aero: 0 0 16px rgba(94, 174, 253, 0.55);
+
+  /* ===================================================================
+     SEMANTIC LAYER — wire each token to a primitive above.
+     Never put a literal value here. Never reference a primitive from
+     a component stylesheet. The pipeline is: primitive → semantic →
+     component.
+     =================================================================== */
+
+  /* ─── SEMANTIC: Surfaces (the Aero glass chrome) ───────────────── */
+  --surface-glass-tint: var(--color-glass-tint-light);
+  --surface-glass-blur: var(--blur-md);
+  --surface-glass-border: var(--color-glass-border-inner);
+  --surface-glass-highlight: var(--color-glass-highlight);
+
+  /* ─── SEMANTIC: Shadows (multi-layer composition) ──────────────── */
+  /* Multi-layer box-shadow syntax: comma-separate three shadow primitives.
+     Focused variant: same stack PLUS the aero glow primitive. */
+  --shadow-window: var(--shadow-close), var(--shadow-soft), var(--shadow-ambient);
+  --shadow-window-focused:
+    var(--shadow-close), var(--shadow-soft), var(--shadow-ambient), var(--shadow-glow-aero);
+
+  /* ─── SEMANTIC: Text shorthands ────────────────────────────────── */
+  /* CSS font shorthand: <size>/<line-height> <family> */
+  --text-title: var(--font-size-300) / 1.25 var(--font-family-serif);
+  --text-heading: var(--font-size-200) / 1.3 var(--font-family-serif);
+  --text-body: var(--font-size-100) / 1.45 var(--font-family-sans);
+
+  /* ─── SEMANTIC: Focus ───────────────────────────────────────────── */
+  --focus-ring-color: var(--color-aero-500);
+  --focus-ring-width: 2px;
+
+  /* ─── SEMANTIC: Z-axis (reserved for Phase 2 window manager) ───── */
+  --z-desktop: 100;
+  --z-window: 200;
+  --z-window-focused: 300;
+  --z-taskbar: 400;
+  --z-modal: 500;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* =====================================================================
+   Document baseline
+   ===================================================================== */
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #ffffff;
-    --foreground: #171717;
-  }
+html {
+  font-size: 16px; /* anchors every rem-based primitive above */
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  font: var(--text-body);
+  color: var(--color-neutral-900);
+  background: var(--color-neutral-700);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Minimal element-level reset — preflight is intentionally gone. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button {
+  font: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
