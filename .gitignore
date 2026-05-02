@@ -43,3 +43,5 @@ next-env.d.ts
 
 # ai context
 /ai_context
+*storybook.log
+storybook-static

@@ -65,13 +65,10 @@ projects and tooling.
 
 ### TypeScript
 
-- **Role:** Type safety enforced across every application layer
-- **Design Rationale:** Eliminates class of runtime errors at compile time. GraphQL schema types,
-  Redux state shapes, component prop interfaces, and Supabase response structures are all
-  statically typed. Named prop interfaces used over inlined types for extensibility.
+- **Role:** Type safety across every layer (GraphQL schema, Redux state, props, Supabase responses).
 - **Key constraint:** `strict` mode enabled. `!` non-null assertion used only where environment
   variables are guaranteed present. All Redux hooks are typed wrappers (`useAppDispatch`,
-  `useAppSelector`) — never raw `useDispatch`/`useSelector`.
+  `useAppSelector`) — never raw `useDispatch`/`useSelector`. Named prop interfaces over inlined types.
 
 ### Redux Toolkit
 
@@ -118,12 +115,9 @@ projects and tooling.
 
 ### GraphQL
 
-- **Role:** Query language for structured, typed data fetching from Supabase
-- **Design Rationale:** Meta-standard API layer present at Netflix, Airbnb, GitHub, Shopify.
-  Client declares exact data shape needed — server returns exactly that, nothing more. Eliminates
-  REST over-fetching. `pg_graphql` Postgres extension auto-generates full GraphQL schema from
-  table definitions. Relay Connection Specification (`edges/node`) implemented by default for
-  cursor-based pagination at scale.
+- **Role:** Query language for structured, typed data fetching from Supabase via `pg_graphql`.
+- **Schema generation:** `pg_graphql` Postgres extension auto-generates full GraphQL schema from
+  table definitions. Relay Connection Spec (`edges/node`) used for pagination.
 - **Naming convention:** `pg_graphql` converts `snake_case` column names to `camelCase` field
   names automatically (`tech_stack` → `techStack`).
 
@@ -152,12 +146,9 @@ projects and tooling.
 
 ### Postman
 
-- **Role:** API platform for constructing, testing, and validating GraphQL requests against the
-  Supabase endpoint
-- **Design Rationale:** Used during development to validate GraphQL queries and Supabase RLS
-  behavior before Apollo Client integration. Requests require `Content-Type: application/json`,
-  `apikey: <anon-key>`, and `Authorization: Bearer <anon-key>` headers. Saved request
-  collections maintained per project for repeatable endpoint validation.
+- **Role:** Validates GraphQL queries and RLS behavior against the Supabase endpoint pre-Apollo.
+- **Required headers:** `Content-Type: application/json`, `apikey: <anon-key>`,
+  `Authorization: Bearer <anon-key>`.
 
 ### Supabase
 
@@ -185,46 +176,38 @@ projects and tooling.
 
 ### Jest + React Testing Library
 
-- **Role:** Unit and integration test runner (Jest) + behavior-driven component testing (RTL)
-- **Design Rationale:** RTL tests against user behavior not implementation details — queries by
-  accessible role, label, and text rather than CSS selectors or component internals. Jest handles
-  Redux slice logic, utility functions, and Apollo query mocking.
+- **Role:** Unit/integration tests (Jest) + behavior-driven component tests (RTL).
+- **Key constraint:** RTL queries by accessible role/label/text — never by CSS selector or
+  component internals. Jest covers Redux slices, utilities, Apollo mocking.
 
 ### Cypress
 
-- **Role:** End-to-end testing for complete Guest and Admin user journeys
-- **Design Rationale:** Validates the full stack integration — login → desktop → window open →
-  window interactions — in a real browser environment. CI pipeline runs Cypress suite on every
-  merge to `main`.
+- **Role:** E2E for full Guest/Admin journeys (login → desktop → window interactions).
+- **Key constraint:** Cypress suite runs in CI on every merge to `main`.
 
 ### Storybook
 
-- **Role:** Isolated component development environment and living UI documentation
-- **Design Rationale:** All UI components built and validated in Storybook before integration.
-  Stories cover every state variant (focused, blurred, minimized, maximized). Serves as
-  reference documentation for the Aero Glass design system.
+- **Role:** Isolated component development; living UI documentation for Aero Glass system.
+- **Key constraint:** Every UI component built in Storybook FIRST. Stories must cover all state
+  variants (focused, blurred, minimized, maximized).
 
 ### Docker
 
-- **Role:** Containerized local development environment for reproducibility
-- **Design Rationale:** Ensures environment parity between local development and CI. Not used as
-  the primary dev environment — Node.js installed on host for Cursor IDE extension compatibility
-  (ESLint, Prettier, TypeScript language server require host-level Node.js). Docker provides a
-  production-equivalent runtime artifact.
+- **Role:** Production-equivalent runtime artifact for environment parity.
+- **Key constraint:** NOT the primary dev environment — Node.js runs on host for Cursor IDE
+  extensions (ESLint, Prettier, TS language server require host Node).
 
 ### GitHub Actions
 
-- **Role:** CI/CD pipeline executing lint, format check, build, and deploy on every merge
-- **Design Rationale:** Two workflows: `ci.yml` (lint → format → build on every PR to `main`),
-  `deploy.yml` (confirms Vercel deployment on merge to `main`). Supabase credentials stored as
-  GitHub repository secrets for build-time environment variable injection.
+- **Workflows:**
+  - `ci.yml` — lint → format → build on every PR to `main`
+  - `deploy.yml` — confirms Vercel deployment on merge to `main`
+- **Secrets:** Supabase credentials stored as GitHub repo secrets for build-time injection.
 
 ### Vercel
 
-- **Role:** Production hosting with automatic Git-based deployments
-- **Design Rationale:** Zero-config Next.js deployment. Hobby tier covers portfolio traffic.
-  Environment variables configured in Vercel dashboard mirror `.env.local`. Auto-deploy on
-  `main` branch merge.
+- **Role:** Production hosting, auto-deploy on `main` merge. Hobby tier.
+- **Key constraint:** Env vars in Vercel dashboard MUST mirror `.env.local`.
 
 ---
 
@@ -321,6 +304,31 @@ src/
     hooks.ts              Typed useAppDispatch and useAppSelector
     slices/               One file per Redux domain slice
 ```
+
+## Anti-Patterns (DO NOT)
+
+- **DO NOT** use raw `useDispatch` / `useSelector` — always import the typed wrappers
+  `useAppDispatch` / `useAppSelector` from `src/store/hooks.ts`.
+- **DO NOT** import deprecated Apollo APIs: `setContext` (use `SetContextLink`) or
+  `createHttpLink` (use `HttpLink` constructor).
+- **DO NOT** use `console.log` — banned by ESLint. Route through `src/lib/debug.ts`.
+  `console.warn` / `console.error` are reserved for legitimate production signals.
+- **DO NOT** hardcode colors, shadows, blurs, radii, or gradients in CSS modules —
+  reference CSS custom properties from `globals.css`.
+- **DO NOT** install Tailwind, styled-components, or any other styling library.
+  Aero Glass requires named, intentional design tokens; CSS Modules are mandatory.
+- **DO NOT** route data fetches through the Supabase JS SDK. The SDK is for **auth only**
+  (`supabase.auth.signInWithPassword`). All data access goes through Apollo + GraphQL.
+- **DO NOT** add `'use client'` to `src/app/layout.tsx` — it must remain a pure server
+  component. Client providers belong in `src/components/providers/`.
+- **DO NOT** use `@dnd-kit` for window dragging — it is for icon dragging only. Window
+  dragging uses raw `pointermove` events with boundary clamping.
+- **DO NOT** prefix server-only env vars with `NEXT_PUBLIC_` — that prefix exposes them
+  to the browser.
+- **DO NOT** use braceless one-liner `if` statements where short-circuit (`&&`, `?.`)
+  would do. ESLint enforces `curly: ['error', 'all']` on actual blocks.
+- **DO NOT** bypass commit hooks (`--no-verify`) or skip lint warnings — `--max-warnings=0`
+  is enforced for a reason.
 
 ---
 

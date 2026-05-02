@@ -27,6 +27,12 @@
   --color-neutral-700: #2a2f36;
   --color-neutral-900: #0f1115;
 
+  /* ─── PRIMITIVE: Color — Feedback ────────────────────────────────── */
+  --color-danger-100: #fbe3e5;
+  --color-danger-300: #f5b1b5;
+  --color-danger-500: #c1272d;
+  --color-danger-700: #991f23;
+
   /* ─── PRIMITIVE: Color — Glass Translucents ────────────────────── */
   /* rgba (not hex) — backdrop-filter requires alpha to composite the
      blurred backdrop against the surface tint. Hex values would paint
@@ -40,6 +46,7 @@
   --color-glass-highlight: rgba(255, 255, 255, 0.55);
   --color-glass-border-inner: rgba(255, 255, 255, 0.3);
   --color-glass-border-outer: rgba(0, 0, 0, 0.18);
+  --color-aero-focus-glow: rgba(0, 120, 215, 0.25);
 
   /* ─── PRIMITIVE: Spacing — 4px base grid ───────────────────────── */
   --space-1: 4px;
@@ -123,6 +130,9 @@
   --z-window-focused: 300;
   --z-taskbar: 400;
   --z-modal: 500;
+
+  /* ─── SEMANTIC: Feedback ────────────────────────────────────────── */
+  --color-feedback-error: var(--color-danger-500);
 }
 
 /* =====================================================================
