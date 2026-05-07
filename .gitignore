@@ -41,7 +41,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# ai context
-/ai_context
 *storybook.log
 storybook-static
+
+# ai
+.claude

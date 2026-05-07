@@ -9,6 +9,7 @@ interface PasswordInputProps {
   disabled?: boolean
   placeholder?: string
   ref?: Ref<HTMLInputElement>
+  id?: string
 }
 
 export function PasswordInput({
@@ -18,6 +19,7 @@ export function PasswordInput({
   disabled,
   placeholder,
   ref,
+  id,
 }: PasswordInputProps) {
   const classes =
     styles.input + ' ' + (error ? styles.error : '') + ' ' + (disabled ? styles.disabled : '')
@@ -31,6 +33,7 @@ export function PasswordInput({
         disabled={disabled}
         placeholder={placeholder}
         ref={ref}
+        id={id}
         aria-label="Password"
         aria-invalid={Boolean(error)}
         aria-describedby={error ? 'password-input-error-message' : undefined}

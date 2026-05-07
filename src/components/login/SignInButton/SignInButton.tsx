@@ -1,12 +1,13 @@
 import styles from './SignInButton.module.css'
 
 interface SignInButtonProps {
-  onClick: () => void
+  onClick?: () => void
   disabled?: boolean
   ariaLabel?: string
+  type?: 'button' | 'submit' | 'reset' | undefined
 }
 
-export function SignInButton({ onClick, disabled, ariaLabel }: SignInButtonProps) {
+export function SignInButton({ onClick, disabled, ariaLabel, type }: SignInButtonProps) {
   const classes = styles.button + ' ' + (disabled ? styles.disabled : '')
   return (
     <button
@@ -14,6 +15,7 @@ export function SignInButton({ onClick, disabled, ariaLabel }: SignInButtonProps
       onClick={onClick}
       disabled={disabled}
       aria-label={ariaLabel ?? 'Sign in'}
+      type={type ?? 'button'}
     >
       →
     </button>

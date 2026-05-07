@@ -48,6 +48,10 @@
   --color-glass-border-outer: rgba(0, 0, 0, 0.18);
   --color-aero-focus-glow: rgba(0, 120, 215, 0.25);
 
+  /* ─── PRIMITIVE: Color — Wallpaper Blooms ────────────────────── */
+  --color-wallpaper-bloom-warm: rgba(180, 220, 255, 0.7);
+  --color-wallpaper-bloom-cool: rgba(94, 174, 253, 0.5);
+
   /* ─── PRIMITIVE: Spacing — 4px base grid ───────────────────────── */
   --space-1: 4px;
   --space-2: 8px;
@@ -106,6 +110,18 @@
   --surface-glass-blur: var(--blur-md);
   --surface-glass-border: var(--color-glass-border-inner);
   --surface-glass-highlight: var(--color-glass-highlight);
+  --surface-desktop-wallpaper:
+    radial-gradient(
+      ellipse 55% 40% at 30% 30%,
+      var(--color-wallpaper-bloom-warm) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 75% 75%,
+      var(--color-wallpaper-bloom-cool) 0%,
+      transparent 65%
+    ),
+    radial-gradient(circle at 50% 50%, var(--color-aero-500) 0%, var(--color-aero-700) 90%);
 
   /* ─── SEMANTIC: Shadows (multi-layer composition) ──────────────── */
   /* Multi-layer box-shadow syntax: comma-separate three shadow primitives.
