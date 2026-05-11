@@ -26,20 +26,19 @@ experiencing the work as an interactive desktop environment.
 ## Long-Term Vision
 
 Extensible beyond a static portfolio — the desktop environment is designed to support future
-additions: Start Menu, Settings window, File Explorer, sound effects, multi-monitor simulation,
-and real-time visitor presence. The Admin account provides a private workspace for non-public
-projects and tooling.
+additions: Start Menu, Settings window, File Explorer, sound effects, and real-time visitor presence.
+The Admin account provides a private workspace for non-public projects and tooling.
 
 ---
 
-# SYSTEM*ARCHITECTURE*&\_STACK
+# SYSTEM ARCHITECTURE & STACK
 
 ## Architectural Overview
 
 ```
 [ Browser ]
     ↕
-[ Next.js 14 + React ]     — rendering, routing, server/client component split
+[ Next.js + React ]        — rendering, routing, server/client component split
     ↕
 [ Apollo Client ]          — GraphQL client, normalized cache, auth header injection
     ↕
@@ -53,7 +52,15 @@ projects and tooling.
 
 ## Stack Reference
 
-### Next.js 14 (App Router)
+\* Reference dependency versions in `package.json` and `package-lock.json` before making version-specific decisions
+
+\* No version numbers appear in this file intentionally. If a version number is present
+elsewhere in this document, it is stale — delete it and defer to `package.json`.
+
+\* Stack behavior described here reflects latest stable at time of last edit.
+Always verify against installed versions before acting on any API or convention described below.
+
+### Next.js (App Router)
 
 - **Role:** Core framework — SSR, file-based routing, API routes, server/client component model
 - **Design Rationale:** App Router enables granular server vs client rendering decisions per
@@ -174,7 +181,7 @@ projects and tooling.
 - **RLS state:** Enabled from initialization. Phase 0 uses permissive dev read policy
   (`USING (true)`). Phase 3 replaces with role-based policies.
 
-### Jest + React Testing Library
+### Vitest / Jest + React Testing Library
 
 - **Role:** Unit/integration tests (Jest) + behavior-driven component tests (RTL).
 - **Key constraint:** RTL queries by accessible role/label/text — never by CSS selector or
@@ -315,6 +322,7 @@ src/
   `console.warn` / `console.error` are reserved for legitimate production signals.
 - **DO NOT** hardcode colors, shadows, blurs, radii, or gradients in CSS modules —
   reference CSS custom properties from `globals.css`.
+- **DO NOT** makeup css values — reference the links provided in `AGENTS.md` under `Visual Reference`
 - **DO NOT** install Tailwind, styled-components, or any other styling library.
   Aero Glass requires named, intentional design tokens; CSS Modules are mandatory.
 - **DO NOT** route data fetches through the Supabase JS SDK. The SDK is for **auth only**
