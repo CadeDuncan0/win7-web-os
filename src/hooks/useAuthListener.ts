@@ -2,11 +2,12 @@ import { Session } from '@supabase/supabase-js'
 import { useEffect } from 'react'
 
 import { AppSession, getCurrentSession, signOut } from '@/lib/auth'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 import { useAppDispatch } from '@/store/hooks'
 import { setSession, clearSession } from '@/store/slices/sessionSlice'
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL
+const supabase = createClient()
 
 export function useAuthListener(): void {
   const dispatch = useAppDispatch()

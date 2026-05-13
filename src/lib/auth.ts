@@ -1,7 +1,7 @@
 import { AuthError } from '@supabase/supabase-js'
 import z from 'zod'
 
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -11,6 +11,7 @@ export type AuthResult<T> = { ok: true; data: T } | { ok: false; error: string }
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
+const supabase = createClient()
 //  Namespaced to prevent collisions with other sessionStorage consumers (browser extensions, embedded widgets).
 const GUEST_SESSION_KEY = 'portfolio.guestSession'
 
