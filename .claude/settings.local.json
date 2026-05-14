@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir *)",
+      "PowerShell($out = npx tsc --noEmit 2>&1; \"ExitCode: $LASTEXITCODE\"; \"Lines: $\\($out.Count\\)\"; if \\($out.Count -gt 0\\) { $out | Select-Object -First 40 })",
+      "PowerShell($out = npx prettier --check . 2>&1; \"ExitCode: $LASTEXITCODE\"; $out | Select-Object -Last 30)",
+      "PowerShell(npx prettier --list-different src/lib/auth.ts src/lib/guestCookie.ts src/lib/supabase/proxy.ts 2>&1; \"---\"; npx prettier --check src/lib/auth.ts 2>&1)",
+      "PowerShell(npm test *)",
+      "PowerShell(npm run *)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["proxy-verifier"]
+}
