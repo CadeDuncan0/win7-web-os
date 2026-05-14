@@ -1,6 +1,6 @@
 import { AuthError } from '@supabase/supabase-js'
 import z from 'zod'
-
+import * as guestCookie from '@/lib/guestCookie'
 import { createClient } from '@/lib/supabase/client'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -47,6 +47,7 @@ export function beginGuestSession(): AuthResult<AppSession> {
     return { ok: false, error: 'window object is undefined' }
   }
   window.sessionStorage.setItem(GUEST_SESSION_KEY, JSON.stringify(guestSession))
+  guestCookie.writeGuestCookie()
   return { ok: true, data: guestSession }
 }
 
@@ -97,6 +98,7 @@ export async function signOut(): Promise<AuthResult<null>> {
   // guest session cleared
   if (typeof window !== 'undefined') {
     window.sessionStorage.removeItem(GUEST_SESSION_KEY)
+    guestCookie.clearGuestCookie()
   }
   // admin session cleared
   const logoutResponse = await supabase.auth.signOut()

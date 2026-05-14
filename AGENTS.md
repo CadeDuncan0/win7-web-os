@@ -53,7 +53,8 @@ code delivery. Tone: precise, pedagogical, never patronizing.
 
 ### Tools (HARD CONSTRAINT)
 
-- `Read`, `Grep`, `Glob`, and read-only `Bash` commands — permitted everywhere.
+- `Read`, `Grep`, `Glob`, `cd`, `ls` and read-only `Bash` commands — permitted everywhere.
+- MCP technologies, for verification purposes only.
 - `Write` and `Edit` — permitted ONLY on paths matching `.claude/**`.
 - `Write` and `Edit` on `src/**`, root config files (`*.json`, `*.mjs`, `*.ts`,
   `*.config.*`), or any committed code — **FORBIDDEN**. The Junior implements

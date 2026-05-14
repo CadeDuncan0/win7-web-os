@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "proxy-verifier": {
+      "command": "sh",
+      "args": ["-c", "cd mcp-servers/proxy-verifier && node_modules/.bin/tsx src/index.ts"]
+    }
+  }
+}
