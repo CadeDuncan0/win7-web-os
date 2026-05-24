@@ -1,137 +1,145 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { useEffect, useRef, SubmitEvent, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react'
 
-import { AccountTile } from '@/components/login/AccountTile/AccountTile'
-import { PasswordInput } from '@/components/login/PasswordInput/PasswordInput'
-import { SignInButton } from '@/components/login/SignInButton/SignInButton'
+import { AccountSelection, type AccountId } from '@/components/screens/Login/AccountSelection'
+import { SignIn } from '@/components/screens/Login/SignIn'
+import { Welcome } from '@/components/screens/Login/Welcome'
 import { beginGuestSession, signInAsAdmin } from '@/lib/auth'
 import { debug } from '@/lib/debug'
+import { pickTwoDistinctIcons } from '@/lib/userIcons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { selectAuthStatus, setSession } from '@/store/slices/sessionSlice'
 
-import styles from './Login.module.css'
+/* Login page — state machine orchestrator
+   --------------------------------------------------------------------
+   Which Login screen renders is a function of (authStatus, signingInAs):
 
+     authStatus === 'authenticated'  → <Welcome />  → router.replace('/desktop')
+     signingInAs === 'admin'         → <SignIn />
+     otherwise                       → <AccountSelection />
+
+   AccountSelection follows the win7simu copycat single-account model:
+   it shows one avatar at a time and a "Switch user" button cycles to
+   the next account. currentAccount is tracked here so returning from
+   <SignIn /> via Back restores the last-viewed account.
+   ==================================================================== */
 export default function LoginPage() {
-  // states
-  const [selected, setSelected] = useState<'guest' | 'admin' | null>(null)
+  const [currentAccount, setCurrentAccount] = useState<AccountId>('guest')
+  const [signingInAs, setSigningInAs] = useState<AccountId | null>(null)
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | undefined>(undefined)
   const [submitting, setSubmitting] = useState(false)
+  const [avatars, setAvatars] = useState<{ guest: string; admin: string } | null>(null)
 
-  // refs
   const passwordRef = useRef<HTMLInputElement>(null)
-
-  // hooks
   const dispatch = useAppDispatch()
   const router = useRouter()
   const authStatus = useAppSelector(selectAuthStatus)
 
-  // handlers
-  const handleSelectGuest = () => {
-    const authresult = beginGuestSession()
+  // Random avatars are picked client-side after mount to avoid SSR/CSR
+  // hydration mismatch (Math.random would diverge between server and client).
+  useEffect(() => {
+    const [guest, admin] = pickTwoDistinctIcons()
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot RNG init; cannot use lazy state initializer without hydration mismatch.
+    setAvatars({ guest, admin })
+  }, [])
 
-    if (!authresult.ok) {
-      debug.error(authresult.error)
+  const accounts = useMemo(
+    () =>
+      avatars
+        ? ([
+            { id: 'guest', label: 'Guest', avatarSrc: avatars.guest },
+            { id: 'admin', label: 'Admin', avatarSrc: avatars.admin },
+          ] as const)
+        : null,
+    [avatars]
+  )
+
+  const handleSelect = (id: AccountId) => {
+    if (id === 'guest') {
+      const r = beginGuestSession()
+      if (!r.ok) {
+        debug.error(r.error)
+        return
+      }
+      dispatch(setSession(r.data))
       return
     }
-
-    dispatch(setSession(authresult.data))
-  }
-
-  const handleSelectAdmin = () => {
-    setSelected('admin')
+    setSigningInAs('admin')
     setError(undefined)
     setPassword('')
   }
 
+  const handleSwitch = () => {
+    setCurrentAccount((c) => (c === 'guest' ? 'admin' : 'guest'))
+  }
+
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    // guards empty submit; SignInButton will be disabled too — defense in depth)
     if (!password) {
       return
     }
     setSubmitting(true)
-
-    const result = await signInAsAdmin(password)
-    // failed sign in
-    if (!result.ok) {
-      setError(result.error)
+    const r = await signInAsAdmin(password)
+    if (!r.ok) {
+      setError(r.error)
       setPassword('')
       setSubmitting(false)
       passwordRef.current?.focus()
-      return
     }
+    // success: auth listener dispatches setSession; effect below transitions
+    // to <Welcome /> and then to /desktop.
+  }
+
+  const handleBack = () => {
+    setSigningInAs(null)
+    setPassword('')
+    setError(undefined)
   }
 
   useEffect(() => {
     if (authStatus === 'authenticated') {
-      router.replace('/desktop')
+      const t = setTimeout(() => router.replace('/desktop'), 800)
+      return () => clearTimeout(t)
     }
   }, [authStatus, router])
 
   useEffect(() => {
-    if (selected === 'admin') {
+    if (signingInAs === 'admin') {
       passwordRef.current?.focus()
     }
-  }, [selected])
+  }, [signingInAs])
 
-  if (authStatus === 'unknown') {
-    return <div className={styles.screen} />
+  if (authStatus === 'authenticated') {
+    return <Welcome />
   }
-
+  if (authStatus === 'unknown' || accounts === null || avatars === null) {
+    return null
+  }
+  if (signingInAs === 'admin') {
+    return (
+      <SignIn
+        accountLabel="Admin"
+        avatarSrc={avatars.admin}
+        password={password}
+        onPasswordChange={setPassword}
+        onSubmit={handleSubmit}
+        onBack={handleBack}
+        error={error}
+        submitting={submitting}
+        passwordRef={passwordRef}
+      />
+    )
+  }
   return (
-    <main className={styles.screen}>
-      <div className={styles.tileRow}>
-        <AccountTile
-          label="Guest"
-          glyph="👤"
-          selected={selected === 'guest'}
-          disabled={submitting}
-          onSelect={handleSelectGuest}
-        />
-        <AccountTile
-          label="Admin"
-          glyph="🔒"
-          selected={selected === 'admin'}
-          disabled={submitting}
-          onSelect={handleSelectAdmin}
-        />
-      </div>
-
-      <AnimatePresence>
-        {selected === 'admin' && (
-          <motion.form
-            key="admin-form"
-            className={styles.passwordRow}
-            onSubmit={handleSubmit}
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-          >
-            <label htmlFor="admin-password" className={styles.visuallyHidden}>
-              Password
-            </label>
-            <PasswordInput
-              ref={passwordRef}
-              value={password}
-              onChange={setPassword}
-              error={error}
-              disabled={submitting}
-              placeholder="Password"
-              id="admin-password"
-            />
-            <SignInButton
-              type="submit"
-              disabled={submitting || !password} // empty pw can't submit
-            />
-          </motion.form>
-        )}
-      </AnimatePresence>
-    </main>
+    <AccountSelection
+      accounts={accounts}
+      currentId={currentAccount}
+      onSwitch={handleSwitch}
+      onSelect={handleSelect}
+      disabled={submitting}
+    />
   )
 }

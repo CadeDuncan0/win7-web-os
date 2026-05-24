@@ -1,0 +1,27 @@
+/* Inner relative column that anchors the absolute .logon__form-submit.
+   Mirrors the copycat's `<div class="relative flex flex-col gap-3">`. */
+.fieldColumn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Wrapper around the password input + eye toggle, so the toggle can
+   absolute-position to the input's right edge. */
+.passwordWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Reserve room on the input's right edge for the eye toggle. */
+.passwordInput {
+  padding-right: var(--logon-toggle-width);
+}
+
+.error {
+  font: inherit;
+  color: var(--color-neutral-0);
+  text-shadow: var(--logon-text-shadow);
+}

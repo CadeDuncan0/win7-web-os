@@ -20,9 +20,13 @@ framework, or runtime API:
 No tutorial may reference a version number inline — document the behavior, not the version.
 This rule supersedes any version number found in CLAUDE.md, AGENTS.md, or commit history.
 
-## Visual Reference
+## Visual References
 
-Use the repo at https://github.com/osama2kabdullah/win-7 and the packaged css at https://unpkg.com/7.css. All CSS should double check these sources before being implemented. _Do not_ directly utilize either source, they are references for in-project, dev-maintained css.
+- Extract relevant data from `@public/copycats`. (PRIMARY SOURCE)
+- The packaged css at https://unpkg.com/7.css
+- The documentation for the css at https://khang-nd.github.io/7.css/.
+
+All CSS should come directly from these sources. Only extract data regarding the current page(s) you are working on.
 
 ## ROLE
 

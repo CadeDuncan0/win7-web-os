@@ -1,154 +1,135 @@
 /* =====================================================================
-   Aero Glass Design Token System
+   Win7 Lockscreen Design Tokens
    ---------------------------------------------------------------------
-   Layer 1 (PRIMITIVE) — raw values, no semantics. Define once, never
-                         consumed directly by component stylesheets.
-   Layer 2 (SEMANTIC)  — intent. Each token references a primitive.
-                         Components consume ONLY this layer.
-   Layer 3 (COMPONENT) — lives in CSS Module files, not here.
+   Every value below is sourced directly from
+   public/copycats/signin/* and public/copycats/accountselection/*.
+   That source IS the textbook — primitives mirror the exact rgba()
+   stops, drop-shadow geometry, and dimension constants used by the
+   win7simu .logon__* classes. Component CSS Modules consume these
+   tokens; no magic values live outside this file.
    ===================================================================== */
 
 :root {
-  /* ─── PRIMITIVE: Color — Aero Blue Scale ───────────────────────── */
-  /* Anchored at #0078D7 — the canonical Windows 7 accent. The 300 rung
-     (#5eaefd) is the brighter highlight used for hover glows; the 700
-     rung (#003399) is the deep navy used for active/selected text. */
-  --color-aero-50: #eaf4fe;
-  --color-aero-100: #cce8ff;
-  --color-aero-300: #5eaefd;
-  --color-aero-500: #0078d7;
-  --color-aero-700: #003399;
-
-  /* ─── PRIMITIVE: Color — Neutral Scale ─────────────────────────── */
+  /* ─── PRIMITIVE: Color ─────────────────────────────────────────── */
+  --color-aero-cyan: #11c5f1;
   --color-neutral-0: #ffffff;
-  --color-neutral-100: #f4f6f9;
-  --color-neutral-300: #c8cdd5;
-  --color-neutral-500: #6b7280;
-  --color-neutral-700: #2a2f36;
-  --color-neutral-900: #0f1115;
+  --color-neutral-900: #000000;
+  --color-logon-input-border: #666666;
+  --color-logon-input-text: #000000;
+  --color-logon-avatar-border: #3f3f3f;
 
-  /* ─── PRIMITIVE: Color — Feedback ────────────────────────────────── */
-  --color-danger-100: #fbe3e5;
-  --color-danger-300: #f5b1b5;
-  --color-danger-500: #c1272d;
-  --color-danger-700: #991f23;
+  /* ─── PRIMITIVE: Alpha-white scale (button gradient + gloss) ───── */
+  --alpha-white-13: rgba(255, 255, 255, 0.1333333333);
+  --alpha-white-20: rgba(255, 255, 255, 0.2);
+  --alpha-white-27: rgba(255, 255, 255, 0.2666666667);
+  --alpha-white-40: rgba(255, 255, 255, 0.4);
+  --alpha-white-50: rgba(255, 255, 255, 0.5019607843);
+  --alpha-white-53: rgba(255, 255, 255, 0.5333333333);
+  --alpha-white-60: rgba(255, 255, 255, 0.6);
 
-  /* ─── PRIMITIVE: Color — Glass Translucents ────────────────────── */
-  /* rgba (not hex) — backdrop-filter requires alpha to composite the
-     blurred backdrop against the surface tint. Hex values would paint
-     a solid wash and defeat the frosted effect entirely. */
-  /* Real Aero glass is overwhelmingly WHITE with thin alpha — not blue.
-     The blue impression comes from the wallpaper bleeding through. The
-     -strong variant is the taskbar/active-surface tint (saturated navy
-     with high alpha) — used sparingly. */
-  --color-glass-tint-light: rgba(255, 255, 255, 0.15);
-  --color-glass-tint-strong: rgba(60, 100, 150, 0.8);
-  --color-glass-highlight: rgba(255, 255, 255, 0.55);
-  --color-glass-border-inner: rgba(255, 255, 255, 0.3);
-  --color-glass-border-outer: rgba(0, 0, 0, 0.18);
-  --color-aero-focus-glow: rgba(0, 120, 215, 0.25);
+  /* ─── PRIMITIVE: Alpha-black scale (text shadows + button halo) ── */
+  --alpha-black-13: rgba(0, 0, 0, 0.1333333333);
+  --alpha-black-20: rgba(0, 0, 0, 0.2);
+  --alpha-black-53: rgba(0, 0, 0, 0.5333333333);
+  --alpha-black-60: rgba(0, 0, 0, 0.6);
+  --alpha-black-80: rgba(0, 0, 0, 0.8);
 
-  /* ─── PRIMITIVE: Color — Wallpaper Blooms ────────────────────── */
-  --color-wallpaper-bloom-warm: rgba(180, 220, 255, 0.7);
-  --color-wallpaper-bloom-cool: rgba(94, 174, 253, 0.5);
+  /* ─── PRIMITIVE: Teal-ink scale (button gradient mid-stops) ────── */
+  --alpha-teal-10: rgba(39, 71, 86, 0.1019607843);
+  --alpha-teal-38: rgba(39, 71, 86, 0.3764705882);
 
-  /* ─── PRIMITIVE: Spacing — 4px base grid ───────────────────────── */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 32px;
-  --space-8: 40px;
+  /* ─── PRIMITIVE: Spacing — Tailwind-aligned (rem) ──────────────── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
 
-  /* ─── PRIMITIVE: Radius ────────────────────────────────────────── */
-  /* Aero corners are soft, not rounded. Reference values from
-     real Win7 chrome: icons 3px, context menu 2px, start menu 5px,
-     widgets 8px. Avoid modern 12–16px. */
-  --radius-sm: 3px;
-  --radius-md: 5px;
-  --radius-lg: 8px;
+  /* ─── PRIMITIVE: Type sizes (Tailwind scale used by copycat) ───── */
+  --font-size-xs: 0.75rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --line-height-3xl: 2.25rem;
 
-  /* ─── PRIMITIVE: Blur strengths ────────────────────────────────── */
-  /* Aero blur is subtle — real Win7 surfaces blur in the 5–12px range,
-     not the 20px+ commonly shown in modern "frosted glass" demos. */
-  --blur-sm: 5px;
-  --blur-md: 10px;
-  --blur-lg: 16px;
-
-  /* ─── PRIMITIVE: Type sizes ────────────────────────────────────── */
-  /* Spec is in pt (Title 16pt / Heading 13pt / Body 12pt).
-     Conversion at 16px root: 1pt = 1.333px → 12pt = 1rem.
-     Defined in rem so user font-size scaling continues to work. */
-  --font-size-100: 1rem; /* 12pt — body */
-  --font-size-200: 1.083rem; /* 13pt — heading */
-  --font-size-300: 1.333rem; /* 16pt — title */
-
-  /* ─── PRIMITIVE: Type families ─────────────────────────────────── */
-  --font-family-serif: Georgia, 'Times New Roman', serif;
-  --font-family-sans: Arial, Helvetica, sans-serif;
-
-  /* ─── PRIMITIVE: Shadow layers ─────────────────────────────────── */
-  /* Aero windows are NEVER a single drop shadow — they composite
-     three: a tight contact shadow, a soft mid shadow, and a wide
-     ambient shadow. The focused state adds an outer aero glow. */
-  --shadow-close: 0 1px 2px rgba(0, 0, 0, 0.15);
-  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.2);
-  --shadow-ambient: 0 15px 40px rgba(0, 0, 0, 0.45);
-  --shadow-glow-aero: 0 0 16px rgba(94, 174, 253, 0.55);
+  /* ─── PRIMITIVE: Font weights ─────────────────────────────────── */
+  --weight-thin: 100;
+  --weight-bold: 700;
 
   /* ===================================================================
-     SEMANTIC LAYER — wire each token to a primitive above.
-     Never put a literal value here. Never reference a primitive from
-     a component stylesheet. The pipeline is: primitive → semantic →
-     component.
+     SEMANTIC LAYER
      =================================================================== */
 
-  /* ─── SEMANTIC: Surfaces (the Aero glass chrome) ───────────────── */
-  --surface-glass-tint: var(--color-glass-tint-light);
-  --surface-glass-blur: var(--blur-md);
-  --surface-glass-border: var(--color-glass-border-inner);
-  --surface-glass-highlight: var(--color-glass-highlight);
-  --surface-desktop-wallpaper:
+  /* ─── SEMANTIC: Backdrop image ─────────────────────────────────── */
+  --logon-backdrop: url('/imgs/login/background.jpg') no-repeat center / cover;
+
+  /* ─── SEMANTIC: Text shadows on the lock-screen image ──────────── */
+  --logon-text-shadow: 0 1px 2px var(--color-neutral-900);
+  --logon-name-shadow: 0 1px 4px var(--color-neutral-900);
+  --logon-brand-shadow: 1px 3px 3px var(--alpha-black-53);
+
+  /* ─── SEMANTIC: Avatar (.avatar-button) ────────────────────────── */
+  --avatar-size: 144px;
+  --avatar-image-size: 98px;
+  --avatar-frame-padding: 23px;
+  --avatar-frame-bg: var(--color-neutral-0);
+  --avatar-frame-radius: 4px;
+  --avatar-image-radius: 3px;
+  --avatar-image-border: 1px solid var(--color-logon-avatar-border);
+  --avatar-drop-shadow: drop-shadow(2px 2px 8px var(--alpha-black-53));
+  --avatar-glow: drop-shadow(0 0 12px var(--color-aero-cyan));
+  --avatar-gloss:
     radial-gradient(
-      ellipse 55% 40% at 30% 30%,
-      var(--color-wallpaper-bloom-warm) 0%,
-      transparent 60%
+      farthest-corner at top,
+      var(--alpha-white-53),
+      var(--alpha-white-27) 40%,
+      transparent 44%
     ),
-    radial-gradient(
-      ellipse 70% 50% at 75% 75%,
-      var(--color-wallpaper-bloom-cool) 0%,
-      transparent 65%
-    ),
-    radial-gradient(circle at 50% 50%, var(--color-aero-500) 0%, var(--color-aero-700) 90%);
+    linear-gradient(135deg, var(--alpha-white-13) 48%, transparent 52%);
 
-  /* ─── SEMANTIC: Shadows (multi-layer composition) ──────────────── */
-  /* Multi-layer box-shadow syntax: comma-separate three shadow primitives.
-     Focused variant: same stack PLUS the aero glow primitive. */
-  --shadow-window: var(--shadow-close), var(--shadow-soft), var(--shadow-ambient);
-  --shadow-window-focused:
-    var(--shadow-close), var(--shadow-soft), var(--shadow-ambient), var(--shadow-glow-aero);
+  /* ─── SEMANTIC: Logon form input (.logon__form-input + is-win7) ── */
+  --logon-input-width: 200px;
+  --logon-input-height: 23px;
+  --logon-input-padding-x: 6px;
+  --logon-input-radius: 3px;
+  --logon-input-border: 1px solid var(--color-logon-input-border);
+  --logon-input-ring: 0 0 0 1px var(--alpha-white-50);
 
-  /* ─── SEMANTIC: Text shorthands ────────────────────────────────── */
-  /* CSS font shorthand: <size>/<line-height> <family> */
-  --text-title: var(--font-size-300) / 1.25 var(--font-family-serif);
-  --text-heading: var(--font-size-200) / 1.3 var(--font-family-serif);
-  --text-body: var(--font-size-100) / 1.45 var(--font-family-sans);
+  /* ─── SEMANTIC: Logon form button (.logon__form-button + is-win7) ─ */
+  --logon-button-min-width: 80px;
+  --logon-button-padding: 6px 8px;
+  --logon-button-radius: 3px;
+  --logon-button-gradient: linear-gradient(
+    180deg,
+    var(--alpha-white-40),
+    var(--alpha-white-20) 45%,
+    var(--alpha-teal-38) 50%,
+    var(--alpha-teal-10) 90%,
+    var(--alpha-white-40)
+  );
+  --logon-button-shadow:
+    inset 0 0 2px var(--color-neutral-0), inset 0 1px 3px var(--alpha-white-60),
+    0 1px 1px var(--alpha-black-80), -1px -1px 1px var(--alpha-black-20),
+    1px -1px 1px var(--alpha-black-20);
 
-  /* ─── SEMANTIC: Focus ───────────────────────────────────────────── */
-  --focus-ring-color: var(--color-aero-500);
-  --focus-ring-width: 2px;
+  /* ─── SEMANTIC: Password-visibility toggle (.logon__form-toggle) ─ */
+  --logon-toggle-color: var(--alpha-black-60);
+  --logon-toggle-hover-bg: var(--alpha-black-13);
+  --logon-toggle-width: 40px;
 
-  /* ─── SEMANTIC: Z-axis (reserved for Phase 2 window manager) ───── */
-  --z-desktop: 100;
-  --z-window: 200;
-  --z-window-focused: 300;
-  --z-taskbar: 400;
-  --z-modal: 500;
+  /* ─── SEMANTIC: Circular submit (.logon__form-submit + w-12 h-12) ─ */
+  --logon-submit-size: 48px;
+  --logon-submit-offset-y: 16px;
 
-  /* ─── SEMANTIC: Feedback ────────────────────────────────────────── */
-  --color-feedback-error: var(--color-danger-500);
+  /* ─── SEMANTIC: Bottom brand (.logon__brand) ───────────────────── */
+  --logon-brand-icon-size: 32px;
+
+  /* ─── SEMANTIC: Shutdown group (.shutdown-button / -dropdown) ──── */
+  --shutdown-button-width: 42px;
+  --shutdown-button-height: 32px;
+  --shutdown-dropdown-width: 24px;
 }
 
 /* =====================================================================
@@ -156,31 +137,22 @@
    ===================================================================== */
 
 html {
-  font-size: 16px; /* anchors every rem-based primitive above */
+  font-size: 16px;
 }
 
 body {
   margin: 0;
-  font: var(--text-body);
+  font: var(--w7-font);
   color: var(--color-neutral-900);
-  background: var(--color-neutral-700);
+  background: var(--w7-surface);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Minimal element-level reset — preflight is intentionally gone. */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-}
-
-button {
-  font: inherit;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
 }
 
 ul,
@@ -188,4 +160,356 @@ ol {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* =====================================================================
+   .logon__* — Win7 Simu lockscreen classes (copied 1:1 from
+   public/copycats/signin/signin-base.css + signin-win7.css and
+   public/copycats/accountselection/startmenu-base.8c444b86.css)
+   ===================================================================== */
+
+/* ─── Full-screen lockscreen surface ──────────────────────────────── */
+.logon__main {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--logon-backdrop);
+  color: var(--color-neutral-0);
+}
+
+/* ─── "Logging on. Please wait..." indicator ──────────────────────── */
+.logon__loading {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-shadow: var(--logon-name-shadow);
+}
+
+/* ─── Centered column holding avatar + name + form ────────────────── */
+.logon__pane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  transform: translateY(-3rem);
+}
+
+/* Avatar inside the pane locks to the canonical 144×144 footprint. */
+.logon__pane .avatar-button {
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+}
+
+/* ─── Account name displayed under the avatar ─────────────────────── */
+.logon__name {
+  font-weight: var(--weight-bold);
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-3xl);
+  text-shadow: var(--logon-name-shadow);
+}
+
+/* ─── Form wrapper ────────────────────────────────────────────────── */
+.logon__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ─── Form input (username / password) ────────────────────────────── */
+.logon__form-input {
+  width: var(--logon-input-width);
+  height: var(--logon-input-height);
+  padding: 0 0 0 var(--logon-input-padding-x);
+  color: var(--color-logon-input-text);
+  background: var(--color-neutral-0);
+  border: var(--logon-input-border);
+  border-radius: var(--logon-input-radius);
+  box-shadow: var(--logon-input-ring);
+  font: inherit;
+}
+
+.logon__form-input:focus {
+  outline: none;
+  box-shadow:
+    var(--logon-input-ring),
+    0 0 4px var(--color-aero-cyan);
+}
+
+/* ─── Form button (Switch User / Back) ────────────────────────────── */
+.logon__form-button {
+  color: inherit;
+  min-width: var(--logon-button-min-width);
+  padding: var(--logon-button-padding);
+  background: var(--logon-button-gradient);
+  border: 0;
+  border-radius: var(--logon-button-radius);
+  box-shadow: var(--logon-button-shadow);
+  text-shadow: var(--logon-text-shadow);
+  cursor: pointer;
+  font: inherit;
+}
+
+.logon__form-button::before,
+.logon__form-button::after {
+  display: none;
+}
+
+.logon__form-button:hover,
+.logon__form-button:focus,
+.logon__form-button:focus-visible {
+  outline: none;
+  filter: contrast(1.7);
+}
+
+.logon__form-button:active {
+  backdrop-filter: brightness(0.6);
+}
+
+.logon__form-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ─── Form submit (circular blue arrow) ───────────────────────────── */
+/* Shares the gradient + halo chrome with .logon__form-button and adds
+   the absolute positioning, fixed footprint, and full radius the
+   copycat applies via Tailwind utilities (absolute left-full ml-3
+   w-12 h-12 rounded-full). */
+.logon__form-submit {
+  position: absolute;
+  left: 100%;
+  top: calc(50% - var(--logon-submit-offset-y));
+  width: var(--logon-submit-size);
+  height: var(--logon-submit-size);
+  margin-left: var(--space-3);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-neutral-0);
+  background: var(--logon-button-gradient);
+  border: 0;
+  border-radius: 9999px;
+  box-shadow: var(--logon-button-shadow);
+  text-shadow: var(--logon-text-shadow);
+  cursor: pointer;
+  font: inherit;
+}
+
+.logon__form-submit::before,
+.logon__form-submit::after {
+  display: none;
+}
+
+.logon__form-submit:hover,
+.logon__form-submit:focus,
+.logon__form-submit:focus-visible {
+  outline: none;
+  filter: contrast(1.7);
+}
+
+.logon__form-submit:active {
+  backdrop-filter: brightness(0.6);
+}
+
+.logon__form-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ─── Password-visibility toggle (eye icon) ───────────────────────── */
+.logon__form-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--logon-toggle-width);
+  height: 100%;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--logon-toggle-color);
+  background: transparent;
+  border: 0;
+  border-top-right-radius: var(--logon-input-radius);
+  border-bottom-right-radius: var(--logon-input-radius);
+  cursor: pointer;
+  font: inherit;
+}
+
+.logon__form-toggle::before,
+.logon__form-toggle::after {
+  display: none;
+}
+
+.logon__form-toggle:hover,
+.logon__form-toggle:focus,
+.logon__form-toggle:focus-visible {
+  outline: none;
+  background: var(--logon-toggle-hover-bg);
+}
+
+/* ─── Underlined text link beneath the form ───────────────────────── */
+.logon__form-link {
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: var(--space-2);
+  text-decoration: underline;
+  text-underline-offset: 1px;
+  text-shadow: var(--logon-text-shadow);
+  cursor: pointer;
+  font: inherit;
+}
+
+.logon__form-link::before,
+.logon__form-link::after {
+  display: none;
+}
+
+.logon__form-link:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* ─── Bottom brand lockup (icon + wordmark + subtitle) ────────────── */
+.logon__brand {
+  position: absolute;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-shadow: var(--logon-brand-shadow);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.logon__brand-icon {
+  width: var(--logon-brand-icon-size);
+  height: var(--logon-brand-icon-size);
+  filter: drop-shadow(var(--logon-brand-shadow));
+}
+
+.logon__brand-text {
+  font-size: var(--font-size-3xl);
+}
+
+.logon__brand-subtitle {
+  align-self: flex-end;
+  font-weight: var(--weight-thin);
+  font-size: var(--font-size-2xl);
+  font-style: italic;
+}
+
+.logon__brand-sup {
+  font-size: var(--font-size-xs);
+  vertical-align: super;
+}
+
+/* =====================================================================
+   .avatar-button — Win7 lockscreen account picture (signin-base.css)
+   ===================================================================== */
+
+.avatar-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--avatar-frame-padding);
+  background: var(--avatar-frame-bg);
+  border: 0;
+  border-radius: var(--avatar-frame-radius);
+  overflow: hidden;
+  filter: var(--avatar-drop-shadow);
+  cursor: pointer;
+  font: inherit;
+}
+
+.avatar-button::before,
+.avatar-button::after {
+  display: none;
+}
+
+.avatar-button.can-click:focus,
+.avatar-button.can-click:focus-visible,
+.avatar-button.can-click:hover {
+  outline: none;
+  filter: var(--avatar-glow);
+}
+
+.avatar-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.avatar-mask {
+  position: relative;
+  overflow: hidden;
+  width: var(--avatar-image-size);
+  height: var(--avatar-image-size);
+}
+
+.avatar-mask::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 300%;
+  height: 100%;
+  pointer-events: none;
+  background-image: var(--avatar-gloss);
+}
+
+.avatar-image {
+  display: block;
+  width: var(--avatar-image-size);
+  height: var(--avatar-image-size);
+  object-fit: cover;
+  border: var(--avatar-image-border);
+  border-radius: var(--avatar-image-radius);
+}
+
+/* =====================================================================
+   .shutdown-* — bottom-right power group (signin.htm)
+   ===================================================================== */
+
+.shutdown-group {
+  position: absolute;
+  right: var(--space-8);
+  bottom: var(--space-6);
+  z-index: 0;
+  display: flex;
+}
+
+.shutdown-button {
+  width: var(--shutdown-button-width);
+  height: var(--shutdown-button-height);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.shutdown-button::before,
+.shutdown-button::after {
+  display: none;
+}
+
+.shutdown-dropdown {
+  position: relative;
+  width: var(--shutdown-dropdown-width);
+  height: var(--shutdown-button-height);
 }

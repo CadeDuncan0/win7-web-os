@@ -1,7 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation'
 
-import { SignInButton } from '@/components/login/SignInButton/SignInButton'
+import { Button } from '@/components/windows7/Button'
 import { signOut } from '@/lib/auth'
 import { useAppSelector } from '@/store/hooks'
 import { selectRole } from '@/store/slices/sessionSlice'
@@ -17,7 +17,7 @@ export default function DesktopPage() {
   return (
     <main>
       <h1>Welcome, {role} </h1>
-      <SignInButton onClick={handleSignOut} />
+      <Button onClick={handleSignOut}>Sign out</Button>
     </main>
   )
 }

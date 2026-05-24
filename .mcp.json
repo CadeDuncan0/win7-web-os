@@ -1,8 +1,15 @@
 {
   "mcpServers": {
     "proxy-verifier": {
-      "command": "sh",
-      "args": ["-c", "cd mcp-servers/proxy-verifier && node_modules/.bin/tsx src/index.ts"]
+      "command": "node",
+      "args": [
+        "${CLAUDE_PROJECT_DIR:-.}/mcp-servers/proxy-verifier/node_modules/tsx/dist/cli.mjs",
+        "${CLAUDE_PROJECT_DIR:-.}/mcp-servers/proxy-verifier/src/index.ts"
+      ],
+      "playwright": {
+        "command": "npx",
+        "args": ["@playwright/mcp@latest"]
+      }
     }
   }
 }

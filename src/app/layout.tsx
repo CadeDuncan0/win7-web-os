@@ -5,6 +5,9 @@ import type { ReactNode } from 'react'
 import ApolloProviderWrapper from '@/components/providers/ApolloProvider'
 import ReduxProviderWrapper from '@/components/providers/ReduxProvider'
 
+import './globals.css'
+import '7.css'
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
