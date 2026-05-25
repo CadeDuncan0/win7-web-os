@@ -1,0 +1,41 @@
+/* ─── AccountIcon wrapper ─────────────────────────────────────────────────── */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/*
+ * .avatarButton
+ *
+ * Adds position: relative so the ::after frame overlay can anchor to it.
+ * globals.css defines .avatar-button::after { display: none } as a reset;
+ * this module class overrides that for AccountIcon-specific frame rendering.
+ */
+.avatarButton {
+  position: relative;
+}
+
+.avatarButton::after {
+  display: block;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--avatar-frame);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─── Username / subtitle label ───────────────────────────────────────────── */
+
+.subtitle {
+  color: var(--color-neutral-0);
+  font-weight: var(--weight-bold);
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-3xl);
+  text-shadow: var(--logon-name-shadow);
+}

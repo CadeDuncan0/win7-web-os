@@ -1,4 +1,4 @@
-/* Inner relative column that anchors the absolute .logon__form-submit.
+/* Inner relative column that anchors the absolute .signin__form-submit.
    Mirrors the copycat's `<div class="relative flex flex-col gap-3">`. */
 .fieldColumn {
   position: relative;

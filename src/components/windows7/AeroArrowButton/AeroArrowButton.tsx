@@ -3,11 +3,11 @@
 import type { ComponentPropsWithRef } from 'react'
 
 /* AeroArrowButton — Win7 lockscreen circular submit.
-   Mirrors the .logon__form-submit button from
+   Mirrors the .signin__form-submit button from
    public/copycats/signin/signin.htm: a circular blue-arrow control that
    absolute-positions to the right of the password column at
    top:calc(50% - 16px). Chrome lives in globals.css under
-   .logon__form-submit so the same gradient + halo box-shadow used by
+   .signin__form-submit so the same gradient + halo box-shadow used by
    the text buttons applies here unchanged. */
 interface AeroArrowButtonProps extends ComponentPropsWithRef<'button'> {
   direction?: 'left' | 'right'
@@ -19,7 +19,7 @@ export function AeroArrowButton({
   type = 'button',
   ...rest
 }: AeroArrowButtonProps) {
-  const merged = ['logon__form-submit', className].filter(Boolean).join(' ')
+  const merged = ['signin__form-submit', className].filter(Boolean).join(' ')
   return (
     <button type={type} {...rest} className={merged}>
       <svg

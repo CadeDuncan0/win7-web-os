@@ -73,6 +73,7 @@
   /* ─── SEMANTIC: Avatar (.avatar-button) ────────────────────────── */
   --avatar-size: 144px;
   --avatar-image-size: 98px;
+  --avatar-frame: url(/imgs/windows7/assets/accountIconBorder.png);
   --avatar-frame-padding: 23px;
   --avatar-frame-bg: var(--color-neutral-0);
   --avatar-frame-radius: 4px;
@@ -89,7 +90,7 @@
     ),
     linear-gradient(135deg, var(--alpha-white-13) 48%, transparent 52%);
 
-  /* ─── SEMANTIC: Logon form input (.logon__form-input + is-win7) ── */
+  /* ─── SEMANTIC: Logon form input (.signin__form-input + is-win7) ── */
   --logon-input-width: 200px;
   --logon-input-height: 23px;
   --logon-input-padding-x: 6px;
@@ -97,7 +98,7 @@
   --logon-input-border: 1px solid var(--color-logon-input-border);
   --logon-input-ring: 0 0 0 1px var(--alpha-white-50);
 
-  /* ─── SEMANTIC: Logon form button (.logon__form-button + is-win7) ─ */
+  /* ─── SEMANTIC: Logon form button (.signin__form-button + is-win7) ─ */
   --logon-button-min-width: 80px;
   --logon-button-padding: 6px 8px;
   --logon-button-radius: 3px;
@@ -114,16 +115,16 @@
     0 1px 1px var(--alpha-black-80), -1px -1px 1px var(--alpha-black-20),
     1px -1px 1px var(--alpha-black-20);
 
-  /* ─── SEMANTIC: Password-visibility toggle (.logon__form-toggle) ─ */
+  /* ─── SEMANTIC: Password-visibility toggle (.signin__form-toggle) ─ */
   --logon-toggle-color: var(--alpha-black-60);
   --logon-toggle-hover-bg: var(--alpha-black-13);
   --logon-toggle-width: 40px;
 
-  /* ─── SEMANTIC: Circular submit (.logon__form-submit + w-12 h-12) ─ */
+  /* ─── SEMANTIC: Circular submit (.signin__form-submit + w-12 h-12) ─ */
   --logon-submit-size: 48px;
   --logon-submit-offset-y: 16px;
 
-  /* ─── SEMANTIC: Bottom brand (.logon__brand) ───────────────────── */
+  /* ─── SEMANTIC: Bottom brand (.login__brand) ───────────────────── */
   --logon-brand-icon-size: 32px;
 
   /* ─── SEMANTIC: Shutdown group (.shutdown-button / -dropdown) ──── */
@@ -167,13 +168,14 @@ button {
 }
 
 /* =====================================================================
-   .logon__* — Win7 Simu lockscreen classes (copied 1:1 from
+   .login__* / .signin__* / .welcome__* — Win7 Simu lockscreen classes
+   (copied 1:1 from
    public/copycats/signin/signin-base.css + signin-win7.css and
    public/copycats/accountselection/startmenu-base.8c444b86.css)
    ===================================================================== */
 
 /* ─── Full-screen lockscreen surface ──────────────────────────────── */
-.logon__main {
+.login__main {
   position: relative;
   width: 100vw;
   height: 100vh;
@@ -186,7 +188,7 @@ button {
 }
 
 /* ─── "Logging on. Please wait..." indicator ──────────────────────── */
-.logon__loading {
+.welcome__loading {
   position: relative;
   display: flex;
   align-items: center;
@@ -195,22 +197,28 @@ button {
 }
 
 /* ─── Centered column holding avatar + name + form ────────────────── */
-.logon__pane {
+.login__pane {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: var(--space-4);
   transform: translateY(-3rem);
 }
 
-/* Avatar inside the pane locks to the canonical 144×144 footprint. */
-.logon__pane .avatar-button {
+/* Avatar inside the pane locks to the canonical 144×144 footprint.
+   The accountIconBorder.png overlay (rendered via AccountIcon's
+   ::after) is the *only* frame — null out the base .avatar-button's
+   rounded corners and drop-shadow so they don't compete with the
+   image's own border and corner geometry. */
+.login__pane .avatar-button {
   width: var(--avatar-size);
   height: var(--avatar-size);
+  border-radius: 0;
+  filter: none;
 }
 
 /* ─── Account name displayed under the avatar ─────────────────────── */
-.logon__name {
+.signin__name {
   font-weight: var(--weight-bold);
   font-size: var(--font-size-3xl);
   line-height: var(--line-height-3xl);
@@ -218,15 +226,23 @@ button {
 }
 
 /* ─── Form wrapper ────────────────────────────────────────────────── */
-.logon__form {
+.signin__form {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-3);
 }
 
+.signin__pane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  transform: translateY(-3rem);
+}
+
 /* ─── Form input (username / password) ────────────────────────────── */
-.logon__form-input {
+.signin__form-input {
   width: var(--logon-input-width);
   height: var(--logon-input-height);
   padding: 0 0 0 var(--logon-input-padding-x);
@@ -238,7 +254,7 @@ button {
   font: inherit;
 }
 
-.logon__form-input:focus {
+.signin__form-input:focus {
   outline: none;
   box-shadow:
     var(--logon-input-ring),
@@ -246,7 +262,7 @@ button {
 }
 
 /* ─── Form button (Switch User / Back) ────────────────────────────── */
-.logon__form-button {
+.signin__form-button {
   color: inherit;
   min-width: var(--logon-button-min-width);
   padding: var(--logon-button-padding);
@@ -259,33 +275,33 @@ button {
   font: inherit;
 }
 
-.logon__form-button::before,
-.logon__form-button::after {
+.signin__form-button::before,
+.signin__form-button::after {
   display: none;
 }
 
-.logon__form-button:hover,
-.logon__form-button:focus,
-.logon__form-button:focus-visible {
+.signin__form-button:hover,
+.signin__form-button:focus,
+.signin__form-button:focus-visible {
   outline: none;
   filter: contrast(1.7);
 }
 
-.logon__form-button:active {
+.signin__form-button:active {
   backdrop-filter: brightness(0.6);
 }
 
-.logon__form-button:disabled {
+.signin__form-button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
 
 /* ─── Form submit (circular blue arrow) ───────────────────────────── */
-/* Shares the gradient + halo chrome with .logon__form-button and adds
+/* Shares the gradient + halo chrome with .signin__form-button and adds
    the absolute positioning, fixed footprint, and full radius the
    copycat applies via Tailwind utilities (absolute left-full ml-3
    w-12 h-12 rounded-full). */
-.logon__form-submit {
+.signin__form-submit {
   position: absolute;
   left: 100%;
   top: calc(50% - var(--logon-submit-offset-y));
@@ -306,61 +322,41 @@ button {
   font: inherit;
 }
 
-.logon__form-submit::before,
-.logon__form-submit::after {
+.signin__form-submit::before,
+.signin__form-submit::after {
   display: none;
 }
 
-.logon__form-submit:hover,
-.logon__form-submit:focus,
-.logon__form-submit:focus-visible {
+.signin__form-submit:hover,
+.signin__form-submit:focus,
+.signin__form-submit:focus-visible {
   outline: none;
   filter: contrast(1.7);
 }
 
-.logon__form-submit:active {
+.signin__form-submit:active {
   backdrop-filter: brightness(0.6);
 }
 
-.logon__form-submit:disabled {
+.signin__form-submit:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
 
-/* ─── Password-visibility toggle (eye icon) ───────────────────────── */
-.logon__form-toggle {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: var(--logon-toggle-width);
-  height: 100%;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--logon-toggle-color);
-  background: transparent;
-  border: 0;
-  border-top-right-radius: var(--logon-input-radius);
-  border-bottom-right-radius: var(--logon-input-radius);
-  cursor: pointer;
-  font: inherit;
-}
-
-.logon__form-toggle::before,
-.logon__form-toggle::after {
+.signin__form-toggle::before,
+.signin__form-toggle::after {
   display: none;
 }
 
-.logon__form-toggle:hover,
-.logon__form-toggle:focus,
-.logon__form-toggle:focus-visible {
+.signin__form-toggle:hover,
+.signin__form-toggle:focus,
+.signin__form-toggle:focus-visible {
   outline: none;
   background: var(--logon-toggle-hover-bg);
 }
 
 /* ─── Underlined text link beneath the form ───────────────────────── */
-.logon__form-link {
+.signin__form-link {
   color: inherit;
   background: transparent;
   border: 0;
@@ -372,18 +368,18 @@ button {
   font: inherit;
 }
 
-.logon__form-link::before,
-.logon__form-link::after {
+.signin__form-link::before,
+.signin__form-link::after {
   display: none;
 }
 
-.logon__form-link:focus-visible {
+.signin__form-link:focus-visible {
   outline: 1px solid currentColor;
   outline-offset: 2px;
 }
 
 /* ─── Bottom brand lockup (icon + wordmark + subtitle) ────────────── */
-.logon__brand {
+.login__brand {
   position: absolute;
   bottom: var(--space-6);
   left: 50%;
@@ -396,24 +392,24 @@ button {
   white-space: nowrap;
 }
 
-.logon__brand-icon {
+.login__brand-icon {
   width: var(--logon-brand-icon-size);
   height: var(--logon-brand-icon-size);
   filter: drop-shadow(var(--logon-brand-shadow));
 }
 
-.logon__brand-text {
+.login__brand-text {
   font-size: var(--font-size-3xl);
 }
 
-.logon__brand-subtitle {
+.login__brand-subtitle {
   align-self: flex-end;
   font-weight: var(--weight-thin);
   font-size: var(--font-size-2xl);
   font-style: italic;
 }
 
-.logon__brand-sup {
+.login__brand-sup {
   font-size: var(--font-size-xs);
   vertical-align: super;
 }
@@ -426,14 +422,28 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--avatar-frame-padding);
-  background: var(--avatar-frame-bg);
+  padding: 0;
+  box-shadow: none;
   border: 0;
   border-radius: var(--avatar-frame-radius);
   overflow: hidden;
   filter: var(--avatar-drop-shadow);
   cursor: pointer;
   font: inherit;
+}
+
+.avatar-frame {
+  display: block;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--avatar-frame);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  border: 0;
+  width: 144px;
+  height: 144px;
 }
 
 .avatar-button::before,
@@ -473,6 +483,7 @@ button {
 
 .avatar-image {
   display: block;
+  margin: 0 auto;
   width: var(--avatar-image-size);
   height: var(--avatar-image-size);
   object-fit: cover;
