@@ -12,6 +12,7 @@
 :root {
   /* ─── PRIMITIVE: Color ─────────────────────────────────────────── */
   --color-aero-cyan: #11c5f1;
+  --color-aero-cyandark: #0e95b7;
   --color-neutral-0: #ffffff;
   --color-neutral-900: #000000;
   --color-logon-input-border: #666666;
@@ -83,7 +84,7 @@
   --avatar-image-radius: 3px;
   --avatar-image-border: 1px solid var(--color-logon-avatar-border);
   --avatar-drop-shadow: drop-shadow(2px 2px 8px var(--alpha-black-53));
-  --avatar-glow: drop-shadow(0 0 12px var(--color-aero-cyan));
+  --avatar-glow: drop-shadow(0 0 12px var(--color-aero-cyandark));
   --avatar-gloss:
     radial-gradient(
       farthest-corner at top,
@@ -146,6 +147,10 @@
   --shutdown-button-width: 42px;
   --shutdown-button-height: 32px;
   --shutdown-dropdown-width: 24px;
+
+  /* ─── SEMANTIC: windows 7 hovering & clicking ──── */
+  --windows7-focus: contrast(1.1);
+  --windows7-active: opacity(0.8);
 }
 
 /* =====================================================================
@@ -220,8 +225,6 @@ button {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--space-4);
-  transform: translateY(-3rem);
 }
 
 /* Avatar inside the pane locks to the canonical 144×144 footprint.
@@ -232,7 +235,7 @@ button {
 .login__pane .avatar-button {
   width: var(--avatar-size);
   height: var(--avatar-size);
-  border-radius: 0;
+  /* Need a border which matches the accountIconBorder.png here *on focus*. */
   filter: none;
 }
 
@@ -268,7 +271,8 @@ button {
   background: var(--color-neutral-0);
   border: var(--logon-input-border);
   border-radius: var(--logon-input-radius);
-  box-shadow: var(--logon-input-ring);
+  box-shadow: var(--logon-input-ring) !important;
+  transition: background-color 9999s ease-in-out 0s !important;
   font: inherit;
 }
 
@@ -289,10 +293,10 @@ button {
   min-height: unset;
   font-size: var(--font-size-s) !important;
   padding: var(--logon-button-padding);
-  background: var(--logon-button-gradient);
+  background: var(--logon-button-gradient) !important;
   border: 0;
   border-radius: var(--logon-button-radius);
-  box-shadow: var(--logon-button-shadow);
+  box-shadow: var(--logon-button-shadow) !important;
   text-shadow: var(--logon-text-shadow);
   cursor: pointer;
   font: inherit;
@@ -307,11 +311,7 @@ button {
 .signin__form-button:focus,
 .signin__form-button:focus-visible {
   outline: none;
-  filter: contrast(1.7);
-}
-
-.signin__form-button:active {
-  backdrop-filter: brightness(0.6);
+  filter: var(--windows7-focus);
 }
 
 .signin__form-button:disabled {
@@ -342,10 +342,10 @@ button {
   align-items: center;
   justify-content: center;
   color: var(--color-neutral-0);
-  background: var(--logon-button-gradient);
+  background: var(--logon-button-gradient) !important;
   border: 0;
   border-radius: 9999px;
-  box-shadow: var(--logon-button-shadow);
+  box-shadow: var(--logon-button-shadow) !important;
   text-shadow: var(--logon-text-shadow);
   cursor: pointer;
   font: inherit;
@@ -360,11 +360,18 @@ button {
 .signin__form-submit:focus,
 .signin__form-submit:focus-visible {
   outline: none;
-  filter: contrast(1.7);
+  filter: var(--windows7-focus);
 }
 
-.signin__form-submit:active {
-  backdrop-filter: brightness(0.6);
+/* Stack a semi-transparent black layer on top of the gradient so only the
+   background dims on click — using `filter` (or the shared --windows7-active
+   opacity token) would also fade the white arrow SVG, text-shadow, and the
+   inset halo box-shadows. background-image sits beneath foreground content,
+   leaving the SVG, shadows, and outline visually untouched. */
+.signin__form-submit:active,
+.signin__form-button:active {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), var(--logon-button-gradient) !important;
 }
 
 .signin__form-submit:disabled {
@@ -485,7 +492,6 @@ button {
 .avatar-button.can-click:hover {
   outline: none;
   filter: var(--avatar-glow);
-  background-image: no;
 }
 
 .avatar-button:disabled {

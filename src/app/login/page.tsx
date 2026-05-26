@@ -16,7 +16,7 @@ import { selectAuthStatus, setSession } from '@/store/slices/sessionSlice'
    --------------------------------------------------------------------
    Which Login screen renders is a function of (authStatus, signingInAs):
 
-     authStatus === 'authenticated'  → <Welcome />  → router.replace('/desktop')
+     authStatus === 'authenticated'  → <Transition />  → router.replace('/desktop')
      signingInAs === 'admin'         → <SignIn />
      otherwise                       → <AccountSelection />
 

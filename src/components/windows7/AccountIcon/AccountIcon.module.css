@@ -16,6 +16,7 @@
  */
 .avatarButton {
   position: relative;
+  margin: 0rem 5rem;
 }
 
 .avatarButton::after {

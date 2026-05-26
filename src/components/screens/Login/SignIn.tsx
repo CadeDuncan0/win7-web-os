@@ -52,7 +52,7 @@ export function SignIn({
                   aria-label="Password"
                   aria-invalid={Boolean(error)}
                   aria-describedby={errorId}
-                  className={`signin__form-input ${styles.passwordInput}`}
+                  className={`signin__form-input`}
                 />
               </div>
 

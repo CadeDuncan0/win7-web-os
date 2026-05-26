@@ -1,6 +1,6 @@
 'use client'
-import { useRouter } from 'next/navigation'
 
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Transition } from '@/components/screens/Transition'
 import { Button } from '@/components/windows7/Button'
@@ -14,8 +14,8 @@ export default function DesktopPage() {
   const [isSigningOut, setIsSigningOut] = useState(false)
 
   const handleSignOut = async () => {
-    await signOut()
     setIsSigningOut(true)
+    await signOut()
     setTimeout(() => router.replace('/login'), 1600)
   }
   if (isSigningOut) {
