@@ -29,7 +29,8 @@
       "PowerShell(Get-Process *)",
       "WebFetch(domain:khang-nd.github.io)",
       "Bash(grep -E '^button[ ,{:]|^button\\\\.|^a\\\\[role=button\\\\]|button\\\\[type')",
-      "Bash(awk -F'{' 'length\\($1\\)<80 && $1 ~ /button/')"
+      "Bash(awk -F'{' 'length\\($1\\)<80 && $1 ~ /button/')",
+      "Bash(git *)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -3,8 +3,8 @@
 import { type Ref, type SubmitEvent } from 'react'
 
 import { AccountIcon } from '@/components/windows7/AccountIcon'
-import { AeroArrowButton } from '@/components/windows7/AeroArrowButton'
 import { OsBranding } from '@/components/windows7/OsBranding'
+import { SubmitButton } from '@/components/windows7/SubmitButton'
 
 import styles from './SignIn.module.css'
 
@@ -37,7 +37,7 @@ export function SignIn({
     <div className="login__main">
       <main>
         <section className="signin__pane">
-          <AccountIcon iconSrc={avatarSrc} subtitle={accountLabel} width={98} height={98} />
+          <AccountIcon iconSrc={avatarSrc} subtitle={accountLabel} disabled={true} />
 
           <form className="signin__form" onSubmit={onSubmit}>
             <div className={styles.fieldColumn}>
@@ -56,12 +56,7 @@ export function SignIn({
                 />
               </div>
 
-              <AeroArrowButton
-                type="submit"
-                direction="right"
-                aria-label="Sign in"
-                disabled={submitting || !password}
-              />
+              <SubmitButton type="submit" aria-label="Sign in" disabled={submitting} />
             </div>
 
             {error && (
@@ -74,7 +69,7 @@ export function SignIn({
               type="button"
               onClick={onBack}
               disabled={submitting}
-              className="signin__form-button"
+              className={`signin__form-button ${styles.switchUser}`}
             >
               Switch User
             </button>

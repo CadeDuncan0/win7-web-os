@@ -15,13 +15,17 @@
   align-items: center;
 }
 
-/* Reserve room on the input's right edge for the eye toggle. */
-.passwordInput {
-  padding-right: var(--logon-toggle-width);
-}
-
 .error {
   font: inherit;
   color: var(--color-neutral-0);
   text-shadow: var(--logon-text-shadow);
+}
+
+/* Pushes the Switch User button well below the password row so the
+   form reads as input ▸ (breathing room) ▸ secondary action, mirroring
+   the spacing in public/imgs/login/os_signin.png. Form-level gap stays
+   tight (var(--space-3)) for the input/error pairing. */
+.switchUser {
+  margin-top: var(--space-8);
+  width: 50%;
 }

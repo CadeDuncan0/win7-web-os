@@ -1,18 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
-import { AeroArrowButton } from './AeroArrowButton'
+import { SubmitButton } from './SubmitButton'
 
 const meta = {
-  title: 'Windows7/AeroArrowButton',
-  component: AeroArrowButton,
+  title: 'Windows7/SubmitButton',
+  component: SubmitButton,
   parameters: { layout: 'centered' },
   decorators: [
     (Story) => (
       <div
         style={{
           position: 'relative',
-          width: 260,
-          height: 80,
+          width: 80,
+          height: 20,
           background: '#1d3a4e',
           color: '#fff',
           padding: 12,
@@ -22,14 +22,15 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof AeroArrowButton>
+} satisfies Meta<typeof SubmitButton>
 
 export default meta
 
 type Story = StoryObj<typeof meta>
 
-export const Right: Story = { args: { direction: 'right', 'aria-label': 'Submit' } }
-export const Left: Story = { args: { direction: 'left', 'aria-label': 'Back' } }
+export const Default: Story = {
+  args: { disabled: false, 'aria-label': 'Submit' },
+}
 export const Disabled: Story = {
-  args: { direction: 'right', disabled: true, 'aria-label': 'Submit' },
+  args: { disabled: true, 'aria-label': 'Submit' },
 }

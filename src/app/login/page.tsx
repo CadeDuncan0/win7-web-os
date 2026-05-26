@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react'
 
 import { AccountSelection, type AccountId } from '@/components/screens/Login/AccountSelection'
 import { SignIn } from '@/components/screens/Login/SignIn'
-import { Welcome } from '@/components/screens/Login/Welcome'
+import { Transition } from '@/components/screens/Transition'
 import { beginGuestSession, signInAsAdmin } from '@/lib/auth'
 import { debug } from '@/lib/debug'
 import { pickTwoDistinctIcons } from '@/lib/userIcons'
@@ -26,7 +26,6 @@ import { selectAuthStatus, setSession } from '@/store/slices/sessionSlice'
    <SignIn /> via Back restores the last-viewed account.
    ==================================================================== */
 export default function LoginPage() {
-  const [currentAccount, setCurrentAccount] = useState<AccountId>('guest')
   const [signingInAs, setSigningInAs] = useState<AccountId | null>(null)
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | undefined>(undefined)
@@ -72,10 +71,6 @@ export default function LoginPage() {
     setPassword('')
   }
 
-  const handleSwitch = () => {
-    setCurrentAccount((c) => (c === 'guest' ? 'admin' : 'guest'))
-  }
-
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!password) {
@@ -101,7 +96,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (authStatus === 'authenticated') {
-      const t = setTimeout(() => router.replace('/desktop'), 800)
+      const t = setTimeout(() => router.replace('/desktop'), 1600)
       return () => clearTimeout(t)
     }
   }, [authStatus, router])
@@ -113,10 +108,10 @@ export default function LoginPage() {
   }, [signingInAs])
 
   if (authStatus === 'authenticated') {
-    return <Welcome />
+    return <Transition message="Welcome" />
   }
   if (authStatus === 'unknown' || accounts === null || avatars === null) {
-    return null
+    return <Transition message="Please wait..." />
   }
   if (signingInAs === 'admin') {
     return (
@@ -133,13 +128,5 @@ export default function LoginPage() {
       />
     )
   }
-  return (
-    <AccountSelection
-      accounts={accounts}
-      currentId={currentAccount}
-      onSwitch={handleSwitch}
-      onSelect={handleSelect}
-      disabled={submitting}
-    />
-  )
+  return <AccountSelection accounts={accounts} onSelect={handleSelect} />
 }

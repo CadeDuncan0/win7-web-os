@@ -50,9 +50,12 @@
 
   /* ─── PRIMITIVE: Type sizes (Tailwind scale used by copycat) ───── */
   --font-size-xs: 0.75rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem;
-  --line-height-3xl: 2.25rem;
+  --font-size-s: 0.875rem;
+  --font-size-m: 1rem;
+  --font-size-l: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-3xl: 2rem;
 
   /* ─── PRIMITIVE: Font weights ─────────────────────────────────── */
   --weight-thin: 100;
@@ -63,7 +66,7 @@
      =================================================================== */
 
   /* ─── SEMANTIC: Backdrop image ─────────────────────────────────── */
-  --logon-backdrop: url('/imgs/login/background.jpg') no-repeat center / cover;
+  --logon-backdrop: url('/imgs/login/background.jpg');
 
   /* ─── SEMANTIC: Text shadows on the lock-screen image ──────────── */
   --logon-text-shadow: 0 1px 2px var(--color-neutral-900);
@@ -100,15 +103,25 @@
 
   /* ─── SEMANTIC: Logon form button (.signin__form-button + is-win7) ─ */
   --logon-button-min-width: 80px;
-  --logon-button-padding: 6px 8px;
+  --logon-button-padding: 4px 8px;
   --logon-button-radius: 3px;
   --logon-button-gradient: linear-gradient(
-    180deg,
-    var(--alpha-white-40),
-    var(--alpha-white-20) 45%,
-    var(--alpha-teal-38) 50%,
-    var(--alpha-teal-10) 90%,
-    var(--alpha-white-40)
+    to bottom,
+    #6bc4f6 0%,
+    #4aafe6 7.14%,
+    #45aae2 14.29%,
+    #3da5e1 21.43%,
+    #39a3df 28.57%,
+    #35a2dd 35.71%,
+    #32a2e2 42.86%,
+    #288fcc 50%,
+    #2286c2 57.14%,
+    #248bc9 64.29%,
+    #2391d0 71.43%,
+    #249bda 78.57%,
+    #28a2df 85.71%,
+    #2eaeea 92.86%,
+    #56cafa 100%
   );
   --logon-button-shadow:
     inset 0 0 2px var(--color-neutral-0), inset 0 1px 3px var(--alpha-white-60),
@@ -120,9 +133,11 @@
   --logon-toggle-hover-bg: var(--alpha-black-13);
   --logon-toggle-width: 40px;
 
-  /* ─── SEMANTIC: Circular submit (.signin__form-submit + w-12 h-12) ─ */
-  --logon-submit-size: 48px;
-  --logon-submit-offset-y: 16px;
+  /* ─── SEMANTIC: Circular submit (.signin__form-submit) ───────────── */
+  /* Sized just slightly taller than --logon-input-height (23px) so the
+     circle reads as a companion to the password field, not a button
+     that dominates it. */
+  --logon-submit-size: 30px;
 
   /* ─── SEMANTIC: Bottom brand (.login__brand) ───────────────────── */
   --logon-brand-icon-size: 32px;
@@ -168,7 +183,7 @@ button {
 }
 
 /* =====================================================================
-   .login__* / .signin__* / .welcome__* — Win7 Simu lockscreen classes
+   .login__* / .signin__* / .transition__* — Win7 Simu lockscreen classes
    (copied 1:1 from
    public/copycats/signin/signin-base.css + signin-win7.css and
    public/copycats/accountselection/startmenu-base.8c444b86.css)
@@ -184,16 +199,20 @@ button {
   justify-content: center;
   align-items: center;
   background: var(--logon-backdrop);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   color: var(--color-neutral-0);
 }
 
 /* ─── "Logging on. Please wait..." indicator ──────────────────────── */
-.welcome__loading {
+.transition__loading {
   position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-2);
   text-shadow: var(--logon-name-shadow);
+  font-size: var(--font-size-xl);
 }
 
 /* ─── Centered column holding avatar + name + form ────────────────── */
@@ -220,8 +239,8 @@ button {
 /* ─── Account name displayed under the avatar ─────────────────────── */
 .signin__name {
   font-weight: var(--weight-bold);
-  font-size: var(--font-size-3xl);
-  line-height: var(--line-height-3xl);
+  font-size: var(--font-size-xl);
+  line-height: var(--font-size-2xl);
   text-shadow: var(--logon-name-shadow);
 }
 
@@ -230,7 +249,7 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-6);
 }
 
 .signin__pane {
@@ -238,7 +257,6 @@ button {
   flex-direction: column;
   align-items: center;
   gap: var(--space-4);
-  transform: translateY(-3rem);
 }
 
 /* ─── Form input (username / password) ────────────────────────────── */
@@ -262,9 +280,14 @@ button {
 }
 
 /* ─── Form button (Switch User / Back) ────────────────────────────── */
+/* min-height / min-width unset to override 7.css's generic `button`
+   defaults (23px / 75px) which would otherwise compete with the
+   lockscreen-specific sizing tokens below. */
 .signin__form-button {
   color: inherit;
   min-width: var(--logon-button-min-width);
+  min-height: unset;
+  font-size: var(--font-size-s) !important;
   padding: var(--logon-button-padding);
   background: var(--logon-button-gradient);
   border: 0;
@@ -297,16 +320,22 @@ button {
 }
 
 /* ─── Form submit (circular blue arrow) ───────────────────────────── */
-/* Shares the gradient + halo chrome with .signin__form-button and adds
-   the absolute positioning, fixed footprint, and full radius the
-   copycat applies via Tailwind utilities (absolute left-full ml-3
-   w-12 h-12 rounded-full). */
+/* Shares the gradient + halo chrome with .signin__form-button. Sits
+   absolute-positioned to the right of the password input and is
+   vertically centered to the input via top: 50% + translateY(-50%),
+   which holds regardless of the circle's diameter.
+   min-width / min-height unset to override 7.css's `button` defaults
+   (75px / 23px) — without this the circle is stretched horizontally
+   into a pill instead of rendering as a true circle. */
 .signin__form-submit {
   position: absolute;
   left: 100%;
-  top: calc(50% - var(--logon-submit-offset-y));
+  top: 50%;
+  transform: translateY(-50%);
   width: var(--logon-submit-size);
   height: var(--logon-submit-size);
+  min-width: unset;
+  min-height: unset;
   margin-left: var(--space-3);
   padding: 0;
   display: inline-flex;
@@ -399,13 +428,13 @@ button {
 }
 
 .login__brand-text {
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
 }
 
 .login__brand-subtitle {
   align-self: flex-end;
   font-weight: var(--weight-thin);
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl);
   font-style: italic;
 }
 
@@ -426,6 +455,7 @@ button {
   box-shadow: none;
   border: 0;
   border-radius: var(--avatar-frame-radius);
+  background: var(--w7-el-grad) !important;
   overflow: hidden;
   filter: var(--avatar-drop-shadow);
   cursor: pointer;
@@ -437,10 +467,9 @@ button {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: var(--avatar-frame);
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  pointer-events: none;
+  background-image: var(--avatar-frame) !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
   border: 0;
   width: 144px;
   height: 144px;
@@ -456,11 +485,11 @@ button {
 .avatar-button.can-click:hover {
   outline: none;
   filter: var(--avatar-glow);
+  background-image: no;
 }
 
 .avatar-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+  cursor: default;
 }
 
 .avatar-mask {
