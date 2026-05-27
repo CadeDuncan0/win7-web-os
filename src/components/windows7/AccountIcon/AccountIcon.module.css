@@ -1,4 +1,12 @@
-/* ─── AccountIcon wrapper ─────────────────────────────────────────────────── */
+/* =====================================================================
+   AccountIcon — Win7 lockscreen account picture
+   Rules copied 1:1 from the pre-migration cascade so the rendered output
+   stays identical. The original layered three selectors on the button
+   element (.avatar-button, .avatar-frame, and the module .avatarButton)
+   and intentionally relied on `!important` to beat 7.css's generic
+   `button` declarations. We preserve every flag verbatim — this file
+   exists to relocate the rules, not to change them.
+   ===================================================================== */
 
 .wrapper {
   display: flex;
@@ -7,19 +15,43 @@
   gap: var(--space-2);
 }
 
-/*
- * .avatarButton
- *
- * Adds position: relative so the ::after frame overlay can anchor to it.
- * globals.css defines .avatar-button::after { display: none } as a reset;
- * this module class overrides that for AccountIcon-specific frame rendering.
- */
-.avatarButton {
+/* ─── Outer button: 144×144 white frame + PNG border + drop-shadow ─────
+   Combines the pre-migration `.avatar-button`, `.avatar-frame`, and
+   module `.avatarButton` rules. The final cascade values are inlined
+   directly — the original applied them as three separate class rules
+   on the same element. */
+.button {
+  display: block;
   position: relative;
+  inset: 0;
+  width: 144px;
+  height: 144px;
   margin: 0rem 5rem;
+  padding: 0;
+  background: var(--w7-el-grad) !important;
+  background-image: var(--avatar-frame) !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
+  border: 0;
+  border-radius: var(--avatar-frame-radius);
+  box-shadow: none;
+  overflow: hidden;
+  filter: var(--avatar-drop-shadow);
+  cursor: pointer;
+  font: inherit;
 }
 
-.avatarButton::after {
+/* ::before is reserved for the focus/hover indicator below. Hidden by
+   default so 7.css's generic button::before chrome doesn't paint here. */
+.button::before {
+  display: none;
+}
+
+/* The ::after overlay layers the accountIconBorder.png on top of the
+   button's own background-image. The original kept both paint paths —
+   we preserve that here. globals.css 7.css applies its own ::after
+   chrome to bare buttons; this overrides it for AccountIcon only. */
+.button::after {
   display: block;
   content: '';
   position: absolute;
@@ -31,11 +63,54 @@
   z-index: 1;
 }
 
-/* ─── Username / subtitle label ───────────────────────────────────────────── */
+.button.canClick:focus,
+.button.canClick:focus-visible,
+.button.canClick:hover {
+  outline: none;
+  filter: var(--avatar-glow);
+}
 
+.button:disabled {
+  cursor: default;
+}
+
+/* ─── Inner mask: 98×98 image container with gloss highlight ─────────── */
+.mask {
+  position: relative;
+  overflow: hidden;
+  width: var(--avatar-image-size);
+  height: var(--avatar-image-size);
+}
+
+.mask::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 300%;
+  height: 100%;
+  pointer-events: none;
+  background-image: var(--avatar-gloss);
+}
+
+.image {
+  display: block;
+  margin: 0 auto;
+  width: var(--avatar-image-size);
+  height: var(--avatar-image-size);
+  object-fit: cover;
+  border: var(--avatar-image-border);
+  border-radius: var(--avatar-image-radius);
+}
+
+/* ─── Subtitle label beneath the avatar ──────────────────────────────── */
+/* Font-size reads from --account-icon-subtitle-size with a default of
+   --font-size-xl. Consumers (e.g. SignIn) override the size by setting
+   that custom property on any ancestor — no className passing or
+   specificity-bumping required. */
 .subtitle {
   color: var(--color-neutral-0);
-  font-size: var(--font-size-xl);
+  font-size: var(--account-icon-subtitle-size, var(--font-size-xl));
   line-height: 1.2;
   text-shadow: var(--logon-name-shadow);
 }

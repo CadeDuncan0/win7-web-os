@@ -1,12 +1,24 @@
 /* =====================================================================
-   Win7 Lockscreen Design Tokens
-   ---------------------------------------------------------------------
+   globals.css
+
+   This file is intentionally narrow in scope. Only three categories of
+   rules belong here:
+
+     1. Design tokens — CSS custom properties on :root (colors, spacing,
+        type scale, shadows, radii, semantic lockscreen tokens).
+     2. CSS reset / normalize — element baselines (box-sizing, list reset,
+        button font inheritance).
+     3. Document baseline — html / body typography and background.
+
+   Component-specific styles live in <Component>.module.css next to the
+   component. If you find yourself adding a class selector for a single
+   component here, it belongs in that component's module instead.
+
    Every value below is sourced directly from
    public/copycats/signin/* and public/copycats/accountselection/*.
    That source IS the textbook — primitives mirror the exact rgba()
    stops, drop-shadow geometry, and dimension constants used by the
-   win7simu .logon__* classes. Component CSS Modules consume these
-   tokens; no magic values live outside this file.
+   win7simu .logon__* classes.
    ===================================================================== */
 
 :root {
@@ -74,7 +86,7 @@
   --logon-name-shadow: 0 1px 4px var(--color-neutral-900);
   --logon-brand-shadow: 1px 3px 3px var(--alpha-black-53);
 
-  /* ─── SEMANTIC: Avatar (.avatar-button) ────────────────────────── */
+  /* ─── SEMANTIC: Avatar (consumed by AccountIcon.module.css) ────── */
   --avatar-size: 144px;
   --avatar-image-size: 98px;
   --avatar-frame: url(/imgs/windows7/assets/accountIconBorder.png);
@@ -94,7 +106,7 @@
     ),
     linear-gradient(135deg, var(--alpha-white-13) 48%, transparent 52%);
 
-  /* ─── SEMANTIC: Logon form input (.signin__form-input + is-win7) ── */
+  /* ─── SEMANTIC: Logon form input (consumed by SignIn.module.css) ── */
   --logon-input-width: 200px;
   --logon-input-height: 23px;
   --logon-input-padding-x: 6px;
@@ -102,7 +114,8 @@
   --logon-input-border: 1px solid var(--color-logon-input-border);
   --logon-input-ring: 0 0 0 1px var(--alpha-white-50);
 
-  /* ─── SEMANTIC: Logon form button (.signin__form-button + is-win7) ─ */
+  /* ─── SEMANTIC: Logon form button (consumed by SignIn.module.css +
+     SubmitButton.module.css) ─────────────────────────────────────── */
   --logon-button-min-width: 80px;
   --logon-button-padding: 4px 8px;
   --logon-button-radius: 3px;
@@ -129,21 +142,24 @@
     0 1px 1px var(--alpha-black-80), -1px -1px 1px var(--alpha-black-20),
     1px -1px 1px var(--alpha-black-20);
 
-  /* ─── SEMANTIC: Password-visibility toggle (.signin__form-toggle) ─ */
+  /* ─── SEMANTIC: Password-visibility toggle (currently unused —
+     see migration halt notes; consumers may consume in a later phase) ─ */
   --logon-toggle-color: var(--alpha-black-60);
   --logon-toggle-hover-bg: var(--alpha-black-13);
   --logon-toggle-width: 40px;
 
-  /* ─── SEMANTIC: Circular submit (.signin__form-submit) ───────────── */
-  /* Sized just slightly taller than --logon-input-height (23px) so the
+  /* ─── SEMANTIC: Circular submit (consumed by SubmitButton.module.css)
+     Sized just slightly taller than --logon-input-height (23px) so the
      circle reads as a companion to the password field, not a button
      that dominates it. */
   --logon-submit-size: 30px;
 
-  /* ─── SEMANTIC: Bottom brand (.login__brand) ───────────────────── */
+  /* ─── SEMANTIC: Bottom brand (consumed by OsBranding.module.css) ─ */
   --logon-brand-icon-size: 32px;
 
-  /* ─── SEMANTIC: Shutdown group (.shutdown-button / -dropdown) ──── */
+  /* ─── SEMANTIC: Shutdown group (currently unused —
+     see migration halt notes; tokens preserved for the eventual
+     ShutdownGroup component) ─────────────────────────────────────── */
   --shutdown-button-width: 42px;
   --shutdown-button-height: 32px;
   --shutdown-dropdown-width: 24px;
@@ -185,377 +201,4 @@ ol {
 
 button {
   font-family: inherit;
-}
-
-/* =====================================================================
-   .login__* / .signin__* / .transition__* — Win7 Simu lockscreen classes
-   (copied 1:1 from
-   public/copycats/signin/signin-base.css + signin-win7.css and
-   public/copycats/accountselection/startmenu-base.8c444b86.css)
-   ===================================================================== */
-
-/* ─── Full-screen lockscreen surface ──────────────────────────────── */
-.login__main {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: var(--logon-backdrop);
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  color: var(--color-neutral-0);
-}
-
-/* ─── "Logging on. Please wait..." indicator ──────────────────────── */
-.transition__loading {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  text-shadow: var(--logon-name-shadow);
-  font-size: var(--font-size-xl);
-}
-
-/* ─── Centered column holding avatar + name + form ────────────────── */
-.login__pane {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-/* Avatar inside the pane locks to the canonical 144×144 footprint.
-   The accountIconBorder.png overlay (rendered via AccountIcon's
-   ::after) is the *only* frame — null out the base .avatar-button's
-   rounded corners and drop-shadow so they don't compete with the
-   image's own border and corner geometry. */
-.login__pane .avatar-button {
-  width: var(--avatar-size);
-  height: var(--avatar-size);
-  /* Need a border which matches the accountIconBorder.png here *on focus*. */
-  filter: none;
-}
-
-/* ─── Account name displayed under the avatar ─────────────────────── */
-.signin__name {
-  font-weight: var(--weight-bold);
-  font-size: var(--font-size-xl);
-  line-height: var(--font-size-2xl);
-  text-shadow: var(--logon-name-shadow);
-}
-
-/* ─── Form wrapper ────────────────────────────────────────────────── */
-.signin__form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-6);
-}
-
-.signin__pane {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-/* ─── Form input (username / password) ────────────────────────────── */
-.signin__form-input {
-  width: var(--logon-input-width);
-  height: var(--logon-input-height);
-  padding: 0 0 0 var(--logon-input-padding-x);
-  color: var(--color-logon-input-text);
-  background: var(--color-neutral-0);
-  border: var(--logon-input-border);
-  border-radius: var(--logon-input-radius);
-  box-shadow: var(--logon-input-ring) !important;
-  transition: background-color 9999s ease-in-out 0s !important;
-  font: inherit;
-}
-
-.signin__form-input:focus {
-  outline: none;
-  box-shadow:
-    var(--logon-input-ring),
-    0 0 4px var(--color-aero-cyan);
-}
-
-/* ─── Form button (Switch User / Back) ────────────────────────────── */
-/* min-height / min-width unset to override 7.css's generic `button`
-   defaults (23px / 75px) which would otherwise compete with the
-   lockscreen-specific sizing tokens below. */
-.signin__form-button {
-  color: inherit;
-  min-width: var(--logon-button-min-width);
-  min-height: unset;
-  font-size: var(--font-size-s) !important;
-  padding: var(--logon-button-padding);
-  background: var(--logon-button-gradient) !important;
-  border: 0;
-  border-radius: var(--logon-button-radius);
-  box-shadow: var(--logon-button-shadow) !important;
-  text-shadow: var(--logon-text-shadow);
-  cursor: pointer;
-  font: inherit;
-}
-
-.signin__form-button::before,
-.signin__form-button::after {
-  display: none;
-}
-
-.signin__form-button:hover,
-.signin__form-button:focus,
-.signin__form-button:focus-visible {
-  outline: none;
-  filter: var(--windows7-focus);
-}
-
-.signin__form-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-/* ─── Form submit (circular blue arrow) ───────────────────────────── */
-/* Shares the gradient + halo chrome with .signin__form-button. Sits
-   absolute-positioned to the right of the password input and is
-   vertically centered to the input via top: 50% + translateY(-50%),
-   which holds regardless of the circle's diameter.
-   min-width / min-height unset to override 7.css's `button` defaults
-   (75px / 23px) — without this the circle is stretched horizontally
-   into a pill instead of rendering as a true circle. */
-.signin__form-submit {
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  width: var(--logon-submit-size);
-  height: var(--logon-submit-size);
-  min-width: unset;
-  min-height: unset;
-  margin-left: var(--space-3);
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-neutral-0);
-  background: var(--logon-button-gradient) !important;
-  border: 0;
-  border-radius: 9999px;
-  box-shadow: var(--logon-button-shadow) !important;
-  text-shadow: var(--logon-text-shadow);
-  cursor: pointer;
-  font: inherit;
-}
-
-.signin__form-submit::before,
-.signin__form-submit::after {
-  display: none;
-}
-
-.signin__form-submit:hover,
-.signin__form-submit:focus,
-.signin__form-submit:focus-visible {
-  outline: none;
-  filter: var(--windows7-focus);
-}
-
-/* Stack a semi-transparent black layer on top of the gradient so only the
-   background dims on click — using `filter` (or the shared --windows7-active
-   opacity token) would also fade the white arrow SVG, text-shadow, and the
-   inset halo box-shadows. background-image sits beneath foreground content,
-   leaving the SVG, shadows, and outline visually untouched. */
-.signin__form-submit:active,
-.signin__form-button:active {
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), var(--logon-button-gradient) !important;
-}
-
-.signin__form-submit:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.signin__form-toggle::before,
-.signin__form-toggle::after {
-  display: none;
-}
-
-.signin__form-toggle:hover,
-.signin__form-toggle:focus,
-.signin__form-toggle:focus-visible {
-  outline: none;
-  background: var(--logon-toggle-hover-bg);
-}
-
-/* ─── Underlined text link beneath the form ───────────────────────── */
-.signin__form-link {
-  color: inherit;
-  background: transparent;
-  border: 0;
-  padding: var(--space-2);
-  text-decoration: underline;
-  text-underline-offset: 1px;
-  text-shadow: var(--logon-text-shadow);
-  cursor: pointer;
-  font: inherit;
-}
-
-.signin__form-link::before,
-.signin__form-link::after {
-  display: none;
-}
-
-.signin__form-link:focus-visible {
-  outline: 1px solid currentColor;
-  outline-offset: 2px;
-}
-
-/* ─── Bottom brand lockup (icon + wordmark + subtitle) ────────────── */
-.login__brand {
-  position: absolute;
-  bottom: var(--space-6);
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  text-shadow: var(--logon-brand-shadow);
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.login__brand-icon {
-  width: var(--logon-brand-icon-size);
-  height: var(--logon-brand-icon-size);
-  filter: drop-shadow(var(--logon-brand-shadow));
-}
-
-.login__brand-text {
-  font-size: var(--font-size-2xl);
-}
-
-.login__brand-subtitle {
-  align-self: flex-end;
-  font-weight: var(--weight-thin);
-  font-size: var(--font-size-xl);
-  font-style: italic;
-}
-
-.login__brand-sup {
-  font-size: var(--font-size-xs);
-  vertical-align: super;
-}
-
-/* =====================================================================
-   .avatar-button — Win7 lockscreen account picture (signin-base.css)
-   ===================================================================== */
-
-.avatar-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  box-shadow: none;
-  border: 0;
-  border-radius: var(--avatar-frame-radius);
-  background: var(--w7-el-grad) !important;
-  overflow: hidden;
-  filter: var(--avatar-drop-shadow);
-  cursor: pointer;
-  font: inherit;
-}
-
-.avatar-frame {
-  display: block;
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: var(--avatar-frame) !important;
-  background-size: 100% 100% !important;
-  background-repeat: no-repeat !important;
-  border: 0;
-  width: 144px;
-  height: 144px;
-}
-
-.avatar-button::before,
-.avatar-button::after {
-  display: none;
-}
-
-.avatar-button.can-click:focus,
-.avatar-button.can-click:focus-visible,
-.avatar-button.can-click:hover {
-  outline: none;
-  filter: var(--avatar-glow);
-}
-
-.avatar-button:disabled {
-  cursor: default;
-}
-
-.avatar-mask {
-  position: relative;
-  overflow: hidden;
-  width: var(--avatar-image-size);
-  height: var(--avatar-image-size);
-}
-
-.avatar-mask::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 300%;
-  height: 100%;
-  pointer-events: none;
-  background-image: var(--avatar-gloss);
-}
-
-.avatar-image {
-  display: block;
-  margin: 0 auto;
-  width: var(--avatar-image-size);
-  height: var(--avatar-image-size);
-  object-fit: cover;
-  border: var(--avatar-image-border);
-  border-radius: var(--avatar-image-radius);
-}
-
-/* =====================================================================
-   .shutdown-* — bottom-right power group (signin.htm)
-   ===================================================================== */
-
-.shutdown-group {
-  position: absolute;
-  right: var(--space-8);
-  bottom: var(--space-6);
-  z-index: 0;
-  display: flex;
-}
-
-.shutdown-button {
-  width: var(--shutdown-button-width);
-  height: var(--shutdown-button-height);
-  background: transparent;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  color: inherit;
-  font: inherit;
-}
-
-.shutdown-button::before,
-.shutdown-button::after {
-  display: none;
-}
-
-.shutdown-dropdown {
-  position: relative;
-  width: var(--shutdown-dropdown-width);
-  height: var(--shutdown-button-height);
 }

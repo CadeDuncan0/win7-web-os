@@ -30,7 +30,16 @@
       "WebFetch(domain:khang-nd.github.io)",
       "Bash(grep -E '^button[ ,{:]|^button\\\\.|^a\\\\[role=button\\\\]|button\\\\[type')",
       "Bash(awk -F'{' 'length\\($1\\)<80 && $1 ~ /button/')",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(grep -oE \"button:\\(hover|active|focus|disabled\\)[^,{]*\\\\\\\\{[^}]*\\\\\\\\}\" node_modules/7.css/dist/7.scoped.css)",
+      "Bash(grep -oE \"[^{}]*button[^,{}]*:after[^{}]*\\\\\\\\{[^}]*content[^}]*\\\\\\\\}\" node_modules/7.css/dist/7.scoped.css)",
+      "Bash(grep -nE \"^button[:\\\\\\\\s,{]\" node_modules/7.css/dist/7.scoped.css)",
+      "Bash(grep -oE \"\\\\\\\\.win7 [^,{]*button[^,{]*\\\\\\\\{[^}]{0,80}\" node_modules/7.css/dist/7.scoped.css)",
+      "Bash(grep -oE \"^[^,{]*button[^,{]*\\\\\\\\{[^}]{0,120}\" node_modules/7.css/dist/7.css)",
+      "Bash(grep -oE \"[a-zA-Z\\\\\\\\.\\\\\\\\:\\\\\\\\-\\\\\\\\[\\\\\\\\]\\\\\\\\=]*button[a-zA-Z\\\\\\\\.\\\\\\\\:\\\\\\\\-]*\\\\\\\\{[^}]{0,150}\" node_modules/7.css/dist/7.css)",
+      "Bash(grep -oE \"button:after[^,{]*\\\\\\\\{[^}]+\\\\\\\\}\" node_modules/7.css/dist/7.css)",
+      "Bash(grep -oE \"[a-zA-Z\\\\\\\\.\\\\\\\\:\\\\\\\\-\\\\\\\\[\\\\\\\\]\\\\\\\\=, ]+button:after[a-zA-Z\\\\\\\\.\\\\\\\\:\\\\\\\\-]*\\\\\\\\{[^}]+content[^}]+\\\\\\\\}\" node_modules/7.css/dist/7.css)",
+      "Bash(grep -oE \"[^,{}]+button:after[^,{}]*\\\\\\\\{content:none\\\\\\\\}\" node_modules/7.css/dist/7.css)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -1,0 +1,56 @@
+/* =====================================================================
+   SubmitButton — circular Aero submit.
+   Rules copied 1:1 from the pre-migration .signin__form-submit cascade,
+   including every `!important` flag that was required to beat 7.css's
+   generic `button` declarations. Positioning is the consumer's job —
+   pass a className to absolute-position the circle inside a relative
+   wrapper.
+   min-width / min-height unset to override 7.css's `button` defaults
+   (75px / 23px) which would otherwise stretch the circle into a pill.
+   ===================================================================== */
+
+.button {
+  width: var(--logon-submit-size);
+  height: var(--logon-submit-size);
+  min-width: unset;
+  min-height: unset;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-neutral-0);
+  background: var(--logon-button-gradient) !important;
+  border: 0;
+  border-radius: 9999px;
+  box-shadow: var(--logon-button-shadow) !important;
+  text-shadow: var(--logon-text-shadow);
+  cursor: pointer;
+  font: inherit;
+}
+
+.button::before,
+.button::after {
+  display: none;
+}
+
+.button:hover,
+.button:focus,
+.button:focus-visible {
+  outline: none;
+  filter: var(--windows7-focus);
+}
+
+/* Stack a semi-transparent black layer on top of the gradient so only the
+   background dims on click — using `filter` (or the shared --windows7-active
+   opacity token) would also fade the white arrow SVG, text-shadow, and the
+   inset halo box-shadows. background-image sits beneath foreground content,
+   leaving the SVG, shadows, and outline visually untouched. */
+.button:active {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), var(--logon-button-gradient) !important;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

@@ -1,0 +1,40 @@
+/* =====================================================================
+   OsBranding — bottom-center "Windows® 7 Portfolio" lockup
+   Renders at the bottom of every lockscreen surface (SignIn, AccountSelection,
+   Transition). Owns its absolute positioning, drop-shadow, and typography.
+   ===================================================================== */
+
+.brand {
+  position: absolute;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-shadow: var(--logon-brand-shadow);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.icon {
+  width: var(--logon-brand-icon-size);
+  height: var(--logon-brand-icon-size);
+  filter: drop-shadow(var(--logon-brand-shadow));
+}
+
+.text {
+  font-size: var(--font-size-2xl);
+}
+
+.subtitle {
+  align-self: flex-end;
+  font-weight: var(--weight-thin);
+  font-size: var(--font-size-xl);
+  font-style: italic;
+}
+
+.sup {
+  font-size: var(--font-size-xs);
+  vertical-align: super;
+}

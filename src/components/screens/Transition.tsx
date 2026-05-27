@@ -1,14 +1,17 @@
 import { OsBranding } from '@/components/windows7/OsBranding'
 import { Spinner } from '@/components/windows7/Spinner'
 
+import login from './Login/Login.module.css'
+import styles from './Transition.module.css'
+
 interface TransitionProps {
   message: string
 }
 
 export function Transition({ message }: TransitionProps) {
   return (
-    <div className="login__main" role="status" aria-live="polite">
-      <div className="transition__loading">
+    <div className={login.main} role="status" aria-live="polite">
+      <div className={styles.loading}>
         <Spinner variant="loading" aria-label="Loading" />
         <span>{message}</span>
       </div>

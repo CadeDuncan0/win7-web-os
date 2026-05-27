@@ -6,6 +6,7 @@ import { AccountIcon } from '@/components/windows7/AccountIcon'
 import { OsBranding } from '@/components/windows7/OsBranding'
 import { SubmitButton } from '@/components/windows7/SubmitButton'
 
+import login from './Login.module.css'
 import styles from './SignIn.module.css'
 
 interface SignInProps {
@@ -34,12 +35,12 @@ export function SignIn({
   const errorId = error ? 'signin-error' : undefined
 
   return (
-    <div className="login__main">
+    <div className={login.main}>
       <main>
-        <section className="signin__pane">
+        <section className={styles.pane}>
           <AccountIcon iconSrc={avatarSrc} subtitle={accountLabel} disabled={true} />
 
-          <form className="signin__form" onSubmit={onSubmit}>
+          <form className={styles.form} onSubmit={onSubmit}>
             <div className={styles.fieldColumn}>
               <div className={styles.passwordWrapper}>
                 <input
@@ -52,11 +53,16 @@ export function SignIn({
                   aria-label="Password"
                   aria-invalid={Boolean(error)}
                   aria-describedby={errorId}
-                  className={`signin__form-input`}
+                  className={styles.formInput}
                 />
               </div>
 
-              <SubmitButton type="submit" aria-label="Sign in" disabled={submitting} />
+              <SubmitButton
+                type="submit"
+                aria-label="Sign in"
+                disabled={submitting}
+                className={styles.submit}
+              />
             </div>
 
             {error && (
@@ -69,7 +75,7 @@ export function SignIn({
               type="button"
               onClick={onBack}
               disabled={submitting}
-              className={`signin__form-button ${styles.switchUser}`}
+              className={styles.switchUser}
             >
               Switch User
             </button>
