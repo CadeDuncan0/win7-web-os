@@ -13,6 +13,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
+  position: relative;
 }
 
 /* ─── Outer button: 144×144 white frame + PNG border + drop-shadow ─────
@@ -59,14 +60,18 @@
   background-image: var(--avatar-frame);
   background-size: 100% 100%;
   background-repeat: no-repeat;
+  box-shadow: none;
   pointer-events: none;
   z-index: 1;
 }
 
 .button.canClick:focus,
 .button.canClick:focus-visible,
+.button.canClick:active,
 .button.canClick:hover {
   outline: none;
+  box-shadow: none;
+  animation: none;
   filter: var(--avatar-glow);
 }
 
@@ -75,20 +80,28 @@
 }
 
 /* ─── Inner mask: 98×98 image container with gloss highlight ─────────── */
+/* display: block is required — a default-inline <span> ignores width/height
+   and produces an inline containing block that Chrome and Firefox size
+   differently for the absolutely-positioned ::after gloss layer (Chrome
+   stretches it via the 300%/-100% trick; Firefox collapses it). Block
+   layout makes the containing block exactly --avatar-image-size in both. */
 .mask {
+  display: block;
   position: relative;
   overflow: hidden;
   width: var(--avatar-image-size);
   height: var(--avatar-image-size);
+  margin: 0 auto;
 }
 
+/* Gloss layer fills the mask exactly. The gradient itself (defined in
+   globals.css as --avatar-gloss) uses explicit ellipse extents so its
+   size does not depend on the engine-specific `farthest-corner`
+   resolution that previously diverged between Chrome and Firefox. */
 .mask::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 300%;
-  height: 100%;
+  inset: 0;
   pointer-events: none;
   background-image: var(--avatar-gloss);
 }
@@ -113,4 +126,29 @@
   font-size: var(--account-icon-subtitle-size, var(--font-size-xl));
   line-height: 1.2;
   text-shadow: var(--logon-name-shadow);
+}
+
+/* ─── Selected/focus outline overlay ──────────────────────────────────
+   Positioned to overlay the 144×144 avatar button. The SVG is rendered
+   at 170×171 (scale ~0.96 from its 177×178 viewBox) so the visible
+   ~150-unit rounded-rect path lands at ~144 rendered pixels — flush
+   with the avatar's outer frame edge, reading as an inset border
+   rather than an outset glow. The layered 5px/3px strokes inside the
+   SVG render as a ~1px #6DB5F3 line on either side of the 3px #4285C5
+   selection ring. */
+.outline {
+  position: absolute;
+  top: calc((144px - 169px) / 2); /* center 171px-tall svg over 144px button */
+  left: 50%;
+  transform: translateX(-49.5%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+  z-index: 0;
+}
+
+.wrapper:has(.button.canClick:focus) .outline,
+.wrapper:has(.button.canClick:focus-visible) .outline,
+.wrapper:has(.button.canClick:active) .outline {
+  opacity: 1;
 }

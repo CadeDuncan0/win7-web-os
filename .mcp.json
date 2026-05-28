@@ -6,9 +6,9 @@
         "${CLAUDE_PROJECT_DIR:-.}/mcp-servers/proxy-verifier/node_modules/tsx/dist/cli.mjs",
         "${CLAUDE_PROJECT_DIR:-.}/mcp-servers/proxy-verifier/src/index.ts"
       ],
-      "playwright": {
+      "chrome-devtools": {
         "command": "npx",
-        "args": ["@playwright/mcp@latest"]
+        "args": ["chrome-devtools-mcp@latest"]
       }
     }
   }

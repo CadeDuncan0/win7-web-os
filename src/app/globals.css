@@ -97,9 +97,14 @@
   --avatar-image-border: 1px solid var(--color-logon-avatar-border);
   --avatar-drop-shadow: drop-shadow(2px 2px 8px var(--alpha-black-53));
   --avatar-glow: drop-shadow(0 0 12px var(--color-aero-cyandark));
+  /* Explicit ellipse extents (180% × 90%) instead of `farthest-corner`
+     so Chrome and Firefox compute the gloss radius identically — the
+     legacy keyword sized the gradient against the engine-specific
+     gradient-box, which is why the highlight rendered too wide in
+     Chrome and not at all in Firefox. */
   --avatar-gloss:
     radial-gradient(
-      farthest-corner at top,
+      ellipse 180% 90% at 50% 0%,
       var(--alpha-white-53),
       var(--alpha-white-27) 40%,
       transparent 44%
