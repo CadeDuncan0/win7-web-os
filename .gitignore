@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+mcp-servers/**/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -41,5 +42,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# ai context
-/ai_context
+*storybook.log
+storybook-static

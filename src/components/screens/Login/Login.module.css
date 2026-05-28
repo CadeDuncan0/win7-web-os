@@ -1,0 +1,20 @@
+/* =====================================================================
+   Lockscreen — shared full-viewport surface used by every login-flow
+   screen (SignIn, AccountSelection, Transition). Owns the Windows 7
+   wallpaper backdrop and the centered-column flex layout.
+   ===================================================================== */
+
+.main {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--logon-backdrop);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: var(--color-neutral-0);
+}

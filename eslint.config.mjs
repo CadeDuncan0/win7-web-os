@@ -1,14 +1,15 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import prettier from 'eslint-config-prettier'
 import importPlugin from 'eslint-plugin-import'
+import storybook from 'eslint-plugin-storybook'
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  prettier,
-  // Custom rules
+  prettier, // Custom rules
   {
     plugins: {
       import: importPlugin,
@@ -18,13 +19,13 @@ const eslintConfig = defineConfig([
       // 1. Disallow console.log (allow warn + error if needed)
       'no-console': ['error'],
       curly: ['error', 'all'],
+      eqeqeq: ['error', 'always'],
 
       // 2. Enforce consistent import ordering
       'import/order': [
         'error',
         {
           groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-          'newlines-between': 'always',
           alphabetize: {
             order: 'asc',
             caseInsensitive: true,
@@ -43,10 +44,9 @@ const eslintConfig = defineConfig([
         },
       ],
     },
-  },
-
-  // Override default ignores of eslint-config-next
-  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
+  }, // Override default ignores of eslint-config-next
+  globalIgnores(['.next/**', 'out/**', 'build/**', 'storybook-static/**', 'next-env.d.ts']),
+  ...storybook.configs['flat/recommended'],
 ])
 
 export default eslintConfig

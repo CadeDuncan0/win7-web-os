@@ -1,0 +1,29 @@
+import Image from 'next/image'
+
+import styles from './OsBranding.module.css'
+
+interface OsBrandingProps {
+  subtitle?: string
+  className?: string
+}
+
+export function OsBranding({ subtitle = 'Portfolio', className }: OsBrandingProps) {
+  const merged = [styles.brand, className].filter(Boolean).join(' ')
+  return (
+    <div className={merged}>
+      <Image
+        src="/imgs/login/windows-logo.webp"
+        alt=""
+        width={32}
+        height={32}
+        unoptimized
+        className={styles.icon}
+        priority
+      />
+      <span className={styles.text}>
+        Windows<sup className={styles.sup}>®</sup> 7
+      </span>
+      <span className={styles.subtitle}>{subtitle}</span>
+    </div>
+  )
+}

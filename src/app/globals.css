@@ -1,26 +1,209 @@
-@import 'tailwindcss';
+/* =====================================================================
+   globals.css
+
+   This file is intentionally narrow in scope. Only three categories of
+   rules belong here:
+
+     1. Design tokens — CSS custom properties on :root (colors, spacing,
+        type scale, shadows, radii, semantic lockscreen tokens).
+     2. CSS reset / normalize — element baselines (box-sizing, list reset,
+        button font inheritance).
+     3. Document baseline — html / body typography and background.
+
+   Component-specific styles live in <Component>.module.css next to the
+   component. If you find yourself adding a class selector for a single
+   component here, it belongs in that component's module instead.
+
+   Every value below is sourced directly from
+   public/copycats/signin/* and public/copycats/accountselection/*.
+   That source IS the textbook — primitives mirror the exact rgba()
+   stops, drop-shadow geometry, and dimension constants used by the
+   win7simu .logon__* classes.
+   ===================================================================== */
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  /* ─── PRIMITIVE: Color ─────────────────────────────────────────── */
+  --color-aero-cyan: #11c5f1;
+  --color-aero-cyandark: #0e95b7;
+  --color-neutral-0: #ffffff;
+  --color-neutral-900: #000000;
+  --color-logon-input-border: #666666;
+  --color-logon-input-text: #000000;
+  --color-logon-avatar-border: #3f3f3f;
+
+  /* ─── PRIMITIVE: Alpha-white scale (button gradient + gloss) ───── */
+  --alpha-white-13: rgba(255, 255, 255, 0.1333333333);
+  --alpha-white-20: rgba(255, 255, 255, 0.2);
+  --alpha-white-27: rgba(255, 255, 255, 0.2666666667);
+  --alpha-white-40: rgba(255, 255, 255, 0.4);
+  --alpha-white-50: rgba(255, 255, 255, 0.5019607843);
+  --alpha-white-53: rgba(255, 255, 255, 0.5333333333);
+  --alpha-white-60: rgba(255, 255, 255, 0.6);
+
+  /* ─── PRIMITIVE: Alpha-black scale (text shadows + button halo) ── */
+  --alpha-black-13: rgba(0, 0, 0, 0.1333333333);
+  --alpha-black-20: rgba(0, 0, 0, 0.2);
+  --alpha-black-53: rgba(0, 0, 0, 0.5333333333);
+  --alpha-black-60: rgba(0, 0, 0, 0.6);
+  --alpha-black-80: rgba(0, 0, 0, 0.8);
+
+  /* ─── PRIMITIVE: Teal-ink scale (button gradient mid-stops) ────── */
+  --alpha-teal-10: rgba(39, 71, 86, 0.1019607843);
+  --alpha-teal-38: rgba(39, 71, 86, 0.3764705882);
+
+  /* ─── PRIMITIVE: Spacing — Tailwind-aligned (rem) ──────────────── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* ─── PRIMITIVE: Type sizes (Tailwind scale used by copycat) ───── */
+  --font-size-xs: 0.75rem;
+  --font-size-s: 0.875rem;
+  --font-size-m: 1rem;
+  --font-size-l: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-3xl: 2rem;
+
+  /* ─── PRIMITIVE: Font weights ─────────────────────────────────── */
+  --weight-thin: 100;
+  --weight-bold: 700;
+
+  /* ===================================================================
+     SEMANTIC LAYER
+     =================================================================== */
+
+  /* ─── SEMANTIC: Backdrop image ─────────────────────────────────── */
+  --logon-backdrop: url('/imgs/login/background.jpg');
+
+  /* ─── SEMANTIC: Text shadows on the lock-screen image ──────────── */
+  --logon-text-shadow: 0 1px 2px var(--color-neutral-900);
+  --logon-name-shadow: 0 1px 4px var(--color-neutral-900);
+  --logon-brand-shadow: 1px 3px 3px var(--alpha-black-53);
+
+  /* ─── SEMANTIC: Avatar (consumed by AccountIcon.module.css) ────── */
+  --avatar-size: 144px;
+  --avatar-image-size: 98px;
+  --avatar-frame: url(/imgs/windows7/assets/accountIconBorder.png);
+  --avatar-frame-padding: 23px;
+  --avatar-frame-bg: var(--color-neutral-0);
+  --avatar-frame-radius: 4px;
+  --avatar-image-radius: 3px;
+  --avatar-image-border: 1px solid var(--color-logon-avatar-border);
+  --avatar-drop-shadow: drop-shadow(2px 2px 8px var(--alpha-black-53));
+  --avatar-glow: drop-shadow(0 0 12px var(--color-aero-cyandark));
+  /* Explicit ellipse extents (180% × 90%) instead of `farthest-corner`
+     so Chrome and Firefox compute the gloss radius identically — the
+     legacy keyword sized the gradient against the engine-specific
+     gradient-box, which is why the highlight rendered too wide in
+     Chrome and not at all in Firefox. */
+  --avatar-gloss:
+    radial-gradient(
+      ellipse 180% 90% at 50% 0%,
+      var(--alpha-white-53),
+      var(--alpha-white-27) 40%,
+      transparent 44%
+    ),
+    linear-gradient(135deg, var(--alpha-white-13) 48%, transparent 52%);
+
+  /* ─── SEMANTIC: Logon form input (consumed by SignIn.module.css) ── */
+  --logon-input-width: 200px;
+  --logon-input-height: 23px;
+  --logon-input-padding-x: 6px;
+  --logon-input-radius: 3px;
+  --logon-input-border: 1px solid var(--color-logon-input-border);
+  --logon-input-ring: 0 0 0 1px var(--alpha-white-50);
+
+  /* ─── SEMANTIC: Logon form button (consumed by SignIn.module.css +
+     SubmitButton.module.css) ─────────────────────────────────────── */
+  --logon-button-min-width: 80px;
+  --logon-button-padding: 4px 8px;
+  --logon-button-radius: 3px;
+  --logon-button-gradient: linear-gradient(
+    to bottom,
+    #6bc4f6 0%,
+    #4aafe6 7.14%,
+    #45aae2 14.29%,
+    #3da5e1 21.43%,
+    #39a3df 28.57%,
+    #35a2dd 35.71%,
+    #32a2e2 42.86%,
+    #288fcc 50%,
+    #2286c2 57.14%,
+    #248bc9 64.29%,
+    #2391d0 71.43%,
+    #249bda 78.57%,
+    #28a2df 85.71%,
+    #2eaeea 92.86%,
+    #56cafa 100%
+  );
+  --logon-button-shadow:
+    inset 0 0 2px var(--color-neutral-0), inset 0 1px 3px var(--alpha-white-60),
+    0 1px 1px var(--alpha-black-80), -1px -1px 1px var(--alpha-black-20),
+    1px -1px 1px var(--alpha-black-20);
+
+  /* ─── SEMANTIC: Password-visibility toggle (currently unused —
+     see migration halt notes; consumers may consume in a later phase) ─ */
+  --logon-toggle-color: var(--alpha-black-60);
+  --logon-toggle-hover-bg: var(--alpha-black-13);
+  --logon-toggle-width: 40px;
+
+  /* ─── SEMANTIC: Circular submit (consumed by SubmitButton.module.css)
+     Sized just slightly taller than --logon-input-height (23px) so the
+     circle reads as a companion to the password field, not a button
+     that dominates it. */
+  --logon-submit-size: 30px;
+
+  /* ─── SEMANTIC: Bottom brand (consumed by OsBranding.module.css) ─ */
+  --logon-brand-icon-size: 32px;
+
+  /* ─── SEMANTIC: Shutdown group (currently unused —
+     see migration halt notes; tokens preserved for the eventual
+     ShutdownGroup component) ─────────────────────────────────────── */
+  --shutdown-button-width: 42px;
+  --shutdown-button-height: 32px;
+  --shutdown-dropdown-width: 24px;
+
+  /* ─── SEMANTIC: windows 7 hovering & clicking ──── */
+  --windows7-focus: contrast(1.1);
+  --windows7-active: opacity(0.8);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* =====================================================================
+   Document baseline
+   ===================================================================== */
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #ffffff;
-    --foreground: #171717;
-  }
+html {
+  font-size: 16px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  font: var(--w7-font);
+  color: var(--color-neutral-900);
+  background: var(--w7-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button {
+  font-family: inherit;
 }
