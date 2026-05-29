@@ -1,0 +1,62 @@
+/* =====================================================================
+   Desktop — full-viewport Windows 7 desktop surface. Owns the desktop
+   wallpaper backdrop set to cover. Sign-out action is centered for now
+   (placeholder until the taskbar / Start menu lands in Phase 2).
+   ===================================================================== */
+
+.main {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--desktop-backdrop);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: var(--color-neutral-0);
+}
+
+/* ─── Sign out button ────────────────────────────────────────────────── */
+/* Styled 1:1 with the lockscreen "Switch User" button (see
+   SignIn.module.css .switchUser). min-height unset to override 7.css's
+   generic `button` default (23px) which would otherwise compete with the
+   logon button sizing tokens below. */
+.signOut {
+  color: inherit;
+  min-width: var(--logon-button-min-width);
+  min-height: unset;
+  font-size: var(--font-size-s) !important;
+  padding: var(--logon-button-padding);
+  background: var(--logon-button-gradient) !important;
+  border: 0;
+  border-radius: var(--logon-button-radius);
+  box-shadow: var(--logon-button-shadow) !important;
+  text-shadow: var(--logon-text-shadow);
+  cursor: pointer;
+  font: inherit;
+}
+
+.signOut::before,
+.signOut::after {
+  display: none;
+}
+
+.signOut:hover,
+.signOut:focus,
+.signOut:focus-visible {
+  outline: none;
+  filter: var(--windows7-focus);
+}
+
+.signOut:active {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), var(--logon-button-gradient) !important;
+}
+
+.signOut:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

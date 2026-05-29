@@ -22,9 +22,9 @@ This rule supersedes any version number found in CLAUDE.md, AGENTS.md, or commit
 
 ## Visual References
 
-- Extract relevant data from `@public/copycats`. (PRIMARY SOURCE)
 - The packaged css at https://unpkg.com/7.css
 - The documentation for the css at https://khang-nd.github.io/7.css/.
+- A UI mod for Windows 10 (specifically for the logon screen) at https://github.com/world-windows-federation/AuthUX
 
 All CSS should come directly from these sources. Only extract data regarding the current page(s) you are working on.
 
