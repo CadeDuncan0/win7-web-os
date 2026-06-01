@@ -55,7 +55,14 @@
       "mcp__chrome-devtools__evaluate_script",
       "mcp__chrome-devtools__hover",
       "mcp__chrome-devtools__click",
-      "mcp__chrome-devtools__resize_page"
+      "mcp__chrome-devtools__resize_page",
+      "Bash(echo \"TSC_EXIT=$?\")",
+      "Bash(npx jest *)",
+      "Bash(echo \"JEST_EXIT=$?\")",
+      "Bash(echo \"LINT_EXIT=$?\")",
+      "Bash(node -e \"const p=require\\('@reduxjs/toolkit/package.json'\\); console.log\\('installed RTK', p.version\\)\")",
+      "Bash(node -e \"const rtk=require\\('@reduxjs/toolkit'\\); ['createSlice','createSelector','createListenerMiddleware','createAction','isAnyOf'].forEach\\(k=>console.log\\(k, typeof rtk[k]\\)\\)\")",
+      "Bash(xargs grep -l \"extraReducers\")"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -1,4 +1,5 @@
 <!-- Created: 2026-05-28 00:42:28 -->
+<!-- Completed: 2026-06-01 03:27:12 -->
 
 # 🎯 Task 1: Expand Window Slice Logic
 
@@ -240,21 +241,6 @@ const windowSlice = createSlice({
 export default windowSlice.reducer
 ```
 
-Read it. Compare it against `CLAUDE.md`'s **Window Manager Rules** section. List every gap.
-
-> **TODO:** `[Action required by Junior]` — List at least **five** specific defects in the
-> Phase 0 shape, each with its product consequence. Drop them into the `[Audit]:` block below.
-> Do not write the replacement shape yet — this is the audit pass only.
-
-```
-[Audit]:
-- Defect 1: ...
-- Defect 2: ...
-- Defect 3: ...
-- Defect 4: ...
-- Defect 5: ...
-```
-
 ### Step 2 — Define The State Shape
 
 Rewrite [`src/store/slices/windowSlice.ts`](../../../../src/store/slices/windowSlice.ts) from
@@ -312,15 +298,6 @@ const initialState: WindowState = {
   zCounter: 0,
   nextIdSeed: 0,
 }
-```
-
-> **TODO:** `[Decision required by Junior]` — The `WindowKind` union is intentionally tiny
-> (two kinds for Phase 2). State the trade-off you would face if you instead modeled `kind` as
-> a plain `string`. Your answer must reference: (a) compile-time exhaustiveness checks in the
-> window-content registry, (b) what breaks the day Phase 3 adds a new kind.
-
-```
-[Answer]: ...
 ```
 
 ### Step 3 — Implement The Reducer Family
@@ -480,12 +457,6 @@ export const {
 export default windowSlice.reducer
 ```
 
-> **TODO:** `[RESEARCH REQUIRED]` — Read the Redux Toolkit `createSlice` documentation on
-> action payload typing patterns (specifically `prepare` callbacks). Decide whether you want
-> `openWindow` to use a `prepare` callback to pre-compute defaults at action-creation time, or
-> to bake defaults into the reducer body as shown above. State your decision and trade-off in
-> the Challenge.
-
 ### Step 4 — Implement The Selectors
 
 Selectors are the public read API. Component code (Tasks 10, 13, 16, 17) reads through these
@@ -546,20 +517,6 @@ export const selectVisibleWindows = createSelector([selectOpenWindows], (windows
   // ...
   return [] as WindowInstance[]
 })
-```
-
-> **TODO:** `[Decision required by Junior]` — `selectWindowById` above is a **higher-order
-> selector** (returns a selector). An alternative is a plain function taking `(state, id)`:
->
-> ```ts
-> export const selectWindowById = (state: RootState, id: string) => state.window.byId[id]
-> ```
->
-> Read `react-redux`'s `useSelector` docs and `useAppSelector`'s typing. State why the
-> higher-order form is preferable in this codebase given the typed hook signature.
-
-```
-[Answer]: ...
 ```
 
 ### Step 5 — Write The Unit Test Suite
@@ -814,93 +771,3 @@ rule warns against.
 Validated by: Cade
 Validated on:
 ```
-
----
-
-## 🛡️ Challenge & Review
-
-Complete every TODO, fill the `[Audit]:` and `[Answer]:` blocks, and make the unit tests green
-before answering.
-
-**1.** The slice models stacking with a **monotonic `zCounter`** rather than an **array of ids
-in z-order**. State the precise technical argument for the counter approach. Your answer must
-address: (a) the cost of a focus mutation in each model and what re-renders downstream, (b)
-why the array model fights `<AnimatePresence>` (Task 14), (c) the integer-overflow objection
-and why it does not apply to a portfolio website.
-
-```
-[Answer]: ...
-```
-
-**2.** `closeWindow` deliberately does **not** decrement or reset `zCounter`. A teammate argues:
-"If we just opened and closed 50 windows, the counter is at 50 and the next window opens at
-zIndex 51 — wasteful." Write the rebuttal. Your answer must explain: (a) what concrete bug
-arises from reusing a freed z-index, (b) why "wasteful" is a non-concern for a 32-bit
-integer in this product context.
-
-```
-[Answer]: ...
-```
-
-**3.** `toggleMaximize` accepts `viewport: { width, height }` in its **payload** rather than
-reading the viewport itself. A teammate suggests `window.innerWidth` inside the reducer would
-be simpler. Refuse this. Your answer must reference: (a) the purity contract of reducers, (b)
-what specifically breaks in Jest tests if the reducer reads `window.innerWidth`, (c) the
-"slice owns state, components own DOM" boundary established in this codebase.
-
-```
-[Answer]: ...
-```
-
-**4.** `focusWindow` and `restoreWindow` have **nearly identical** reducer bodies — both
-un-minimize (if applicable) and bump to top. Justify keeping them as two separate reducers
-rather than collapsing them into one. Your answer must reference: (a) Redux DevTools action
-trace readability, (b) the semantic distinction between "user clicked the window" and "user
-clicked the taskbar button of a minimized window," (c) what changes in your Cypress E2E
-assertions (Task 18) if the two actions are indistinguishable in the log.
-
-```
-[Answer]: ...
-```
-
-**5.** `selectOpenWindows` is wrapped in `createSelector` even though its body is a single
-`.map`. State the **specific re-render bug** that occurs if you replace it with a plain
-function. Your answer must include: (a) a sentence about reference equality and
-`useSelector`'s default comparison, (b) a concrete scenario during window drag (Task 11) where
-the bug would manifest at 60fps, (c) the general rule for "when do you reach for Reselect."
-
-```
-[Answer]: ...
-```
-
-**6.** `[DOCS INVESTIGATION]` — The slice generates window ids with a monotonic counter
-(`win-1`, `win-2`, ...). Read the Redux Toolkit docs on the `prepare` callback for
-`createSlice` reducers (the React-Redux style guide chapter on "Use prepare callbacks for
-non-serializable or random data"). Answer:
-
-- What problem does `prepare` solve that this slice does not have?
-- Why is it still safe (and idiomatic here) to do the id generation inline in the reducer
-  body rather than in a `prepare` callback?
-- Sketch the one scenario in which you _would_ reach for `prepare` later in Phase 2.
-
-```
-[Answer]: ...
-```
-
-**7.** `[CLAUDE.md TRACE]` — Open `CLAUDE.md`'s **Window Manager Rules** section. For each of
-the following rules, state which reducer or selector in this task enforces it (or explicitly
-defers it):
-
-- "Every open window has: `id`, `title`, `position (x,y)`, `size (w,h)`, `zIndex`, `isMinimized`, `isMaximized`"
-- "Z-index managed globally via Redux — clicking any window dispatches `focusWindow`"
-- "Windows cannot be dragged outside viewport bounds (boundary clamping)"
-- "Window dragging: raw `pointermove` events (not dnd-kit)"
-- "Admin icon positions persist in Redux; Guest positions reset on session end"
-
-For any rule deferred to a later task, name the task and state why it cannot live in the slice.
-
-```
-[Answer]: ...
-```
-
----

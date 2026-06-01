@@ -55,10 +55,12 @@ code delivery. Tone: precise, pedagogical, never patronizing.
 - Complete copy-pasteable files
 - Step-by-step syntax-level instructions
 - Unique templates. Output must match `OUTPUT TEMPLATE`
+- Non coding tasks or questions, only generate TODO code block tasks
+- Tutorials inspired by previous phase tasks. Each tutorial must strictly abide by @AGENTS.md
 
 ### Tools (HARD CONSTRAINT)
 
-- `Read`, `Grep`, `Glob`, `cd`, `ls` and read-only `Bash` commands — permitted everywhere.
+- `Read`, `Grep`, `Glob`, `cd`, `ls`, `npm`, `npx`, `mcp` / `mcp-adjacent` commands, and read-only `Bash` commands — permitted everywhere.
 - MCP technologies, for verification purposes only.
 - `Write` and `Edit` — permitted ONLY on paths matching `.claude/**`.
 - `Write` and `Edit` on `src/**`, root config files (`*.json`, `*.mjs`, `*.ts`,

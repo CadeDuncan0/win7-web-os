@@ -12,13 +12,13 @@
 
 ## Flags
 
-| Flag            | Value                              |
-| --------------- | ---------------------------------- |
-| Phase           | 2                                  |
-| Status          | in-progress                        |
-| Tasks Complete  | 0 / 24                             |
-| Blocking Issues | None                               |
-| Current Task    | Task 1 — Expand Window Slice Logic |
+| Flag            | Value                               |
+| --------------- | ----------------------------------- |
+| Phase           | 2                                   |
+| Status          | in-progress                         |
+| Tasks Complete  | 1 / 24                              |
+| Blocking Issues | None                                |
+| Current Task    | Task 2 — Expand Desktop Slice Logic |
 
 ---
 
@@ -243,32 +243,32 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
 
 ## Task Status
 
-| Task | Name                                             | Status     |
-| ---- | ------------------------------------------------ | ---------- |
-| 1    | Expand Window Slice Logic                        | ⬜ Pending |
-| 2    | Expand Desktop Slice Logic                       | ⬜ Pending |
-| 3    | Install React Testing Library + jest-dom         | ⬜ Pending |
-| 4    | Install Cypress + Wire into CI                   | ⬜ Pending |
-| 5    | Install @dnd-kit for Icon Drag                   | ⬜ Pending |
-| 6    | Wallpaper & Desktop Shell                        | ⬜ Pending |
-| 7    | Desktop Icon Primitive                           | ⬜ Pending |
-| 8    | Icon Grid + Snap-to-Grid Drag                    | ⬜ Pending |
-| 9    | Context Menu System                              | ⬜ Pending |
-| 10   | Wire Window Component to Redux State             | ⬜ Pending |
-| 11   | Window Dragging via Raw `pointermove` + Clamping | ⬜ Pending |
-| 12   | Maximize / Restore / Minimize Geometry           | ⬜ Pending |
-| 13   | Z-Index Stacking + Focus Promotion               | ⬜ Pending |
-| 14   | Framer Motion Window Transitions                 | ⬜ Pending |
-| 15   | Taskbar Shell + Live Clock                       | ⬜ Pending |
-| 16   | Taskbar Window List + Minimize/Focus Toggle      | ⬜ Pending |
-| 17   | Compose `/desktop` Route                         | ⬜ Pending |
-| 18   | Cypress E2E Suite — Desktop Journeys             | ⬜ Pending |
-| 19   | Validate Phase 2                                 | ⬜ Pending |
-| 20   | Persist Logon Avatar to Session                  | ⬜ Pending |
-| 21   | Internet Explorer Window Shell                   | ⬜ Pending |
-| 22   | IE Navigation Model + Stub Pages                 | ⬜ Pending |
-| 23   | Start Menu Shell + Account Header                | ⬜ Pending |
-| 24   | Start Menu Content: Shortcuts, Search & Sign Out | ⬜ Pending |
+| Task | Name                                             | Status      |
+| ---- | ------------------------------------------------ | ----------- |
+| 1    | Expand Window Slice Logic                        | ✅ Complete |
+| 2    | Expand Desktop Slice Logic                       | ⬜ Pending  |
+| 3    | Install React Testing Library + jest-dom         | ⬜ Pending  |
+| 4    | Install Cypress + Wire into CI                   | ⬜ Pending  |
+| 5    | Install @dnd-kit for Icon Drag                   | ⬜ Pending  |
+| 6    | Wallpaper & Desktop Shell                        | ⬜ Pending  |
+| 7    | Desktop Icon Primitive                           | ⬜ Pending  |
+| 8    | Icon Grid + Snap-to-Grid Drag                    | ⬜ Pending  |
+| 9    | Context Menu System                              | ⬜ Pending  |
+| 10   | Wire Window Component to Redux State             | ⬜ Pending  |
+| 11   | Window Dragging via Raw `pointermove` + Clamping | ⬜ Pending  |
+| 12   | Maximize / Restore / Minimize Geometry           | ⬜ Pending  |
+| 13   | Z-Index Stacking + Focus Promotion               | ⬜ Pending  |
+| 14   | Framer Motion Window Transitions                 | ⬜ Pending  |
+| 15   | Taskbar Shell + Live Clock                       | ⬜ Pending  |
+| 16   | Taskbar Window List + Minimize/Focus Toggle      | ⬜ Pending  |
+| 17   | Compose `/desktop` Route                         | ⬜ Pending  |
+| 18   | Cypress E2E Suite — Desktop Journeys             | ⬜ Pending  |
+| 19   | Validate Phase 2                                 | ⬜ Pending  |
+| 20   | Persist Logon Avatar to Session                  | ⬜ Pending  |
+| 21   | Internet Explorer Window Shell                   | ⬜ Pending  |
+| 22   | IE Navigation Model + Stub Pages                 | ⬜ Pending  |
+| 23   | Start Menu Shell + Account Header                | ⬜ Pending  |
+| 24   | Start Menu Content: Shortcuts, Search & Sign Out | ⬜ Pending  |
 
 ---
 
