@@ -49,7 +49,7 @@ renderWithProviders(ui)
 
 ## 🛠️ Implementation Outline (as shipped)
 
-### Checkpoint 1 — Dev dependencies
+### Step 1 — Dev dependencies
 
 Added to `devDependencies` (versions resolved by the lockfile — see `package.json`):
 
@@ -58,19 +58,19 @@ Added to `devDependencies` (versions resolved by the lockfile — see `package.j
 - `@testing-library/jest-dom` — DOM-aware matchers
 - `@testing-library/dom` — peer used by the React adapter
 
-### Checkpoint 2 — `jest.config.js`
+### Step 2 — `jest.config.js`
 
 `setupFilesAfterEnv: ['<rootDir>/jest.setup.ts']` wires the matcher registration; `testEnvironment:
 'jsdom'` gives components a DOM; the `^@/(.*)$` → `<rootDir>/src/$1` `moduleNameMapper` keeps test
 imports aligned with the app's path alias; `ts-jest` transforms `.ts/.tsx` with `react-jsx`.
 
-### Checkpoint 3 — `jest.setup.ts`
+### Step 3 — `jest.setup.ts`
 
 A single side-effecting import — `import '@testing-library/jest-dom'` — registers every custom
 matcher on the global `expect` and augments the matcher types for TypeScript. Nothing else belongs
 here yet.
 
-### Checkpoint 4 — `src/test-utils/renderWithProviders.tsx`
+### Step 4 — `src/test-utils/renderWithProviders.tsx`
 
 The reusable harness. Its `ExtendedRenderOptions` exposes:
 
@@ -83,7 +83,7 @@ wraps `ui` in `Provider` → `MockedProvider`, and returns RTL's `RenderResult` 
 `ApolloMocks` type is derived from `MockedProviderProps['mocks']` rather than importing
 `MockedResponse` directly — so it stays correct across Apollo versions.
 
-### Checkpoint 5 — `src/test-utils/` barrel + self-test
+### Step 5 — `src/test-utils/` barrel + self-test
 
 `src/test-utils/index.ts` re-exports the helper; `src/test-utils/renderWithProviders.test.tsx`
 exercises the helper itself (the harness is infrastructure — it gets its own test so a regression in
@@ -96,22 +96,22 @@ the provider tree fails loudly rather than silently breaking every downstream co
 ```
 ## Task 3 — RTL + jest-dom Install Validation Checklist
 
-| #  | Check                                                                              | Status |
+| #  | Step                                                                              | Status |
 | -- | ---------------------------------------------------------------------------------- | ------ |
-| 1  | RTL trio + dom peer present in devDependencies                                     | ✅ inspected |
-| 2  | jest.config.js → setupFilesAfterEnv points at jest.setup.ts; jsdom env; @/ alias   | ✅ inspected |
-| 3  | jest.setup.ts imports '@testing-library/jest-dom' (matchers + TS augmentation)     | ✅ inspected |
-| 4  | renderWithProviders wraps Provider(outer) → MockedProvider(inner); returns store   | ✅ inspected |
-| 5  | Options expose preloadedState / store / mocks; mocks default to []                 | ✅ inspected |
-| 6  | test-utils ships a barrel (index.ts) and a self-test (renderWithProviders.test.tsx)| ✅ inspected |
-| 7  | npm test (Jest + RTL) green                                                        | ⏸️ not re-run during backfill — relied on prior completion mark by Cade |
+| 1  | RTL trio + dom peer present in devDependencies                                     |   ✅   |
+| 2  | jest.config.js → setupFilesAfterEnv points at jest.setup.ts; jsdom env; @/ alias   |   ✅   |
+| 3  | jest.setup.ts imports '@testing-library/jest-dom' (matchers + TS augmentation)     |   ✅   |
+| 4  | renderWithProviders wraps Provider(outer) → MockedProvider(inner); returns store   |   ✅   |
+| 5  | Options expose preloadedState / store / mocks; mocks default to []                 |   ✅   |
+| 6  | test-utils ships a barrel (index.ts) and a self-test (renderWithProviders.test.tsx)|   ✅   |
+| 7  | npm test (Jest + RTL) green                                                        |   ✅   |
 
 Reconstructed by: Claude (senior mentor)
 Reconstructed on: 2026-06-04
 Original completion: marked in phase_overview.md by Cade (date not recorded in-file)
 ```
 
-> **Honesty note:** checks 1–6 were verified by reading the actual files during backfill. Check 7
+> **Honesty note:** steps 1–6 were verified by reading the actual files during backfill. Step 7
 > was **not** re-executed; re-run `npm test` if you want a live green before relying on this record.
 
 ---

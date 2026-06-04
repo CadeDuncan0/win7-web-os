@@ -55,7 +55,7 @@ and binary caching is the CI pain it exists to solve. Run against a **production
 > Imports are omitted in these blocks — deduce them (the committed files must include them per the
 > `import/order` rule). Each TODO is one 5–10 min unit.
 
-### Checkpoint A — Install & version-check
+### Step 1 — Install & version-check
 
 ```bash
 npm i -D cypress @testing-library/cypress
@@ -65,7 +65,7 @@ npm i -D cypress @testing-library/cypress
 #   3. Run `npx cypress open` ONCE to scaffold the cypress/ folder, then close it.
 ```
 
-### Checkpoint B — `cypress.config.ts` (repo root, sibling of `jest.config.js`)
+### Step 2 — `cypress.config.ts` (repo root, sibling of `jest.config.js`)
 
 ```ts
 export default defineConfig({
@@ -80,7 +80,7 @@ export default defineConfig({
 })
 ```
 
-### Checkpoint C — Type isolation: `cypress/tsconfig.json`
+### Step 3 — Type isolation: `cypress/tsconfig.json`
 
 ```jsonc
 {
@@ -93,7 +93,7 @@ export default defineConfig({
 }
 ```
 
-### Checkpoint D — Support layer
+### Step 4 — Support layer
 
 ```ts
 // cypress/support/e2e.ts — auto-loaded before every spec.
@@ -102,7 +102,7 @@ export default defineConfig({
 //   2. import '@testing-library/cypress/add-commands'   ← installs cy.findBy* (accessible queries)
 ```
 
-### Checkpoint E — The login commands (the core deliverable)
+### Step 5 — The login commands (the core deliverable)
 
 ```ts
 // cypress/support/commands.ts — Guest + Admin, the REAL auth flow, cached per role.
@@ -134,7 +134,7 @@ Cypress.Commands.add('loginAsAdmin', () => {
       // TODO: [Action Required: drive the real Admin UI against a SEEDED TEST account] - 5-10 min
       //   1. cy.visit('/login'); click the Admin tile (/admin/i).
       //   2. Into the field labelled 'Password' (cy.findByLabelText), type Cypress.env('ADMIN_PASSWORD').
-      //      NEVER hardcode the password — it comes from env (Checkpoint H).
+      //      NEVER hardcode the password — it comes from env (Step H).
       //   3. Click the 'Sign in' button (cy.findByRole('button', { name: /sign in/i })); assert
       //      cy.url() includes '/desktop'.
     },
@@ -161,7 +161,7 @@ Cypress.Commands.add('loginAsAdmin', () => {
 //   Add `export {}` if the file would otherwise not be treated as a module.
 ```
 
-### Checkpoint F — Smoke spec (proves the harness; **journeys are Task 18**)
+### Step 6 — Smoke spec (proves the harness; **journeys are Task 18**)
 
 ```ts
 // cypress/e2e/smoke.cy.ts
@@ -176,7 +176,7 @@ describe('Cypress harness smoke', () => {
 })
 ```
 
-### Checkpoint G — Lint & ignore hygiene
+### Step 7 — Lint & ignore hygiene
 
 ```js
 // eslint.config.mjs — append a Cypress-scoped block (flat config, plain array — no defineConfig wrapper).
@@ -197,10 +197,10 @@ describe('Cypress harness smoke', () => {
 // package.json "scripts" — add (you edit this file):
 // TODO: [Action Required: local E2E ergonomics] - 5 min
 //   "cypress:open": "cypress open"   ← interactive, against a server you start yourself (npm run dev)
-//   "e2e": "cypress run"             ← headless local run; CI uses the action (next checkpoint)
+//   "e2e": "cypress run"             ← headless local run; CI uses the action (next Step)
 ```
 
-### Checkpoint H — CI: second job in `.github/workflows/ci.yml`
+### Step 8 — CI: second job in `.github/workflows/ci.yml`
 
 ```yaml
 # ADD below the existing `quality` job. Partial — complete the TODOs.
@@ -241,12 +241,12 @@ cypress:
 ## 📝 Validation Report
 
 > New task — nothing is done yet. Each row is the bar **you** must clear and the command that proves
-> it. Flip to ✅ only on a real pass; do not loosen a check to make it green.
+> it. Flip to ✅ only on a real pass; do not loosen a step to make it green.
 
 ```
 ## Task 4 — Cypress Install + CI Validation Checklist
 
-| #  | Check                                                                       | Verified by                                              | Status |
+| #  | Step                                                                       | Verified by                                              | Status |
 | -- | --------------------------------------------------------------------------- | -------------------------------------------------------- | ------ |
 | 1  | cypress + @testing-library/cypress in devDependencies; Node satisfies engines| npx cypress --version                                   | ⬜ Pending |
 | 2  | cypress.config.ts has baseUrl :3000 and an (even empty) setupNodeEvents      | npx cypress open scaffolds + loads the config            | ⬜ Pending |
