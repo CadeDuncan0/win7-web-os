@@ -12,13 +12,13 @@
 
 ## Flags
 
-| Flag            | Value                               |
-| --------------- | ----------------------------------- |
-| Phase           | 2                                   |
-| Status          | in-progress                         |
-| Tasks Complete  | 1 / 24                              |
-| Blocking Issues | None                                |
-| Current Task    | Task 2 — Expand Desktop Slice Logic |
+| Flag            | Value                                   |
+| --------------- | --------------------------------------- |
+| Phase           | 2                                       |
+| Status          | in-progress                             |
+| Tasks Complete  | 3 / 24                                  |
+| Blocking Issues | None                                    |
+| Current Task    | Task 4 — Install Cypress + Wire into CI |
 
 ---
 
@@ -30,7 +30,7 @@ production-grade window manager (open, close, minimize, maximize, focus, z-index
 boundary clamping, Framer Motion transitions). A taskbar with a live clock and an active-window
 list anchors the experience along the bottom edge. **All ephemeral UI state lives in Redux** —
 `windowSlice` owns every open window's geometry and stacking, `desktopSlice` owns icon
-positions, the selected icon, and the wallpaper setting. Phase 2 is complete when a Guest or
+positions and the selected icon. Phase 2 is complete when a Guest or
 Admin can land on `/desktop`, reposition icons (snap-to-grid), open multiple windows from those
 icons, drag/minimize/maximize/restore/close them with correct z-index promotion on focus, and
 when both the unit/integration test suite (Jest + React Testing Library) and the end-to-end
@@ -127,7 +127,7 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
 - Task 2
   - Expand Desktop Slice Logic
   - Redux Toolkit · TypeScript · Jest
-  - Icon registry shape, position map, `selectedIconId`, wallpaper setting; reducers (`registerIcon`, `setIconPosition`, `setSelectedIcon`, `clearSelection`, `setWallpaper`, `resetGuestPositions`); persistence boundary — Admin positions persist, Guest positions reset on `sessionSlice` clear; Jest coverage including the role-boundary reset
+  - Icon registry shape, position map, `selectedIconId`; reducers (`registerIcon`, `setIconPosition`, `setSelectedIcon`, `clearSelection`, `resetGuestPositions`); persistence boundary — Admin positions persist, Guest positions reset on `sessionSlice` clear; Jest coverage including the role-boundary reset
 
 - Task 3
   - Install React Testing Library + jest-dom
@@ -246,8 +246,8 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
 | Task | Name                                             | Status      |
 | ---- | ------------------------------------------------ | ----------- |
 | 1    | Expand Window Slice Logic                        | ✅ Complete |
-| 2    | Expand Desktop Slice Logic                       | ⬜ Pending  |
-| 3    | Install React Testing Library + jest-dom         | ⬜ Pending  |
+| 2    | Expand Desktop Slice Logic                       | ✅ Complete |
+| 3    | Install React Testing Library + jest-dom         | ✅ Complete |
 | 4    | Install Cypress + Wire into CI                   | ⬜ Pending  |
 | 5    | Install @dnd-kit for Icon Drag                   | ⬜ Pending  |
 | 6    | Wallpaper & Desktop Shell                        | ⬜ Pending  |

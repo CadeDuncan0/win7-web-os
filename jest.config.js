@@ -1,7 +1,8 @@
 /** @type {import('jest').Config} */
 const config = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
@@ -12,6 +13,7 @@ const config = {
         tsconfig: {
           moduleResolution: 'node',
           module: 'commonjs',
+          jsx: 'react-jsx',
         },
       },
     ],

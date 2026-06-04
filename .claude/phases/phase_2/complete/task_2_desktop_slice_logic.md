@@ -139,7 +139,7 @@ memoization decision falls out:
 
 | Category         | This slice's members                       | `createSelector`?                      |
 | ---------------- | ------------------------------------------ | -------------------------------------- |
-| 1. Field access  | `selectWallpaper`, `selectSelectedIconId`  | No — primitive, reference-stable       |
+| 1. Field access  | `selectSelectedIconId`                     | No — primitive, reference-stable       |
 | 2. O(1) lookup   | `selectIconById(id)`, `selectSelectedIcon` | No — returns a stored reference        |
 | 3. Derived array | `selectDesktopIcons` (`ids.map`)           | **Yes** — `.map` allocates a new array |
 
@@ -156,7 +156,6 @@ on every unrelated dispatch — exactly the 60fps trap Task 1 warned about, now 
 | Collision ("cell occupied → next free cell")     | Grid component drop handler                                                                                              | Task 8  |
 | The static icon set (labels, images, targets)    | In-repo shortcut registry; dispatched via `registerIcon`                                                                 | Task 17 |
 | Cross-**reload** durability (localStorage)       | Out of Phase 2 scope — "persist" here means in-memory, across the session boundary, per `CLAUDE.md` ("persist in Redux") | —       |
-| What a wallpaper id resolves to (the asset)      | Wallpaper registry                                                                                                       | Task 6  |
 
 The slice holds **state**, never behavior. No reducer measures the grid, reads the DOM, or
 resolves an asset path. If you feel the urge, the logic belongs upstream of `dispatch`.
@@ -171,7 +170,7 @@ resolves an asset path. If you feel the urge, the logic belongs upstream of `dis
 
 ```ts
 interface DesktopState {
-  // Phase 2: will hold icon positions, selected icon, wallpaper setting
+  // Phase 2: will hold icon positions, selected icon
   icons: {
     [key: string]: { x: number; y: number }
   }
@@ -183,7 +182,7 @@ const desktopSlice = createSlice({
   name: 'desktop',
   initialState,
   reducers: {
-    // Phase 2: setIconPosition, setWallpaper, setSelectedIcon
+    // Phase 2: setIconPosition, setSelectedIcon
   },
 })
 ```
@@ -221,7 +220,6 @@ export interface DesktopState {
   iconIds: string[] // stable registration order for rendering
   selectedIconId: string | null // single-selection model
   persistPositions: boolean // role-derived: is the current layout durable?
-  wallpaper: string // logical id; the wallpaper registry (Task 6) resolves it
 }
 
 // ─── Initial State ──────────────────────────────────────────────────────────
@@ -234,7 +232,6 @@ const initialState: DesktopState = {
   iconIds: [],
   selectedIconId: null,
   persistPositions: false,
-  wallpaper: 'default',
 }
 ```
 
@@ -290,15 +287,6 @@ const desktopSlice = createSlice({
       // ...
     },
 
-    // ── setWallpaper ──────────────────────────────────────────────────────
-    // Payload: { wallpaper: string }
-    // TODO: [Action required by Junior] — set state.wallpaper from the payload.
-    // The slice does not validate the id against the asset set — that coupling
-    // belongs to the wallpaper registry (Task 6).
-    setWallpaper(/* state, action */) {
-      // ...
-    },
-
     // ── resetGuestPositions ───────────────────────────────────────────────
     // No payload. Returns every icon to its seed layout and clears selection.
     // Exposed as a standalone reducer so it is (a) explicitly dispatchable and
@@ -323,7 +311,6 @@ export const {
   setIconPosition,
   setSelectedIcon,
   clearSelection,
-  setWallpaper,
   resetGuestPositions,
 } = desktopSlice.actions
 export default desktopSlice.reducer
@@ -380,11 +367,6 @@ never touches `state.desktop.*`.
 // ─── Selectors ────────────────────────────────────────────────────────────
 
 // Category 1 — field access. No memoization.
-// TODO: [Action required by Junior] - selectWallpaper → state.desktop.wallpaper
-export const selectWallpaper = (/* state: RootState */): string => {
-  return 'default'
-}
-
 // TODO: [Action required by Junior] - selectSelectedIconId → state.desktop.selectedIconId
 export const selectSelectedIconId = (/* state: RootState */): string | null => {
   return null
@@ -436,7 +418,6 @@ const INITIAL = {
   iconIds: [],
   selectedIconId: null,
   persistPositions: false,
-  wallpaper: 'default',
 } // satisfies DesktopState
 
 // rootFrom: selectors only read state.desktop — stub the rest of RootState.
@@ -482,12 +463,6 @@ describe('desktopSlice', () => {
     })
   })
 
-  describe('setWallpaper', () => {
-    it('replaces the wallpaper id', () => {
-      // TODO: [Action required by Junior]
-    })
-  })
-
   describe('resetGuestPositions', () => {
     it('returns every icon to its default and clears selection', () => {
       // TODO: [Action required by Junior]
@@ -517,7 +492,7 @@ describe('desktopSlice', () => {
   })
 
   describe('selectors', () => {
-    it('selectWallpaper / selectSelectedIconId return their fields', () => {
+    it('selectSelectedIconId returns the selected id field', () => {
       // TODO: [Action required by Junior]
     })
 
@@ -554,8 +529,7 @@ a failing `idempotent` test means your `registerIcon` guard is missing.
      "iconsById": {},
      "iconIds": [],
      "selectedIconId": null,
-     "persistPositions": false,
-     "wallpaper": "default"
+     "persistPositions": false
    }
    ```
 2. Dispatch `{ "type": "desktop/registerIcon", "payload": { "id": "icon-a", "defaultPosition": { "column": 0, "row": 0 } } }`.
@@ -574,8 +548,8 @@ If any branch behaves differently, you have a Step 4 bug — fix it before movin
 Remove the obsolete forward-looking comments left by the scaffold:
 
 ```ts
-// Phase 2: will hold icon positions, selected icon, wallpaper setting
-// Phase 2: setIconPosition, setWallpaper, setSelectedIcon
+// Phase 2: will hold icon positions, selected icon
+// Phase 2: setIconPosition, setSelectedIcon
 ```
 
 The rewritten slice is self-documenting; stale phase-forward comments are exactly the rot
@@ -590,21 +564,21 @@ The rewritten slice is self-documenting; stale phase-forward comments are exactl
 
 | #   | Check                                                                                   | Status |
 | --- | --------------------------------------------------------------------------------------- | ------ |
-| 1   | `DesktopState` = iconsById, iconIds, selectedIconId, persistPositions, wallpaper          |   ?   |
-| 2   | `DesktopIcon` carries position AND a write-once defaultPosition; positions are GridCells  |   ?   |
-| 3   | All 6 reducers implemented (registerIcon, setIconPosition, setSelectedIcon, clearSelection, setWallpaper, resetGuestPositions) | ? |
-| 4   | `registerIcon` is idempotent — re-registering does not clobber a moved position           |   ?   |
-| 5   | `extraReducers` reacts to BOTH setSession (capture flag) and clearSession (act) via builder.addCase | ? |
-| 6   | Guest clear resets to defaults; Admin clear preserves the layout (role-boundary)          |   ?   |
-| 7   | All 5 selectors implemented; only selectDesktopIcons uses createSelector                   |   ?   |
-| 8   | `npx tsc --noEmit` is clean                                                                |   ?   |
-| 9  | `npx jest src/store/slices/desktopSlice.test.ts` — every test passes, incl. role-boundary  |   ?   |
-| 10  | Redux DevTools sequence (Step 7) reproduces the documented guest/admin branch behavior     |   ?   |
-| 11  | Phase 0 `// Phase 2: ...` comment stubs removed                                            |   ?   |
-| 12  | `npm run lint` clean (no-console, curly, import/order, no-unused-vars)                      |   ?   |
+| 1   | `DesktopState` = iconsById, iconIds, selectedIconId, persistPositions |   ✅   |
+| 2   | `DesktopIcon` carries position AND a write-once defaultPosition; positions are GridCells  |   ✅   |
+| 3   | All 5 reducers implemented (registerIcon, setIconPosition, setSelectedIcon, clearSelection, resetGuestPositions) | ✅ |
+| 4   | `registerIcon` is idempotent — re-registering does not clobber a moved position           |   ✅   |
+| 5   | `extraReducers` reacts to BOTH setSession (capture flag) and clearSession (act) via builder.addCase | ✅ |
+| 6   | Guest clear resets to defaults; Admin clear preserves the layout (role-boundary)          |   ✅   |
+| 7   | All 4 selectors implemented; only selectDesktopIcons uses createSelector                   |   ✅   |
+| 8   | `npx tsc --noEmit` is clean                                                                |   ✅   |
+| 9  | `npx jest src/store/slices/desktopSlice.test.ts` — every test passes, incl. role-boundary  |   ✅ 15/15  |
+| 10  | Redux DevTools sequence (Step 7) reproduces the documented guest/admin branch behavior     |   ⏸️ manual  |
+| 11  | Phase 0 `// Phase 2: ...` comment stubs removed                                            |   ✅   |
+| 12  | `npm run lint` clean (no-console, curly, import/order, no-unused-vars)                      |   ✅   |
 
 Validated by: Cade
-Validated on:
+Validated on: 2026-06-04
 ```
 
 ---

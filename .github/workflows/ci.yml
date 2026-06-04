@@ -7,9 +7,9 @@ name: CI
 # push to main → runs after merge, verifying the post-merge state.
 on:
   pull_request:
-    branches: [main, 'Phase*']
+    branches: [main, 'phase*']
   push:
-    branches: [main, 'Phase*']
+    branches: [main, 'phase*']
 
 # Concurrency control: if a new commit is pushed to the same PR branch
 # while a previous run is still executing, cancel the older run.

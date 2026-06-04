@@ -88,7 +88,7 @@ Always verify against installed versions before acting on any API or convention 
 - **Store slices:**
   - `windowSlice` — open windows, z-index stack, minimize/maximize state, positions
   - `sessionSlice` — authenticated role (guest | admin), JWT, auth status
-  - `desktopSlice` — icon positions, selected icon, wallpaper setting
+  - `desktopSlice` — icon positions, selected icon
 - **Provider pattern:** `ReduxProviderWrapper` client component mounts Redux `Provider` into
   React Context tree. Wraps `ApolloProviderWrapper` so Redux state is accessible to Apollo link
   chain (required for Admin JWT injection in Phase 1).
