@@ -21,14 +21,16 @@ Cypress.Commands.add('loginAsAdmin', () => {
   cy.session(
     'admin',
     () => {
-      cy.visit('/login')
-      cy.findByText(/^admin$/i)
-        .parent()
-        .findByRole('button')
-        .click()
-      cy.findByLabelText(/password/i).type(Cypress.env('ADMIN_PASSWORD'))
-      cy.findByRole('button', { name: /sign in/i }).click()
-      cy.url().should('include', '/desktop')
+      cy.env(['ADMIN_PASSWORD']).then(({ ADMIN_PASSWORD }) => {
+        cy.visit('/login')
+        cy.findByText(/^admin$/i)
+          .parent()
+          .findByRole('button')
+          .click()
+        cy.findByLabelText(/password/i).type(ADMIN_PASSWORD)
+        cy.findByRole('button', { name: /sign in/i }).click()
+        cy.url().should('include', '/desktop')
+      })
     },
     {
       validate() {

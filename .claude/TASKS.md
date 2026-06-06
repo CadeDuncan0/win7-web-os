@@ -36,6 +36,11 @@ _ALWAYS_ reference .claude/tasks to see if an in-depth markdown file exists outl
 
 _The `# Desktop page` items below are now planned in `.claude/phases/phase_2/phase_overview.md` (Tasks 1–24), scoped as "shell + launchers + stub content." Live data, real rendering, and per-project subpages remain Phase 3 — see Open Design Decisions above._
 
+# Other:
+
+    - Verify Cypress is working
+    - Add new env variables
+
 # Logon page:
 
     - LogonAccount component needs accurate selected outline. https://github.com/world-windows-federation/AuthUX may be of help

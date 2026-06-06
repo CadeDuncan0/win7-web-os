@@ -4,4 +4,10 @@ describe('Cypress harness smoke', () => {
     cy.visit('/desktop')
     cy.url().should('include', '/desktop')
   })
+
+  it('Admin reaches the desktop', () => {
+    cy.loginAsAdmin()
+    cy.visit('/desktop')
+    cy.url().should('include', '/desktop')
+  })
 })

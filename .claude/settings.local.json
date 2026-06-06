@@ -85,7 +85,8 @@
       "WebFetch(domain:dndkit.com)",
       "Bash(npm i *)",
       "Bash(npm ls *)",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "WebFetch(domain:docs.cypress.io)"
     ]
   },
   "enableAllProjectMcpServers": true,
