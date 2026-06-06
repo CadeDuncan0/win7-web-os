@@ -51,7 +51,7 @@ Three things break with an array model:
    re-order the array, and every component subscribed to the list re-renders on every focus
    change — even components that only render their own window.
 3. **React keying gets brittle.** If you ever `splice` to reorder, React reuses DOM nodes by
-   index, and `<AnimatePresence>` (Task 14) loses its identity-tracking for the exit animation.
+   index, and `<AnimatePresence>` (Task 13) loses its identity-tracking for the exit animation.
 
 The production-shaped slice **normalizes** windows by id and tracks **monotonic counters** for
 identity and z-index. Stacking order is _derived_ from `zIndex`, not stored separately.
@@ -181,11 +181,11 @@ These belong elsewhere:
 
 | Concern                                   | Where it lives                                         | Task    |
 | ----------------------------------------- | ------------------------------------------------------ | ------- |
-| Boundary clamping (keep window on-screen) | Component-layer `pointermove` handler, before dispatch | Task 11 |
-| Snap-to-grid (windows do not snap)        | N/A — only icons snap; windows are free-form           | Task 8  |
+| Boundary clamping (keep window on-screen) | Component-layer `pointermove` handler, before dispatch | Task 10 |
+| Snap-to-grid (windows do not snap)        | N/A — only icons snap; windows are free-form           | Task 7  |
 | What renders **inside** a window          | Window-content registry mapping `kind` → component     | Task 17 |
-| Animations on open/close/minimize         | Framer Motion at the component layer                   | Task 14 |
-| Taskbar button per window                 | Subscribes to selectors from this slice                | Task 16 |
+| Animations on open/close/minimize         | Framer Motion at the component layer                   | Task 13 |
+| Taskbar button per window                 | Subscribes to selectors from this slice                | Task 14 |
 
 The slice's job is **state**, not behavior. A reducer never measures the viewport, never reads
 the DOM, never spawns a timer. If you find yourself wanting to do any of those, the logic
@@ -424,7 +424,7 @@ const windowSlice = createSlice({
     //   2. If isMaximized === true, return (maximized windows can't be moved).
     //   3. Set position.x and position.y from the payload as-is.
     //      DO NOT clamp here. Boundary clamping is the responsibility of the
-    //      component drag handler (Task 11) which has access to the viewport.
+    //      component drag handler (Task 10) which has access to the viewport.
     moveWindow(state, action: PayloadAction<{ id: string; x: number; y: number }>) {
       // ...
     },

@@ -96,7 +96,7 @@ npm i @dnd-kit/core @dnd-kit/utilities
 ```js
 // Enforce the hard constraint: @dnd-kit is for icons ONLY. Any import from
 // @dnd-kit inside src/components/windows7/Window/ or a future ManagedWindow
-// component is a bug — window dragging uses raw pointermove (Task 11).
+// component is a bug — window dragging uses raw pointermove (Task 10).
 //
 // TODO: [Action Required: add a no-restricted-imports rule scoped to window files] - 5-10 min
 //   1. Add a new config object to the defineConfig array, scoped to files matching

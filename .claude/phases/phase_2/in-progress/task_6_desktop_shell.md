@@ -31,7 +31,7 @@ order and apply z-index themselves. Named slot props make the stacking contract 
 │  │  └──────────────────────────────────┘  │  │
 │  └────────────────────────────────────────┘  │
 │  ┌────────────────────────────────────────┐  │
-│  │  (Taskbar — Task 15, not this task)    │  │
+│  │  (Taskbar — Task 14, not this task)    │  │
 │  └────────────────────────────────────────┘  │
 └──────────────────────────────────────────────┘
 ```
@@ -39,7 +39,7 @@ order and apply z-index themselves. Named slot props make the stacking contract 
 **Decision 2 — pure presentational component, no `'use client'`.** The shell renders static
 structure: a wallpaper `<div>`, three stacking layers, and whatever ReactNode props are passed
 in. It has no hooks, no state, no event handlers. Interactivity (click-to-deselect, DndContext
-wrapping, right-click capture) is added by **consuming** components in Tasks 8, 9, and 17. This
+wrapping, right-click capture) is added by **consuming** components in Tasks 7 and 17. This
 keeps the shell testable in Storybook without a Redux provider and server-renderable by default.
 
 **Decision 3 — tokens first, styles second.** The desktop introduces a new visual domain: grid
@@ -145,8 +145,8 @@ interface DesktopProps {
 //      and the layers must always exist for consistent stacking context.
 //
 //   4. Do NOT add onClick, onContextMenu, or any event handlers here.
-//      Click-to-deselect (Task 8), right-click menu (Task 9), and
-//      DndContext (Task 8) are added by consuming components.
+//      Click-to-deselect and DndContext (Task 7) are added by
+//      consuming components.
 ```
 
 ### Step 4 — Barrel export: `src/components/desktop/Desktop/index.ts`
@@ -206,7 +206,7 @@ interface DesktopProps {
       Delete .main. The page will import and render <Desktop> (Task 17),
       so the page.module.css may become empty or minimal.
    2. The .signOut class is retired — Sign Out relocates to the Start Menu
-      (Task 24). Delete .signOut and all its pseudo/state selectors.
+      (Task 8). Delete .signOut and all its pseudo/state selectors.
    3. If page.module.css is now empty, keep the file but leave it blank —
       Task 17 may add page-level composition styles.
    4. In page.tsx, remove the className={styles.main} reference on <main>.

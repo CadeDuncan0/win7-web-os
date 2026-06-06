@@ -34,12 +34,11 @@ _ALWAYS_ reference .claude/tasks to see if an in-depth markdown file exists outl
 
 ## TODO
 
-_The `# Desktop page` items below are now planned in `.claude/phases/phase_2/phase_overview.md` (Tasks 1–24), scoped as "shell + launchers + stub content." Live data, real rendering, and per-project subpages remain Phase 3 — see Open Design Decisions above._
+_The `# Desktop page` items below are now planned in `.claude/phases/phase_2/phase_overview.md` (Tasks 1–19), scoped as "shell + launchers + stub content." Live data, real rendering, and per-project subpages remain Phase 3 — see Open Design Decisions above._
 
-# Other:
+# Other (USER ONLY):
 
-    - Verify Cypress is working
-    - Add new env variables
+    - Setup Phase2 GitHub Tasks
 
 # Logon page:
 
