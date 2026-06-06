@@ -12,13 +12,13 @@
 
 ## Flags
 
-| Flag            | Value                                   |
-| --------------- | --------------------------------------- |
-| Phase           | 2                                       |
-| Status          | in-progress                             |
-| Tasks Complete  | 3 / 24                                  |
-| Blocking Issues | None                                    |
-| Current Task    | Task 4 — Install Cypress + Wire into CI |
+| Flag            | Value                              |
+| --------------- | ---------------------------------- |
+| Phase           | 2                                  |
+| Status          | in-progress                        |
+| Tasks Complete  | 5 / 24                             |
+| Blocking Issues | None                               |
+| Current Task    | Task 6 — Wallpaper & Desktop Shell |
 
 ---
 
@@ -248,8 +248,8 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
 | 1    | Expand Window Slice Logic                        | ✅ Complete |
 | 2    | Expand Desktop Slice Logic                       | ✅ Complete |
 | 3    | Install React Testing Library + jest-dom         | ✅ Complete |
-| 4    | Install Cypress + Wire into CI                   | ⬜ Pending  |
-| 5    | Install @dnd-kit for Icon Drag                   | ⬜ Pending  |
+| 4    | Install Cypress + Wire into CI                   | ✅ Complete |
+| 5    | Install @dnd-kit for Icon Drag                   | ✅ Complete |
 | 6    | Wallpaper & Desktop Shell                        | ⬜ Pending  |
 | 7    | Desktop Icon Primitive                           | ⬜ Pending  |
 | 8    | Icon Grid + Snap-to-Grid Drag                    | ⬜ Pending  |

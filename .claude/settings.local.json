@@ -79,7 +79,13 @@
       "Bash(node -p \"require\\('next/package.json'\\).version\")",
       "Bash(grep -rwindexclude-dir=node_modules -l \"3000\" node_modules/next/dist/docs)",
       "Bash(grep -rhoE \"\\(localhost:3000|--port|default.{0,12}3000|port 3000\\)\" node_modules/next/dist/docs)",
-      "Bash(node -e \"try{const p=require\\('next/dist/cli/next-start.js'\\)}catch\\(e\\){}\")"
+      "Bash(node -e \"try{const p=require\\('next/dist/cli/next-start.js'\\)}catch\\(e\\){}\")",
+      "Bash(Select-String -Pattern \"cypress\" -SimpleMatch)",
+      "PowerShell(Remove-Item *)",
+      "WebFetch(domain:dndkit.com)",
+      "Bash(npm i *)",
+      "Bash(npm ls *)",
+      "Bash(powershell *)"
     ]
   },
   "enableAllProjectMcpServers": true,
