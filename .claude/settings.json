@@ -1,6 +1,7 @@
 {
   "enabledPlugins": {
     "mcp-server-dev@claude-plugins-official": true,
-    "model": ["claude-opus-4-6"]
+    "model": ["claude-opus-4-6"],
+    "effort": ["xhigh"]
   }
 }
