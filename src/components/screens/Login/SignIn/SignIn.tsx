@@ -6,7 +6,7 @@ import { AccountIcon } from '@/components/windows7/AccountIcon'
 import { OsBranding } from '@/components/windows7/OsBranding'
 import { SubmitButton } from '@/components/windows7/SubmitButton'
 
-import login from './Login.module.css'
+import login from '../Login.module.css'
 import styles from './SignIn.module.css'
 
 interface SignInProps {
