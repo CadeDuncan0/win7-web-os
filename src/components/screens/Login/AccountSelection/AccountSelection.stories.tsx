@@ -8,7 +8,7 @@ const SAMPLE_ACCOUNTS = [
 ]
 
 const meta = {
-  title: 'Screens/Login/AccountSelection',
+  title: 'Screens/login/AccountSelection',
   component: AccountSelection,
   parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof AccountSelection>

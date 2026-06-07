@@ -1,0 +1,45 @@
+.icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: var(--space-1);
+  gap: var(--space-1);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--dsk-icon-select-radius);
+  cursor: default;
+  user-select: none;
+  outline: none;
+  -webkit-user-drag: none;
+  touch-action: none;
+}
+
+.icon:focus-visible {
+  outline: 1px dotted var(--color-neutral-0);
+  outline-offset: -2px;
+}
+
+.selected {
+  background: var(--dsk-icon-select-bg);
+  border-color: var(--dsk-icon-select-border);
+}
+
+.image {
+  width: var(--dsk-icon-image-size);
+  height: var(--dsk-icon-image-size);
+  pointer-events: none;
+  image-rendering: auto;
+}
+
+.label {
+  color: var(--color-neutral-0);
+  font-size: var(--dsk-icon-label-size);
+  text-align: center;
+  text-shadow: var(--dsk-icon-label-shadow);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+}

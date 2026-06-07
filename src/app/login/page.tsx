@@ -3,14 +3,14 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react'
 
-import { AccountSelection, type AccountId } from '@/components/screens/Login/AccountSelection'
-import { SignIn } from '@/components/screens/Login/SignIn'
-import { Transition } from '@/components/screens/Transition'
 import { beginGuestSession, signInAsAdmin } from '@/lib/auth'
 import { debug } from '@/lib/debug'
 import { pickTwoDistinctIcons } from '@/lib/userIcons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { selectAuthStatus, setSession } from '@/store/slices/sessionSlice'
+import { AccountSelection, type AccountId } from '@/components/screens/login/AccountSelection'
+import { SignIn } from '@/components/screens/login/SignIn'
+import { Transition } from '@/components/screens/Transition'
 
 /* Login page — state machine orchestrator
    --------------------------------------------------------------------

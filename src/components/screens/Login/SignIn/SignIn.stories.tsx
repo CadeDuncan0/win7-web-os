@@ -6,7 +6,7 @@ import { SignIn } from './SignIn'
 const ADMIN_AVATAR = '/imgs/windows7/user-icons/user.bmp'
 
 const meta = {
-  title: 'Screens/Login/SignIn',
+  title: 'Screens/login/SignIn',
   component: SignIn,
   parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof SignIn>

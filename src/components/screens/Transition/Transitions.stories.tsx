@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { Transition } from './Transition'
 
 const meta = {
-  title: 'Screens/Login/Welcome',
+  title: 'Screens/login/Welcome',
   component: Transition,
   parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof Transition>

@@ -173,6 +173,24 @@
   /* ─── SEMANTIC: windows 7 hovering & clicking ──── */
   --windows7-focus: contrast(1.1);
   --windows7-active: opacity(0.8);
+
+  /* ─── SEMANTIC: Desktop shell ──────────────────────────────────── */
+  --dsk-grid-cell-w: 75px;
+  --dsk-grid-cell-h: 80px;
+  --dsk-grid-padding: 12px;
+  --dsk-taskbar-reserve: 40px;
+  --dsk-z-icons: 1;
+  --dsk-z-windows: 10;
+  --dsk-z-overlay: 9000;
+  --dsk-z-taskbar: 9500;
+
+  /* ─── SEMANTIC: Desktop icons ────────────────────────────────────── */
+  --dsk-icon-image-size: 48px;
+  --dsk-icon-label-size: 11px;
+  --dsk-icon-label-shadow: 1px 1px 2px var(--alpha-black-80);
+  --dsk-icon-select-bg: rgba(170, 221, 250, 0.35);
+  --dsk-icon-select-border: rgba(170, 221, 250, 0.7);
+  --dsk-icon-select-radius: 3px;
 }
 
 /* =====================================================================

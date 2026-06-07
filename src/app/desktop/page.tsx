@@ -1,23 +1,30 @@
 'use client'
 
-// import { useRouter } from 'next/navigation'
-// import { useState } from 'react'
-// import { Transition } from '@/components/screens/Transition'
-// import { signOut } from '@/lib/auth'
-
-import styles from './page.module.css'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { Button } from '@/components/windows7/Button/Button'
+import { signOut } from '@/lib/auth'
+import { Desktop } from '@/components/screens/desktop/Desktop'
+import { Transition } from '@/components/screens/Transition'
 
 export default function DesktopPage() {
-  // const router = useRouter()
-  // const [isSigningOut, setIsSigningOut] = useState(false)
+  const router = useRouter()
+  const [isSigningOut, setIsSigningOut] = useState(false)
 
-  // const handleSignOut = async () => {
-  //   setIsSigningOut(true)
-  //   await signOut()
-  //   setTimeout(() => router.replace('/login'), 1600)
-  // }
-  // if (isSigningOut) {
-  //   return <Transition message="Logging off..." />
-  // }
-  return <main className={styles.main}></main>
+  const handleSignOut = async () => {
+    setIsSigningOut(true)
+    await signOut()
+    setTimeout(() => router.replace('/login'), 1600)
+  }
+  if (isSigningOut) {
+    return <Transition message="Logging off..." />
+  }
+  return (
+    <main>
+      <Desktop />
+      <Button onClick={handleSignOut} aria-label="Sign out">
+        Sign Out
+      </Button>
+    </main>
+  )
 }
