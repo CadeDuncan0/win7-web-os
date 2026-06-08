@@ -1,6 +1,3 @@
-import type { AppSession } from '@/lib/auth'
-import type { RootState } from '@/store'
-
 import reducer, {
   registerIcon,
   setIconPosition,
@@ -16,6 +13,8 @@ import reducer, {
   type GridCell,
 } from './desktopSlice'
 import { setSession, clearSession } from './sessionSlice'
+import type { AppSession } from '@/lib/auth'
+import type { RootState } from '@/store'
 
 const INITIAL = {
   iconsById: {},

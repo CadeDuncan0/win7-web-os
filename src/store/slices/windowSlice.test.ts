@@ -1,5 +1,3 @@
-import type { RootState } from '@/store'
-
 import reducer, {
   openWindow,
   closeWindow,
@@ -17,6 +15,7 @@ import reducer, {
   type WindowInstance,
   type WindowState,
 } from './windowSlice'
+import type { RootState } from '@/store'
 
 const INITIAL: WindowState = {
   byId: {},

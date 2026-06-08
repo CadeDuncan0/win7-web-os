@@ -3,10 +3,9 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { Provider } from 'react-redux'
 import { userEvent, within } from 'storybook/test'
 
+import { DesktopIcon } from './DesktopIcon'
 import { setupStore } from '@/store'
 import { registerIcon, setSelectedIcon } from '@/store/slices/desktopSlice'
-
-import { DesktopIcon } from './DesktopIcon'
 
 const MOCK_ICON_ID = 'icon-test'
 const MOCK_LONG_ID = 'icon-long'

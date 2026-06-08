@@ -2,12 +2,11 @@
 
 import { type Ref, type SubmitEvent } from 'react'
 
+import login from '../Login.module.css'
+import styles from './SignIn.module.css'
 import { AccountIcon } from '@/components/windows7/AccountIcon'
 import { OsBranding } from '@/components/windows7/OsBranding'
 import { SubmitButton } from '@/components/windows7/SubmitButton'
-
-import login from '../Login.module.css'
-import styles from './SignIn.module.css'
 
 interface SignInProps {
   accountLabel: string

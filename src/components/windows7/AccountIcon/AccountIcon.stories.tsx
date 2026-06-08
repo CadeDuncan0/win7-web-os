@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
-import { USER_ICONS, pickTwoDistinctIcons } from '@/lib/userIcons'
-
 import { AccountIcon } from './AccountIcon'
+import { USER_ICONS, pickTwoDistinctIcons } from '@/lib/userIcons'
 
 // Pick two distinct random icons at module-load time so each story shows a
 // different avatar without repeating.

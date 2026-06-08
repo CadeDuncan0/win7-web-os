@@ -15,19 +15,6 @@ import { pickTwoDistinctIcons } from '@/lib/userIcons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { selectAuthStatus, setSession } from '@/store/slices/sessionSlice'
 
-/* Login page — state machine orchestrator
-   --------------------------------------------------------------------
-   Which Login screen renders is a function of (authStatus, signingInAs):
-
-     authStatus === 'authenticated'  → <Transition />  → router.replace('/desktop')
-     signingInAs === 'admin'         → <SignIn />
-     otherwise                       → <AccountSelection />
-
-   AccountSelection follows the win7simu copycat single-account model:
-   it shows one avatar at a time and a "Switch user" button cycles to
-   the next account. currentAccount is tracked here so returning from
-   <SignIn /> via Back restores the last-viewed account.
-   ==================================================================== */
 export default function LoginPage() {
   const [signingInAs, setSigningInAs] = useState<AccountId | null>(null)
   const [password, setPassword] = useState('')
@@ -87,8 +74,6 @@ export default function LoginPage() {
       setSubmitting(false)
       passwordRef.current?.focus()
     }
-    // success: auth listener dispatches setSession; effect below transitions
-    // to <Welcome /> and then to /desktop.
   }
 
   const handleBack = () => {

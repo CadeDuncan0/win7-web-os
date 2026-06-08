@@ -1,53 +1,82 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
-import type { DesktopIcon, GridCell } from '@/store/slices/desktopSlice'
+import { findNextFreeCell, gridCellToPixels, isCellOccupied, pixelsToGridCell } from './gridMath'
+import type { DesktopIcon } from '@/store/slices/desktopSlice'
 
-import {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
-  findNextFreeCell,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
-  gridCellToPixels,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
-  isCellOccupied,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
-  pixelsToGridCell,
-} from './gridMath'
-
-// TODO: [Action Required: implement all test cases below] - 15 min
+function makeIcon(id: string, column: number, row: number): DesktopIcon {
+  return {
+    id,
+    position: { column, row },
+    defaultPosition: { column, row },
+  }
+}
 
 describe('gridCellToPixels', () => {
-  // { column: 0, row: 0 } → { x: 12, y: 12 }
-  it.todo('converts origin cell to GRID_PADDING offset')
+  it('converts origin cell to GRID_PADDING offset', () => {
+    expect(gridCellToPixels({ column: 0, row: 0 })).toEqual({ x: 12, y: 12 })
+  })
 
-  // { column: 1, row: 2 } → { x: 87, y: 172 }
-  it.todo('converts non-origin cell to correct pixel position')
+  it('converts non-origin cell to correct pixel position', () => {
+    expect(gridCellToPixels({ column: 1, row: 2 })).toEqual({ x: 87, y: 172 })
+  })
 })
 
 describe('pixelsToGridCell', () => {
-  // (12, 12) → { column: 0, row: 0 }
-  it.todo('converts exact cell-origin pixels to grid cell')
+  it('converts exact cell-origin pixels to grid cell', () => {
+    expect(pixelsToGridCell(12, 12)).toEqual({ column: 0, row: 0 })
+  })
 
-  // (87, 172) → { column: 1, row: 2 }
-  it.todo('converts non-origin pixels to correct grid cell')
+  it('converts non-origin pixels to correct grid cell', () => {
+    expect(pixelsToGridCell(87, 172)).toEqual({ column: 1, row: 2 })
+  })
 
-  // (49, 12) → { column: 0, row: 0 } — 0.49 rounds to 0
-  it.todo('rounds to nearest cell when between cells')
+  it('rounds to nearest cell when between cells', () => {
+    expect(pixelsToGridCell(49, 12)).toEqual({ column: 0, row: 0 })
+  })
 
-  // negative values → { column: 0, row: 0 }
-  it.todo('clamps negative pixel values to column 0, row 0')
+  it('clamps negative pixel values to column 0, row 0', () => {
+    expect(pixelsToGridCell(-100, -50)).toEqual({ column: 0, row: 0 })
+  })
 })
 
 describe('isCellOccupied', () => {
-  it.todo('returns true when an icon occupies the target cell')
+  const icons = [makeIcon('a', 0, 0), makeIcon('b', 1, 2)]
 
-  it.todo('returns false when excludeId matches the icon at that cell')
+  it('returns true when an icon occupies the target cell', () => {
+    expect(isCellOccupied({ column: 0, row: 0 }, icons)).toBe(true)
+  })
 
-  it.todo('returns false when no icon occupies the target cell')
+  it('returns false when excludeId matches the icon at that cell', () => {
+    expect(isCellOccupied({ column: 0, row: 0 }, icons, 'a')).toBe(false)
+  })
+
+  it('returns false when no icon occupies the target cell', () => {
+    expect(isCellOccupied({ column: 3, row: 3 }, icons)).toBe(false)
+  })
 })
 
 describe('findNextFreeCell', () => {
-  it.todo('returns startCell when it is free')
+  const maxRows = 5
 
-  it.todo('skips occupied cells and returns the next free one')
+  it('returns startCell when it is free', () => {
+    const icons = [makeIcon('a', 0, 0)]
+    expect(findNextFreeCell({ column: 0, row: 1 }, icons, 'b', maxRows)).toEqual({
+      column: 0,
+      row: 1,
+    })
+  })
 
-  it.todo('wraps from bottom of column to top of next column')
+  it('skips occupied cells and returns the next free one', () => {
+    const icons = [makeIcon('a', 0, 0), makeIcon('b', 0, 1)]
+    expect(findNextFreeCell({ column: 0, row: 0 }, icons, 'x', maxRows)).toEqual({
+      column: 0,
+      row: 2,
+    })
+  })
+
+  it('wraps from bottom of column to top of next column', () => {
+    const icons = [makeIcon('a', 0, 3), makeIcon('b', 0, 4), makeIcon('c', 1, 0)]
+    expect(findNextFreeCell({ column: 0, row: 3 }, icons, 'x', maxRows)).toEqual({
+      column: 1,
+      row: 1,
+    })
+  })
 })

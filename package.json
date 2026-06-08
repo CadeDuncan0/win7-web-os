@@ -25,6 +25,7 @@
     "@vercel/analytics": "^1.1.4",
     "@vercel/speed-insights": "^1.0.4",
     "7.css": "^0.21.1",
+    "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
     "next": "^16.2.4",
     "react": "19.2.4",
@@ -59,6 +60,7 @@
     "eslint-config-next": "16.2.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-cypress": "^6.4.1",
+    "eslint-plugin-import-x": "^4.16.2",
     "eslint-plugin-storybook": "^10.3.6",
     "husky": "^9.1.7",
     "jest": "^30.3.0",
@@ -76,8 +78,8 @@
     "*.{ts,tsx}": [
       "npx eslint --fix --max-warnings=0"
     ],
-    "*": [
-      "npx prettier --write ."
+    "*.{ts,tsx,js,mjs,cjs,json,css,md,yml,yaml,html}": [
+      "npx prettier --write"
     ]
   }
 }

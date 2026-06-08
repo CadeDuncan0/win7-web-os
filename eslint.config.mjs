@@ -4,7 +4,7 @@ import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import prettier from 'eslint-config-prettier'
 import cypressPlugin from 'eslint-plugin-cypress'
-import importPlugin from 'eslint-plugin-import'
+import importPlugin from 'eslint-plugin-import-x'
 import storybook from 'eslint-plugin-storybook'
 
 const eslintConfig = defineConfig([
@@ -13,7 +13,7 @@ const eslintConfig = defineConfig([
   prettier, // Custom rules
   {
     plugins: {
-      import: importPlugin,
+      'import-x': importPlugin,
     },
 
     rules: {
@@ -23,7 +23,7 @@ const eslintConfig = defineConfig([
       eqeqeq: ['error', 'always'],
 
       // 2. Enforce consistent import ordering
-      'import/order': [
+      'import-x/order': [
         'error',
         {
           groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],

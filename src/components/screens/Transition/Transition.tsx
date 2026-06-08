@@ -1,8 +1,7 @@
-import { OsBranding } from '@/components/windows7/OsBranding'
-import { Spinner } from '@/components/windows7/Spinner'
-
 import login from '../login/Login.module.css'
 import styles from './Transition.module.css'
+import { OsBranding } from '@/components/windows7/OsBranding'
+import { Spinner } from '@/components/windows7/Spinner'
 
 interface TransitionProps {
   message: string

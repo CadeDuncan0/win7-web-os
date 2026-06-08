@@ -1,6 +1,6 @@
 import { createSlice, createSelector, type PayloadAction } from '@reduxjs/toolkit'
-import { setSession, clearSession } from '@/store/slices/sessionSlice'
 import { RootState } from './../index'
+import { setSession, clearSession } from '@/store/slices/sessionSlice'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 

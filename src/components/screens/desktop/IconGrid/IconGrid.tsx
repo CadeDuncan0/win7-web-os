@@ -6,7 +6,9 @@ import { DndContext, type DragEndEvent } from '@dnd-kit/core'
 import { useEffect, useMemo } from 'react'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
-import { useDesktopSensors } from '@/hooks/useDesktopSensors'
+import { DesktopIcon } from '../DesktopIcon'
+//import styles from './IconGrid.module.css'
+//import { useDesktopSensors } from '@/hooks/useDesktopSensors'
 import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
   CELL_HEIGHT,
@@ -34,11 +36,6 @@ import {
   selectDesktopIcons,
 } from '@/store/slices/desktopSlice'
 import type { WindowKind } from '@/store/slices/windowSlice'
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
-import { DesktopIcon } from '../DesktopIcon'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
-import styles from './IconGrid.module.css'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
 const TASKBAR_RESERVE = 40

@@ -1,14 +1,12 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
+import { act, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
+import { IconGrid } from './IconGrid'
 import { gridCellToPixels } from '@/lib/gridMath'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
+import { setupStore } from '@/store'
+import { registerIcon, setIconPosition, setSelectedIcon } from '@/store/slices/desktopSlice'
 import { renderWithProviders } from '@/test-utils/renderWithProviders'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
-import { IconGrid } from './IconGrid'
-
-// TODO: [Action Required: implement all test cases below] - 20 min
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
 const MOCK_ICONS = [
   {
     id: 'icon-1',
@@ -27,21 +25,95 @@ const MOCK_ICONS = [
 ]
 
 describe('IconGrid', () => {
-  // Render with 2 icons, assert style.left/top match gridCellToPixels output
-  it.todo('renders icons at their grid cell positions')
+  it('renders icons at their grid cell positions', () => {
+    renderWithProviders(<IconGrid icons={MOCK_ICONS} />)
 
-  // Render with 2 icons, assert store.getState().desktop.iconIds.length === 2
-  it.todo('registers icons in Redux on mount')
+    const pos0 = gridCellToPixels({ column: 0, row: 0 })
+    const pos1 = gridCellToPixels({ column: 0, row: 1 })
 
-  // Click icon 1 by aria-label, assert store selectedIconId === 'icon-1'
-  it.todo('selects an icon on click')
+    const icon1 = screen.getByRole('button', { name: 'My Computer' })
+    const icon2 = screen.getByRole('button', { name: 'Recycle Bin' })
 
-  // Pre-seed selectedIconId, click grid background, assert selectedIconId === null
-  it.todo('clears selection on grid background click')
+    expect(icon1.style.left).toBe(`${pos0.x}px`)
+    expect(icon1.style.top).toBe(`${pos0.y}px`)
+    expect(icon2.style.left).toBe(`${pos1.x}px`)
+    expect(icon2.style.top).toBe(`${pos1.y}px`)
+  })
 
-  // Double-click icon, assert store.getState().window.ids.length === 1
-  it.todo('opens a window on double-click')
+  it('registers icons in Redux on mount', () => {
+    const { store } = renderWithProviders(<IconGrid icons={MOCK_ICONS} />)
 
-  // Dispatch setIconPosition to (1,2), assert style matches new gridCellToPixels
-  it.todo('reflects position changes from Redux')
+    expect(store.getState().desktop.iconIds).toHaveLength(2)
+    expect(store.getState().desktop.iconIds).toContain('icon-1')
+    expect(store.getState().desktop.iconIds).toContain('icon-2')
+  })
+
+  it('selects an icon on click', async () => {
+    const user = userEvent.setup()
+    const { store } = renderWithProviders(<IconGrid icons={MOCK_ICONS} />)
+
+    const icon1 = screen.getByRole('button', { name: 'My Computer' })
+    await user.click(icon1)
+
+    expect(store.getState().desktop.selectedIconId).toBe('icon-1')
+  })
+
+  it('clears selection on grid background click', async () => {
+    const user = userEvent.setup()
+    const store = setupStore()
+    store.dispatch(
+      registerIcon({
+        id: 'icon-1',
+        position: { column: 0, row: 0 },
+        defaultPosition: { column: 0, row: 0 },
+      })
+    )
+    store.dispatch(
+      setSelectedIcon({
+        id: 'icon-1',
+        position: { column: 0, row: 0 },
+        defaultPosition: { column: 0, row: 0 },
+      })
+    )
+
+    renderWithProviders(<IconGrid icons={MOCK_ICONS} />, { store })
+
+    expect(store.getState().desktop.selectedIconId).toBe('icon-1')
+
+    const grid = screen.getByTestId('icon-grid')
+    await user.click(grid)
+
+    expect(store.getState().desktop.selectedIconId).toBeNull()
+  })
+
+  it('opens a window on double-click', async () => {
+    const user = userEvent.setup()
+    const { store } = renderWithProviders(<IconGrid icons={MOCK_ICONS} />)
+
+    const icon1 = screen.getByRole('button', { name: 'My Computer' })
+    await user.dblClick(icon1)
+
+    expect(store.getState().window.ids).toHaveLength(1)
+  })
+
+  it('reflects position changes from Redux', () => {
+    const { store } = renderWithProviders(<IconGrid icons={MOCK_ICONS} />)
+
+    const newPos = { column: 1, row: 2 }
+    const expectedPixels = gridCellToPixels(newPos)
+
+    act(() => {
+      store.dispatch(
+        setIconPosition({
+          id: 'icon-1',
+          position: newPos,
+          defaultPosition: { column: 0, row: 0 },
+        })
+      )
+    })
+
+    const icon1 = screen.getByRole('button', { name: 'My Computer' })
+    expect(icon1.style.left).toBe(`${expectedPixels.x}px`)
+    expect(icon1.style.top).toBe(`${expectedPixels.y}px`)
+  })
 })

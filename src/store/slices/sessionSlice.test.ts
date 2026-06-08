@@ -1,6 +1,3 @@
-import type { AppSession } from '@/lib/auth'
-import type { RootState } from '@/store'
-
 import reducer, {
   setSession,
   clearSession,
@@ -10,6 +7,8 @@ import reducer, {
   selectIsAdmin,
   type SessionState,
 } from './sessionSlice'
+import type { AppSession } from '@/lib/auth'
+import type { RootState } from '@/store'
 
 const INITIAL: SessionState = {
   role: null,

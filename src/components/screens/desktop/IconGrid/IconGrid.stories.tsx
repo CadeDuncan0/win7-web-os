@@ -2,9 +2,8 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 import { Provider } from 'react-redux'
 
-import { setupStore } from '@/store'
-
 import { IconGrid } from './IconGrid'
+import { setupStore } from '@/store'
 
 const meta = {
   title: 'Desktop/IconGrid',

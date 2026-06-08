@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
-import { Window } from '@/components/windows7/Window'
-
 import { Desktop } from './Desktop'
+import { Window } from '@/components/windows7/Window'
 
 const meta = {
   title: 'Desktop/Desktop',
