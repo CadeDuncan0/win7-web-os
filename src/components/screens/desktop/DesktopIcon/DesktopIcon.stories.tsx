@@ -1,3 +1,6 @@
+/** Each story needs a Redux store with a registered icon and a DndContext
+ *  wrapper, since DesktopIcon reads position from Redux and uses @dnd-kit. */
+
 import { DndContext } from '@dnd-kit/core'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { Provider } from 'react-redux'

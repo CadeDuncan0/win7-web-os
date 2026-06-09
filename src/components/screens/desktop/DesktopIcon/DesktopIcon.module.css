@@ -1,3 +1,5 @@
+/* -webkit-user-drag: none prevents the native browser drag ghost.
+   touch-action: none lets @dnd-kit handle all pointer events. */
 .icon {
   display: flex;
   flex-direction: column;

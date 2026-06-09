@@ -1,0 +1,25 @@
+/* ManagedWindow — positioning shell around the 7.css <Window> primitive.
+   7.css handles all visual chrome. This module handles only the absolute
+   positioning (from Redux inline styles) and making the inner .window
+   fill the shell via flex layout. */
+
+.managedWindow {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+/* :global() required because .window is a 7.css global class, not a CSS module */
+.managedWindow :global(.window) {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 7.css .window-body does not flex by default — stretch to fill remaining
+   space after the title bar, with scroll for overflowing content */
+.managedWindow :global(.window-body) {
+  flex: 1;
+  overflow: auto;
+}

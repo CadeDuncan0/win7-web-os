@@ -1,44 +1,54 @@
+/** Coordinate math for the desktop icon grid.
+ *  Icons live in a column-major grid; these functions convert between
+ *  grid cells (column, row) and pixel offsets (x, y). */
+
 import type { DesktopIcon, GridCell } from '@/store/slices/desktopSlice'
 
+// Must stay in sync with --dsk-grid-cell-w, --dsk-grid-cell-h, --dsk-grid-padding in globals.css
 export const CELL_WIDTH = 75
 export const CELL_HEIGHT = 80
 export const GRID_PADDING = 12
 
-// TODO: [Action Required: implement grid-cell-to-pixel conversion] - 3 min
-//   x = cell.column * CELL_WIDTH + GRID_PADDING
-//   y = cell.row * CELL_HEIGHT + GRID_PADDING
-export function gridCellToPixels(_cell: GridCell): { x: number; y: number } {
-  throw new Error('Not implemented')
+export function gridCellToPixels(cell: GridCell): { x: number; y: number } {
+  return {
+    x: cell.column * CELL_WIDTH + GRID_PADDING,
+    y: cell.row * CELL_HEIGHT + GRID_PADDING,
+  }
 }
 
-// TODO: [Action Required: implement pixel-to-grid-cell conversion] - 3 min
-//   column = Math.round((x - GRID_PADDING) / CELL_WIDTH)
-//   row    = Math.round((y - GRID_PADDING) / CELL_HEIGHT)
-//   Clamp both to >= 0.
-export function pixelsToGridCell(_x: number, _y: number): GridCell {
-  throw new Error('Not implemented')
+export function pixelsToGridCell(x: number, y: number): GridCell {
+  return {
+    column: Math.max(0, Math.round((x - GRID_PADDING) / CELL_WIDTH)),
+    row: Math.max(0, Math.round((y - GRID_PADDING) / CELL_HEIGHT)),
+  }
 }
 
-// TODO: [Action Required: implement cell occupancy check] - 3 min
-//   Return true if any icon (except excludeId) occupies the target cell.
-export function isCellOccupied(
-  _cell: GridCell,
-  _icons: DesktopIcon[],
-  _excludeId?: string
-): boolean {
-  throw new Error('Not implemented')
+export function isCellOccupied(cell: GridCell, icons: DesktopIcon[], excludeId?: string): boolean {
+  return icons.some(
+    (icon) =>
+      icon.id !== excludeId &&
+      icon.position.column === cell.column &&
+      icon.position.row === cell.row
+  )
 }
 
-// TODO: [Action Required: implement next-free-cell scan] - 5 min
-//   Starting from startCell, scan forward in column-first order:
-//     row + 1 → if row >= maxRows, column + 1 and row = 0
-//   Return the first cell where isCellOccupied is false.
-//   If startCell itself is free, return it immediately.
+// Scans column-major (down rows, then next column) to match Win7's icon flow
 export function findNextFreeCell(
-  _startCell: GridCell,
-  _icons: DesktopIcon[],
-  _excludeId: string,
-  _maxRows: number
+  startCell: GridCell,
+  icons: DesktopIcon[],
+  excludeId: string,
+  maxRows: number
 ): GridCell {
-  throw new Error('Not implemented')
+  let { column, row } = startCell
+
+  while (true) {
+    if (!isCellOccupied({ column, row }, icons, excludeId)) {
+      return { column, row }
+    }
+    row += 1
+    if (row >= maxRows) {
+      row = 0
+      column += 1
+    }
+  }
 }

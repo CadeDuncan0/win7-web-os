@@ -191,6 +191,40 @@
   --dsk-icon-select-bg: rgba(170, 221, 250, 0.35);
   --dsk-icon-select-border: rgba(170, 221, 250, 0.7);
   --dsk-icon-select-radius: 3px;
+
+  /* ─── SEMANTIC: Start Menu ──────────────────────────────────────── */
+  /* Structural */
+  --sm-width: 410px;
+  --sm-left-col-width: 190px;
+  --sm-padding: 6px;
+  --sm-item-height: 30px;
+  --sm-item-padding: 4px 8px;
+  --sm-item-icon-size: 24px;
+  --sm-item-gap: 8px;
+  --sm-search-height: 26px;
+  --sm-avatar-size: 48px;
+  --sm-avatar-offset: -20px;
+  --sm-z: var(--dsk-z-overlay);
+
+  /* Visual — sourced from 7.css glass pattern + Win7 Start Menu anatomy:
+     Left column = white program list, right column = Aero blue tint,
+     search bar = white bottom strip. Glass blur via ::after pseudo. */
+  --sm-bg: rgba(37, 97, 158, 0.85);
+  --sm-border: 1px solid var(--w7-w-bd);
+  --sm-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 4px 20px rgba(0, 0, 0, 0.45);
+  --sm-left-bg: rgba(255, 255, 255, 0.95);
+  --sm-right-bg: rgba(52, 112, 172, 0.5);
+  --sm-divider: rgba(0, 0, 0, 0.15);
+  --sm-item-hover-bg: var(--w7-li-bg-hl);
+  --sm-item-hover-border: var(--w7-li-bd-hl);
+  --sm-search-border: 1px solid var(--w7-el-bd);
+  --sm-search-bg: var(--color-neutral-0);
+  --sm-right-text: var(--color-neutral-0);
+  --sm-right-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+
+  /* ─── SEMANTIC: ManagedWindow ─────────────────────────────────── */
+  --mw-min-width: 240px;
+  --mw-min-height: 160px;
 }
 
 /* =====================================================================

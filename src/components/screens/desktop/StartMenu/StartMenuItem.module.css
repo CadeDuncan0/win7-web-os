@@ -1,0 +1,44 @@
+/* =====================================================================
+   StartMenuItem — single shortcut row in the Start Menu.
+   Renders in both the left (program) and right (folder) columns.
+   Visual distinction between columns is handled by the parent column's
+   color/text-shadow — this component just provides the hover highlight.
+   ===================================================================== */
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--sm-item-gap);
+  height: var(--sm-item-height);
+  padding: var(--sm-item-padding);
+  border: 1px solid transparent;
+  border-radius: var(--w7-el-bdr);
+  cursor: default;
+  user-select: none;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: var(--w7-font);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.item:hover,
+.item:focus-visible {
+  background: var(--sm-item-hover-bg);
+  border-color: var(--sm-item-hover-border);
+}
+
+.itemIcon {
+  width: var(--sm-item-icon-size);
+  height: var(--sm-item-icon-size);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.itemLabel {
+  font-size: var(--font-size-s);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

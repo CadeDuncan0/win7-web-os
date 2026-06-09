@@ -1,3 +1,5 @@
+// Each story provides a fresh Redux store; icons self-register on mount.
+
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 import { Provider } from 'react-redux'

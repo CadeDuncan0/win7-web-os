@@ -1,3 +1,6 @@
+// Tests verify grid rendering, icon registration, selection, deselection,
+// window opening on double-click, and position reactivity from Redux.
+
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 

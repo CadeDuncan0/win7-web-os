@@ -1,0 +1,215 @@
+'use client'
+
+import { AnimatePresence, motion } from 'framer-motion'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
+import styles from './StartMenu.module.css'
+import { StartMenuItem } from './StartMenuItem'
+import {
+  LEFT_COLUMN_SHORTCUTS,
+  RIGHT_COLUMN_SHORTCUTS,
+  SIGN_OUT_ITEM,
+  type StartMenuShortcut,
+} from './startMenuItems'
+import { signOut } from '@/lib/auth'
+import { useAppDispatch } from '@/store/hooks'
+import { clearSession } from '@/store/slices/sessionSlice'
+import { openWindow } from '@/store/slices/windowSlice'
+
+/** Aero glass Start Menu panel. Controlled by parent via isOpen/onClose —
+ *  the Taskbar (Task 14) owns the toggle state. Search filters the left
+ *  column only; right column shortcuts remain fixed. */
+
+export interface StartMenuProps {
+  isOpen: boolean
+  onClose: () => void
+  avatarSrc?: string // Wired to session avatar in Task 15; falls back to default user icon
+}
+
+export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+  const panelRef = useRef<HTMLDivElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  // Resets search state before closing so the menu opens clean next time
+  const handleClose = useCallback(() => {
+    setSearchQuery('')
+    onClose()
+  }, [onClose])
+
+  const filteredLeft = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return LEFT_COLUMN_SHORTCUTS
+    }
+    const q = searchQuery.toLowerCase()
+    return LEFT_COLUMN_SHORTCUTS.filter((s) => s.label.toLowerCase().includes(q))
+  }, [searchQuery])
+
+  useEffect(() => {
+    if (!isOpen) {
+      return
+    }
+    function handleClickOutside(e: MouseEvent) {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+        handleClose()
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen, handleClose])
+
+  useEffect(() => {
+    if (!isOpen) {
+      return
+    }
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        handleClose()
+      }
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [isOpen, handleClose])
+
+  // Deferred focus — requestAnimationFrame lets Framer Motion mount the panel first
+  useEffect(() => {
+    if (isOpen) {
+      requestAnimationFrame(() => searchRef.current?.focus())
+    }
+  }, [isOpen])
+
+  // WAI-ARIA roving tabindex: Arrow keys cycle focus through menuitems
+  function handleMenuKeyDown(e: React.KeyboardEvent) {
+    const items = panelRef.current?.querySelectorAll('[role="menuitem"]')
+    if (!items?.length) {
+      return
+    }
+
+    const focusedIndex = Array.from(items).indexOf(document.activeElement as Element)
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      const next = focusedIndex < items.length - 1 ? focusedIndex + 1 : 0
+      ;(items[next] as HTMLElement).focus()
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      if (focusedIndex > 0) {
+        ;(items[focusedIndex - 1] as HTMLElement).focus()
+      } else {
+        searchRef.current?.focus()
+      }
+    }
+    if (e.key === 'Home') {
+      e.preventDefault()
+      ;(items[0] as HTMLElement).focus()
+    }
+    if (e.key === 'End') {
+      e.preventDefault()
+      ;(items[items.length - 1] as HTMLElement).focus()
+    }
+  }
+
+  async function handleAction(action: StartMenuShortcut['action']) {
+    handleClose()
+    if (action.type === 'openWindow') {
+      dispatch(openWindow({ kind: action.kind, title: action.title }))
+    } else if (action.type === 'signOut') {
+      await signOut()
+      dispatch(clearSession())
+      router.push('/login')
+    }
+  }
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          ref={panelRef}
+          className={styles.panel}
+          role="menu"
+          aria-label="Start menu"
+          onKeyDown={handleMenuKeyDown}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.15, ease: 'easeOut' }}
+        >
+          <div className={styles.leftColumn}>
+            <ul className={styles.shortcutList}>
+              {filteredLeft.map((shortcut) => (
+                <StartMenuItem
+                  key={shortcut.id}
+                  iconSrc={shortcut.iconSrc}
+                  label={shortcut.label}
+                  onClick={() => handleAction(shortcut.action)}
+                />
+              ))}
+              {filteredLeft.length === 0 && <li className={styles.emptyMessage}>No matches</li>}
+            </ul>
+          </div>
+
+          <div className={styles.rightColumn}>
+            <div className={styles.avatarHeader}>
+              <div className={styles.avatarFrame}>
+                <Image
+                  className={styles.avatarImage}
+                  src={avatarSrc ?? '/imgs/windows7/user-icons/user.bmp'}
+                  alt="User avatar"
+                  width={48}
+                  height={48}
+                  unoptimized
+                />
+              </div>
+            </div>
+
+            <ul className={styles.shortcutList}>
+              {RIGHT_COLUMN_SHORTCUTS.map((shortcut) => (
+                <StartMenuItem
+                  key={shortcut.id}
+                  iconSrc={shortcut.iconSrc}
+                  label={shortcut.label}
+                  onClick={() => handleAction(shortcut.action)}
+                />
+              ))}
+            </ul>
+
+            <div className={styles.divider} />
+
+            <StartMenuItem
+              iconSrc={SIGN_OUT_ITEM.iconSrc}
+              label={SIGN_OUT_ITEM.label}
+              onClick={() => handleAction(SIGN_OUT_ITEM.action)}
+            />
+          </div>
+
+          <div className={styles.searchBar}>
+            <input
+              ref={searchRef}
+              className={styles.searchInput}
+              type="text"
+              placeholder="Search programs and files"
+              aria-label="Search programs and files"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'ArrowDown') {
+                  e.preventDefault()
+                  e.stopPropagation() // Prevent panel's handleMenuKeyDown from double-advancing
+                  const firstItem = panelRef.current?.querySelector(
+                    '[role="menuitem"]'
+                  ) as HTMLElement
+                  firstItem?.focus()
+                }
+              }}
+            />
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}

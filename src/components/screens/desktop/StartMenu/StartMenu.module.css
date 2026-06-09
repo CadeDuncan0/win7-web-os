@@ -1,0 +1,160 @@
+/* =====================================================================
+   StartMenu — Aero glass two-column panel.
+
+   Layout: CSS Grid with left (program shortcuts) and right (folder
+   shortcuts + avatar) columns, plus a full-width search bar row at
+   the bottom. The panel is fixed-positioned above the taskbar.
+
+   Glass effect follows the 7.css pattern: a ::after pseudo-element
+   covers the panel with backdrop-filter: blur() at z-index: -1,
+   and the panel itself uses a semi-transparent background so the
+   blur shows through.
+   ===================================================================== */
+
+.panel {
+  position: fixed;
+  bottom: var(--dsk-taskbar-reserve);
+  left: 0;
+  width: var(--sm-width);
+  z-index: var(--sm-z);
+  display: grid;
+  grid-template-columns: var(--sm-left-col-width) 1fr;
+  grid-template-rows: 1fr auto;
+  background: var(--sm-bg);
+  border: var(--sm-border);
+  border-radius: var(--w7-w-bdr) var(--w7-w-bdr) 0 0;
+  box-shadow: var(--sm-shadow);
+  overflow: visible;
+  font: var(--w7-font);
+}
+
+.panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: inherit;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ─── Left column: white background, dark text ──────────────────── */
+
+.leftColumn {
+  grid-column: 1;
+  grid-row: 1;
+  background: var(--sm-left-bg);
+  padding: var(--sm-padding);
+  border-right: 1px solid var(--sm-divider);
+  border-radius: var(--w7-w-bdr) 0 0 0;
+  overflow-y: auto;
+  color: var(--w7-el-c);
+}
+
+/* ─── Right column: Aero blue tint, white text ──────────────────── */
+
+.rightColumn {
+  grid-column: 2;
+  grid-row: 1;
+  background: var(--sm-right-bg);
+  padding: var(--sm-padding);
+  padding-top: calc(var(--sm-padding) + 8px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0 var(--w7-w-bdr) 0 0;
+  color: var(--sm-right-text);
+  text-shadow: var(--sm-right-text-shadow);
+}
+
+/* ─── Avatar header ─────────────────────────────────────────────── */
+
+.avatarHeader {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: var(--sm-padding);
+  padding-left: var(--space-1);
+}
+
+.avatarFrame {
+  width: var(--sm-avatar-size);
+  height: var(--sm-avatar-size);
+  border-radius: var(--avatar-image-radius);
+  border: var(--avatar-image-border);
+  overflow: hidden;
+  flex-shrink: 0;
+  filter: var(--avatar-drop-shadow);
+}
+
+.avatarImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ─── Shared shortcut list ──────────────────────────────────────── */
+
+.shortcutList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Divider between folder shortcuts and Sign Out ─────────────── */
+
+.divider {
+  height: 1px;
+  background: var(--sm-divider);
+  margin: var(--sm-padding) 0;
+}
+
+/* ─── Search bar (spans both columns) ───────────────────────────── */
+
+.searchBar {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  padding: var(--sm-padding);
+  background: var(--sm-left-bg);
+  border-top: 1px solid var(--sm-divider);
+  border-radius: 0 0 var(--w7-w-bdr) var(--w7-w-bdr);
+}
+
+.searchInput {
+  width: 100%;
+  height: var(--sm-search-height);
+  padding: 2px 6px 2px 26px;
+  border: var(--sm-search-border);
+  border-radius: var(--w7-el-bdr);
+  background: var(--w7-s-bg), var(--sm-search-bg);
+  background-size: 14px, auto;
+  background-position:
+    6px center,
+    0 0;
+  background-repeat: no-repeat, repeat;
+  font: var(--w7-font);
+  color: var(--w7-el-c);
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: var(--w7-el-c-d);
+}
+
+.searchInput:focus {
+  border-color: var(--w7-el-bd-h);
+  box-shadow: var(--w7-el-sd);
+}
+
+/* ─── Empty state when search matches nothing ───────────────────── */
+
+.emptyMessage {
+  padding: var(--sm-item-padding);
+  color: var(--w7-el-c-d);
+  font: var(--w7-font);
+  font-style: italic;
+}

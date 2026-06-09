@@ -1,43 +1,31 @@
 'use client'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
-import { DndContext, type DragEndEvent } from '@dnd-kit/core'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
-import { useEffect, useMemo } from 'react'
+/** Virtual icon grid with @dnd-kit drag-and-drop. Icons snap to a column-major
+ *  grid on drop, with collision avoidance to the next free cell. */
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
+import { DndContext, type DragEndEvent } from '@dnd-kit/core'
+import { useEffect, useState } from 'react'
 import { DesktopIcon } from '../DesktopIcon'
-//import styles from './IconGrid.module.css'
-//import { useDesktopSensors } from '@/hooks/useDesktopSensors'
+import styles from './IconGrid.module.css'
+import { useDesktopSensors } from '@/hooks/useDesktopSensors'
 import {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
   CELL_HEIGHT,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
   GRID_PADDING,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
   gridCellToPixels,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
   pixelsToGridCell,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
   isCellOccupied,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
   findNextFreeCell,
 } from '@/lib/gridMath'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
   registerIcon,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
   setIconPosition,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
   clearSelection,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
   selectDesktopIcons,
 } from '@/store/slices/desktopSlice'
-import type { WindowKind } from '@/store/slices/windowSlice'
+import { openWindow, type WindowKind } from '@/store/slices/windowSlice'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used after TODO implementation
+// Must stay in sync with --dsk-taskbar-reserve in globals.css
 const TASKBAR_RESERVE = 40
 
 interface IconGridProps {
@@ -50,59 +38,91 @@ interface IconGridProps {
   }>
 }
 
-// TODO: [Action Required: implement the IconGrid component] - 25 min
-//
-//   1. Pull hooks:
-//      - const dispatch = useAppDispatch()
-//      - const sensors = useDesktopSensors()
-//      - const desktopIcons = useAppSelector(selectDesktopIcons)
-//
-//   2. On mount, register icons that aren't already in Redux:
-//      useEffect(() => {
-//        icons.forEach((iconDef, index) => {
-//          dispatch(registerIcon({
-//            id: iconDef.id,
-//            position: { column: 0, row: index },
-//            defaultPosition: { column: 0, row: index },
-//          }))
-//        })
-//      }, [])
-//
-//   3. Compute maxRows from viewport height:
-//      const maxRows = useMemo(() => {
-//        const availableHeight = window.innerHeight - TASKBAR_RESERVE - GRID_PADDING * 2
-//        return Math.floor(availableHeight / CELL_HEIGHT)
-//      }, [])
-//
-//   4. Implement handleDragEnd(event: DragEndEvent):
-//      - Extract active.id and delta from event
-//      - Find icon in desktopIcons by id
-//      - Compute new pixel position = current pixels + delta
-//      - Snap to nearest grid cell via pixelsToGridCell
-//      - Clamp to grid bounds (0 to maxRows - 1)
-//      - If cell is occupied, find next free via findNextFreeCell
-//      - Dispatch setIconPosition with the resolved cell
-//
-//   5. Implement handleDeselect on the wrapping div:
-//      - onClick: if e.target === e.currentTarget, dispatch clearSelection()
-//
-//   6. Render:
-//      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-//        <div className={styles.grid} onClick={handleDeselect}>
-//          {icons.map((iconDef) => (
-//            <DesktopIcon
-//              key={iconDef.id}
-//              id={iconDef.id}
-//              label={iconDef.label}
-//              iconSrc={iconDef.iconSrc}
-//              onOpen={() => dispatch(openWindow({
-//                kind: iconDef.windowKind,
-//                title: iconDef.windowTitle,
-//              }))}
-//            />
-//          ))}
-//        </div>
-//      </DndContext>
 export function IconGrid({ icons: _icons }: IconGridProps) {
-  throw new Error('Not implemented')
+  // Pull hooks
+  const dispatch = useAppDispatch()
+  const sensors = useDesktopSensors()
+  const desktopIcons = useAppSelector(selectDesktopIcons)
+
+  useEffect(() => {
+    _icons.forEach((iconDef, index) => {
+      dispatch(
+        registerIcon({
+          id: iconDef.id,
+          position: { column: 0, row: index },
+          defaultPosition: { column: 0, row: index },
+        })
+      )
+    })
+  }, [dispatch, _icons])
+
+  const [maxRows, setMaxRows] = useState(1)
+
+  useEffect(() => {
+    const computeMaxRows = () => {
+      const availableHeight = window.innerHeight - TASKBAR_RESERVE - GRID_PADDING * 2
+      setMaxRows(Math.floor(availableHeight / CELL_HEIGHT))
+    }
+    computeMaxRows()
+    window.addEventListener('resize', computeMaxRows)
+    return () => window.removeEventListener('resize', computeMaxRows)
+  }, [])
+
+  // Drop handler: convert pixel delta → grid cell → clamp → collision check → dispatch
+  const handleDragEnd = (event: DragEndEvent) => {
+    const id = event.active.id.toString()
+    const { delta } = event
+
+    const icon = desktopIcons.find((i) => i.id === id)
+    if (!icon) {
+      return
+    }
+
+    const currentPixels = gridCellToPixels(icon.position)
+    const newPixels = { x: currentPixels.x + delta.x, y: currentPixels.y + delta.y }
+
+    let gridCell = pixelsToGridCell(newPixels.x, newPixels.y)
+
+    // Clamp to grid bounds
+    gridCell = {
+      column: Math.max(0, gridCell.column),
+      row: Math.max(0, Math.min(gridCell.row, maxRows - 1)),
+    }
+
+    // If the target cell is taken, scan for the next free cell
+    if (isCellOccupied(gridCell, desktopIcons, id)) {
+      gridCell = findNextFreeCell(gridCell, desktopIcons, id, maxRows)
+    }
+
+    dispatch(setIconPosition({ ...icon, position: gridCell }))
+  }
+
+  // Only deselect when clicking the grid background itself, not a child icon
+  const handleDeselect = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      dispatch(clearSelection())
+    }
+  }
+  return (
+    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+      <div className={styles.grid} data-testid="icon-grid" onClick={handleDeselect}>
+        {_icons.map((iconDef) => (
+          <DesktopIcon
+            key={iconDef.id}
+            id={iconDef.id}
+            label={iconDef.label}
+            iconSrc={iconDef.iconSrc}
+            onOpen={() =>
+              dispatch(
+                openWindow({
+                  kind: iconDef.windowKind,
+                  title: iconDef.windowTitle,
+                })
+              )
+            }
+          />
+        ))}
+      </div>
+    </DndContext>
+  )
 }

@@ -12,13 +12,13 @@
 
 ## Flags
 
-| Flag            | Value                              |
-| --------------- | ---------------------------------- |
-| Phase           | 2                                  |
-| Status          | in-progress                        |
-| Tasks Complete  | 5 / 19                             |
-| Blocking Issues | None                               |
-| Current Task    | Task 6 — Wallpaper & Desktop Shell |
+| Flag            | Value                         |
+| --------------- | ----------------------------- |
+| Phase           | 2                             |
+| Status          | in-progress                   |
+| Tasks Complete  | 8 / 19                        |
+| Blocking Issues | None                          |
+| Current Task    | Task 9 — Wire Window to Redux |
 
 ---
 
@@ -229,9 +229,9 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
 | 3    | Install React Testing Library + jest-dom         | ✅ Complete |
 | 4    | Install Cypress + Wire into CI                   | ✅ Complete |
 | 5    | Install @dnd-kit for Icon Drag                   | ✅ Complete |
-| 6    | Wallpaper & Desktop Shell                        | ⬜ Pending  |
-| 7    | Desktop Icon Component                           | ⬜ Pending  |
-| 8    | Start Menu                                       | ⬜ Pending  |
+| 6    | Wallpaper & Desktop Shell                        | ✅ Complete |
+| 7    | Desktop Icon Component                           | ✅ Complete |
+| 8    | Start Menu                                       | ✅ Complete |
 | 9    | Wire Window Component to Redux State             | ⬜ Pending  |
 | 10   | Window Dragging via Raw `pointermove` + Clamping | ⬜ Pending  |
 | 11   | Maximize / Restore / Minimize Geometry           | ⬜ Pending  |

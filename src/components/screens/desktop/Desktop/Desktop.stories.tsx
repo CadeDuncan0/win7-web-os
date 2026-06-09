@@ -1,3 +1,6 @@
+/** Stories exercise the Desktop shell's three stacking layers
+ *  (icons, windows, overlay) using inline mock components. */
+
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 import { Desktop } from './Desktop'

@@ -13,6 +13,8 @@
   z-index: var(--dsk-z-icons);
 }
 
+/* pointer-events: none so clicks pass through to the icon layer;
+   individual windows re-enable pointer-events on themselves */
 .windowLayer {
   position: absolute;
   inset: 0;
