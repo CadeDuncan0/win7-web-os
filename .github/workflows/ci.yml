@@ -75,6 +75,13 @@ jobs:
       - name: Check Prettier formatting
         run: npx prettier --check .
 
+      # Step 5.5 — Run the unit/component test suite (Vitest).
+      # The `unit` project covers slice reducers, pure utilities, and RTL
+      # component behavior tests; the `storybook` project (browser-based)
+      # is exercised separately and is not part of this gate.
+      - name: Run unit tests
+        run: npm test
+
       # Step 6 — Build the Next.js production bundle.
       # This is the functional integration test: if the app cannot build,
       # nothing downstream matters. `next build` runs type-checking,
