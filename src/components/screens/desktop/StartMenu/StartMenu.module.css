@@ -32,8 +32,8 @@
   content: '';
   position: absolute;
   inset: 0;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(var(--sm-glass-blur));
+  -webkit-backdrop-filter: blur(var(--sm-glass-blur));
   border-radius: inherit;
   z-index: -1;
   pointer-events: none;

@@ -25,8 +25,8 @@
   display: block;
   position: relative;
   inset: 0;
-  width: 144px;
-  height: 144px;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
   margin: 0rem 5rem;
   padding: 0;
   background: var(--w7-el-grad) !important;

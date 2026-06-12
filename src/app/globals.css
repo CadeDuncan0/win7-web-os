@@ -74,6 +74,9 @@
   --weight-thin: 100;
   --weight-bold: 700;
 
+  /* ─── PRIMITIVE: Radii ────────────────────────────────────────── */
+  --radius-full: 9999px;
+
   /* ===================================================================
      SEMANTIC LAYER
      =================================================================== */
@@ -210,6 +213,7 @@
      Left column = white program list, right column = Aero blue tint,
      search bar = white bottom strip. Glass blur via ::after pseudo. */
   --sm-bg: rgba(37, 97, 158, 0.85);
+  --sm-glass-blur: 4px;
   --sm-border: 1px solid var(--w7-w-bd);
   --sm-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 4px 20px rgba(0, 0, 0, 0.45);
   --sm-left-bg: rgba(255, 255, 255, 0.95);
