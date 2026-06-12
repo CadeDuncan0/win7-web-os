@@ -29,8 +29,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts",
-    "cypress.env.local"
+    "**/*.mts"
   ],
   "exclude": ["node_modules", "mcp-servers", "cypress", "cypress.config.ts"]
 }
