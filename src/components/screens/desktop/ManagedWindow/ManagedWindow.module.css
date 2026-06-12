@@ -26,3 +26,12 @@
   flex: 1;
   overflow: auto;
 }
+
+.managedWindow :global(.title-bar) {
+  touch-action: none;
+  cursor: default;
+}
+
+.dragging {
+  user-select: none;
+}

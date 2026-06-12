@@ -1,4 +1,5 @@
 <!-- Created: 2026-06-12 02:25:51 -->
+<!-- Completed: 2026-06-12 -->
 
 # Task 10: Window Dragging via Raw `pointermove` + Boundary Clamping
 

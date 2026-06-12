@@ -12,13 +12,13 @@
 
 ## Flags
 
-| Flag            | Value                     |
-| --------------- | ------------------------- |
-| Phase           | 2                         |
-| Status          | in-progress               |
-| Tasks Complete  | 10 / 19                   |
-| Blocking Issues | None                      |
-| Current Task    | Task 10 — Window Dragging |
+| Flag            | Value                                            |
+| --------------- | ------------------------------------------------ |
+| Phase           | 2                                                |
+| Status          | in-progress                                      |
+| Tasks Complete  | 11 / 19                                          |
+| Blocking Issues | None                                             |
+| Current Task    | Task 11 — Maximize / Restore / Minimize Geometry |
 
 ---
 
@@ -233,7 +233,7 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
 | 7    | Desktop Icon Component                           | ✅ Complete |
 | 8    | Start Menu                                       | ✅ Complete |
 | 9    | Wire Window Component to Redux State             | ✅ Complete |
-| 10   | Window Dragging via Raw `pointermove` + Clamping | ⬜ Pending  |
+| 10   | Window Dragging via Raw `pointermove` + Clamping | ✅ Complete |
 | 11   | Maximize / Restore / Minimize Geometry           | ⬜ Pending  |
 | 12   | Z-Index Stacking + Focus Promotion               | ⬜ Pending  |
 | 13   | Framer Motion Window Transitions                 | ⬜ Pending  |

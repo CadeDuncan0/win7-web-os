@@ -8,6 +8,7 @@ import type { CSSProperties, ReactNode } from 'react'
 
 import styles from './ManagedWindow.module.css'
 import { Window } from '@/components/windows7/Window'
+import { useWindowDrag } from '@/hooks/useWindowDrag'
 import { TASKBAR_RESERVE } from '@/lib/gridMath'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
@@ -29,16 +30,22 @@ export function ManagedWindow({ windowId, children }: ManagedWindowProps) {
   const windowData = useAppSelector(selectWindowById(windowId))
   const topWindowId = useAppSelector(selectTopWindowId)
 
+  const drag = useWindowDrag({
+    windowId,
+    position: windowData?.position ?? { x: 0, y: 0 },
+    size: windowData?.size ?? { width: 0, height: 0 },
+    isMaximized: windowData?.isMaximized ?? false,
+  })
+
   if (!windowData) {
     return null
   }
 
   const isActive = windowData.id === topWindowId
 
-  // Fires before mousedown/click — ensures z-index promotion happens
-  // before any child handler (title-bar buttons, future drag handler)
-  function handlePointerDown() {
+  function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
     dispatch(focusWindow({ id: windowId }))
+    drag.handlePointerDown(e)
   }
 
   function handleClose() {
@@ -49,7 +56,6 @@ export function ManagedWindow({ windowId, children }: ManagedWindowProps) {
     dispatch(minimizeWindow({ id: windowId }))
   }
 
-  // Reads taskbar height from CSS at dispatch time so viewport changes are captured
   function handleToggleMaximize() {
     const taskbarHeight =
       parseInt(
@@ -67,7 +73,6 @@ export function ManagedWindow({ windowId, children }: ManagedWindowProps) {
     )
   }
 
-  // 7.css renders button icons based on aria-label attribute selectors
   const controls = (
     <>
       <button aria-label="Minimize" onClick={handleMinimize} />
@@ -79,10 +84,14 @@ export function ManagedWindow({ windowId, children }: ManagedWindowProps) {
     </>
   )
 
+  const wrapperClass = drag.isDragging
+    ? `${styles.managedWindow} ${styles.dragging}`
+    : styles.managedWindow
+
   const style: CSSProperties = {
     position: 'absolute',
-    left: windowData.position.x,
-    top: windowData.position.y,
+    left: windowData.position.x + drag.dragOffset.x,
+    top: windowData.position.y + drag.dragOffset.y,
     width: windowData.size.width,
     height: windowData.size.height,
     zIndex: windowData.zIndex,
@@ -90,9 +99,11 @@ export function ManagedWindow({ windowId, children }: ManagedWindowProps) {
 
   return (
     <div
-      className={styles.managedWindow}
+      className={wrapperClass}
       style={style}
       onPointerDown={handlePointerDown}
+      onPointerMove={drag.handlePointerMove}
+      onPointerUp={drag.handlePointerUp}
       data-testid={`managed-window-${windowId}`}
     >
       <Window title={windowData.title} active={isActive} glass controls={controls}>

@@ -126,3 +126,17 @@ export const WithContent: Story = {
     ),
   },
 }
+
+export const Draggable: Story = {
+  args: {
+    windowId: 'win-1',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Grab the title bar and drag. The window clamps to all four viewport edges and never escapes the canvas. Test: left, right, top, bottom edges.',
+      },
+    },
+  },
+}

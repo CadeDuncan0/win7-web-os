@@ -195,3 +195,124 @@ describe('ManagedWindow', () => {
     expect(store.getState().window.byId['win-1'].zIndex).toBe(3)
   })
 })
+
+// ─── Dragging ──────────────────────────────────────────────────────────────
+
+function pointerDrag(
+  titleBar: Element,
+  wrapper: HTMLElement,
+  from: { clientX: number; clientY: number },
+  to: { clientX: number; clientY: number }
+) {
+  fireEvent.pointerDown(titleBar, { ...from, pointerId: 1 })
+  fireEvent.pointerMove(wrapper, { ...to, pointerId: 1 })
+  fireEvent.pointerUp(wrapper, { ...to, pointerId: 1 })
+}
+
+describe('ManagedWindow — dragging', () => {
+  // jsdom viewport: 1024×768, TASKBAR_RESERVE = 40 → clamp viewport 1024×728
+
+  it('commits the moved position to Redux on pointerup', () => {
+    const { store, container } = renderWithProviders(<ManagedWindow windowId="win-1" />, {
+      preloadedState: SINGLE_WINDOW,
+    })
+
+    const wrapper = screen.getByTestId('managed-window-win-1')
+    const titleBar = container.querySelector('.title-bar')!
+
+    pointerDrag(titleBar, wrapper, { clientX: 150, clientY: 60 }, { clientX: 250, clientY: 160 })
+
+    const pos = store.getState().window.byId['win-1'].position
+    expect(pos).toEqual({ x: 200, y: 150 })
+  })
+
+  it('does not write to Redux during pointermove (transient phase)', () => {
+    const { store, container } = renderWithProviders(<ManagedWindow windowId="win-1" />, {
+      preloadedState: SINGLE_WINDOW,
+    })
+
+    const wrapper = screen.getByTestId('managed-window-win-1')
+    const titleBar = container.querySelector('.title-bar')!
+
+    fireEvent.pointerDown(titleBar, { clientX: 150, clientY: 60, pointerId: 1 })
+    fireEvent.pointerMove(wrapper, { clientX: 250, clientY: 160, pointerId: 1 })
+
+    expect(store.getState().window.byId['win-1'].position).toEqual({ x: 100, y: 50 })
+  })
+
+  it('clamps the committed position to the viewport', () => {
+    const { store, container } = renderWithProviders(<ManagedWindow windowId="win-1" />, {
+      preloadedState: SINGLE_WINDOW,
+    })
+
+    const wrapper = screen.getByTestId('managed-window-win-1')
+    const titleBar = container.querySelector('.title-bar')!
+
+    pointerDrag(titleBar, wrapper, { clientX: 150, clientY: 60 }, { clientX: 5000, clientY: 5000 })
+
+    const pos = store.getState().window.byId['win-1'].position
+    // maxX = 1024 - 400 = 624, maxY = 728 - 300 = 428
+    expect(pos).toEqual({ x: 624, y: 428 })
+  })
+
+  it('clamps to 0 when dragged past the top-left', () => {
+    const { store, container } = renderWithProviders(<ManagedWindow windowId="win-1" />, {
+      preloadedState: SINGLE_WINDOW,
+    })
+
+    const wrapper = screen.getByTestId('managed-window-win-1')
+    const titleBar = container.querySelector('.title-bar')!
+
+    pointerDrag(
+      titleBar,
+      wrapper,
+      { clientX: 150, clientY: 60 },
+      { clientX: -5000, clientY: -5000 }
+    )
+
+    expect(store.getState().window.byId['win-1'].position).toEqual({ x: 0, y: 0 })
+  })
+
+  it('does not drag when pointerdown starts on a control button', () => {
+    const { store } = renderWithProviders(<ManagedWindow windowId="win-1" />, {
+      preloadedState: SINGLE_WINDOW,
+    })
+
+    const wrapper = screen.getByTestId('managed-window-win-1')
+    const closeBtn = screen.getByRole('button', { name: 'Close' })
+
+    fireEvent.pointerDown(closeBtn, { clientX: 150, clientY: 60, pointerId: 1 })
+    fireEvent.pointerMove(wrapper, { clientX: 300, clientY: 200, pointerId: 1 })
+    fireEvent.pointerUp(wrapper, { clientX: 300, clientY: 200, pointerId: 1 })
+
+    expect(store.getState().window.byId['win-1']?.position).toEqual({ x: 100, y: 50 })
+  })
+
+  it('does not drag a maximized window', () => {
+    const { store, container } = renderWithProviders(<ManagedWindow windowId="win-1" />, {
+      preloadedState: MAXIMIZED_WINDOW,
+    })
+
+    const wrapper = screen.getByTestId('managed-window-win-1')
+    const titleBar = container.querySelector('.title-bar')!
+
+    pointerDrag(titleBar, wrapper, { clientX: 100, clientY: 20 }, { clientX: 300, clientY: 200 })
+
+    expect(store.getState().window.byId['win-1'].position).toEqual({ x: 0, y: 0 })
+  })
+
+  it('still promotes z-index on title-bar pointerdown', () => {
+    const { store } = renderWithProviders(
+      <>
+        <ManagedWindow windowId="win-1" />
+        <ManagedWindow windowId="win-2" />
+      </>,
+      { preloadedState: TWO_WINDOWS }
+    )
+
+    const wrapper = screen.getByTestId('managed-window-win-1')
+    fireEvent.pointerDown(wrapper, { clientX: 100, clientY: 50, pointerId: 1 })
+
+    expect(store.getState().window.byId['win-1'].zIndex).toBe(3)
+  })
+})
