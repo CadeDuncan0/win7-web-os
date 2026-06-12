@@ -12,6 +12,10 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = { args: { children: 'Click me' } }
-export const FormDefault: Story = { args: { children: 'I am the one!', variant: 'default' } }
-export const Disabled: Story = { args: { children: 'I cannot be clicked', disabled: true } }
+export const Default: Story = { args: { children: 'Click me', 'aria-label': 'Click me' } }
+export const FormDefault: Story = {
+  args: { children: 'I am the one!', variant: 'default', 'aria-label': 'I am the one!' },
+}
+export const Disabled: Story = {
+  args: { children: 'I cannot be clicked', disabled: true, 'aria-label': 'I cannot be clicked' },
+}
