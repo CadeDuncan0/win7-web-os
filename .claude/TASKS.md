@@ -16,7 +16,7 @@ _ALWAYS_ reference .claude/tasks to see if an in-depth markdown file exists outl
     - AccountIcons should be renamed to 'LogonAccount'
     - Any reference to a variable or file name 'Login' should be renamed to 'Logon'
     - SubmitButton renamed to 'LogonSubmitButton'
-    - OsBranding renmaed to 'LogonOsBranding'
+    - OsBranding renamed to 'LogonOsBranding'
 
 ## OPEN DESIGN DECISIONS
 
