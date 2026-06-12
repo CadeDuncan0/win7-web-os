@@ -8,10 +8,31 @@ import { defineConfig } from 'vitest/config'
 const dirname =
   typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url))
 
-// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.join(dirname, 'src'),
+    },
+  },
   test: {
     projects: [
+      // Unit / component tests (the former Jest suite). `npm test` runs only
+      // this project; the storybook project needs a Playwright browser.
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          environment: 'jsdom',
+          globals: true,
+          include: ['src/**/*.test.{ts,tsx}'],
+          setupFiles: ['./vitest.setup.ts'],
+          css: {
+            // CSS module imports resolve to their original class names so
+            // tests can assert against them without processing real CSS.
+            modules: { classNameStrategy: 'non-scoped' },
+          },
+        },
+      },
       {
         extends: true,
         plugins: [

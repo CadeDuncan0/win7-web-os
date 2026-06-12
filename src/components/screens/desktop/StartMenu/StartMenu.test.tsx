@@ -6,42 +6,46 @@ import { renderWithProviders } from '@/test-utils/renderWithProviders'
 
 // Stub next/navigation and auth module so tests can assert on
 // route changes and sign-out calls without hitting real services.
-const mockPush = jest.fn()
-jest.mock('next/navigation', () => ({
+// vi.hoisted lifts the mock fns above the hoisted vi.mock factories.
+const { mockPush, mockSignOut } = vi.hoisted(() => ({
+  mockPush: vi.fn(),
+  mockSignOut: vi.fn().mockResolvedValue({ ok: true, data: null }),
+}))
+
+vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
 }))
 
-const mockSignOut = jest.fn().mockResolvedValue({ ok: true, data: null })
-jest.mock('@/lib/auth', () => ({
+vi.mock('@/lib/auth', () => ({
   signOut: (...args: unknown[]) => mockSignOut(...args),
 }))
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('StartMenu', () => {
   it('does not render when isOpen is false', () => {
-    renderWithProviders(<StartMenu isOpen={false} onClose={jest.fn()} />)
+    renderWithProviders(<StartMenu isOpen={false} onClose={vi.fn()} />)
 
     expect(screen.queryByRole('menu')).not.toBeInTheDocument()
   })
 
   it('renders the menu panel when isOpen is true', () => {
-    renderWithProviders(<StartMenu isOpen={true} onClose={jest.fn()} />)
+    renderWithProviders(<StartMenu isOpen={true} onClose={vi.fn()} />)
 
     expect(screen.getByRole('menu', { name: /start menu/i })).toBeInTheDocument()
   })
 
   it('renders all left-column shortcuts', () => {
-    renderWithProviders(<StartMenu isOpen={true} onClose={jest.fn()} />)
+    renderWithProviders(<StartMenu isOpen={true} onClose={vi.fn()} />)
 
     expect(screen.getByRole('menuitem', { name: 'Resume' })).toBeInTheDocument()
     expect(screen.getByRole('menuitem', { name: 'Projects' })).toBeInTheDocument()
   })
 
   it('renders all right-column shortcuts', () => {
-    renderWithProviders(<StartMenu isOpen={true} onClose={jest.fn()} />)
+    renderWithProviders(<StartMenu isOpen={true} onClose={vi.fn()} />)
 
     expect(screen.getByRole('menuitem', { name: 'GitHub' })).toBeInTheDocument()
     expect(screen.getByRole('menuitem', { name: 'LinkedIn' })).toBeInTheDocument()
@@ -49,14 +53,14 @@ describe('StartMenu', () => {
   })
 
   it('renders the Sign Out item', () => {
-    renderWithProviders(<StartMenu isOpen={true} onClose={jest.fn()} />)
+    renderWithProviders(<StartMenu isOpen={true} onClose={vi.fn()} />)
 
     expect(screen.getByRole('menuitem', { name: 'Sign Out' })).toBeInTheDocument()
   })
 
   it('filters left-column shortcuts by search query', async () => {
     const user = userEvent.setup()
-    renderWithProviders(<StartMenu isOpen={true} onClose={jest.fn()} />)
+    renderWithProviders(<StartMenu isOpen={true} onClose={vi.fn()} />)
 
     const search = screen.getByRole('textbox', { name: /search/i })
     await user.type(search, 'res')
@@ -71,7 +75,7 @@ describe('StartMenu', () => {
 
   it('shows empty message when search matches nothing', async () => {
     const user = userEvent.setup()
-    renderWithProviders(<StartMenu isOpen={true} onClose={jest.fn()} />)
+    renderWithProviders(<StartMenu isOpen={true} onClose={vi.fn()} />)
 
     const search = screen.getByRole('textbox', { name: /search/i })
     await user.type(search, 'zzzznonexistent')
@@ -83,7 +87,7 @@ describe('StartMenu', () => {
 
   it('dispatches openWindow when a shortcut is clicked', async () => {
     const user = userEvent.setup()
-    const onClose = jest.fn()
+    const onClose = vi.fn()
     const { store } = renderWithProviders(<StartMenu isOpen={true} onClose={onClose} />)
 
     const resume = screen.getByRole('menuitem', { name: 'Resume' })
@@ -98,7 +102,7 @@ describe('StartMenu', () => {
 
   it('calls onClose when a shortcut is clicked', async () => {
     const user = userEvent.setup()
-    const onClose = jest.fn()
+    const onClose = vi.fn()
     renderWithProviders(<StartMenu isOpen={true} onClose={onClose} />)
 
     const resume = screen.getByRole('menuitem', { name: 'Resume' })
@@ -108,7 +112,7 @@ describe('StartMenu', () => {
   })
 
   it('calls onClose on Escape key', () => {
-    const onClose = jest.fn()
+    const onClose = vi.fn()
     renderWithProviders(<StartMenu isOpen={true} onClose={onClose} />)
 
     fireEvent.keyDown(document, { key: 'Escape' })
@@ -117,7 +121,7 @@ describe('StartMenu', () => {
   })
 
   it('calls onClose on outside click', () => {
-    const onClose = jest.fn()
+    const onClose = vi.fn()
     renderWithProviders(<StartMenu isOpen={true} onClose={onClose} />)
 
     fireEvent.mouseDown(document.body)
@@ -126,7 +130,7 @@ describe('StartMenu', () => {
   })
 
   it('focuses the search input when opened', async () => {
-    renderWithProviders(<StartMenu isOpen={true} onClose={jest.fn()} />)
+    renderWithProviders(<StartMenu isOpen={true} onClose={vi.fn()} />)
 
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: /search/i })).toHaveFocus()
@@ -135,7 +139,7 @@ describe('StartMenu', () => {
 
   it('navigates menuitems with ArrowDown from search', async () => {
     const user = userEvent.setup()
-    renderWithProviders(<StartMenu isOpen={true} onClose={jest.fn()} />)
+    renderWithProviders(<StartMenu isOpen={true} onClose={vi.fn()} />)
 
     // Wait for the component's rAF auto-focus to settle before interacting
     const search = screen.getByRole('textbox', { name: /search/i })
@@ -151,7 +155,7 @@ describe('StartMenu', () => {
 
   it('calls signOut, dispatches clearSession, and navigates on Sign Out click', async () => {
     const user = userEvent.setup()
-    const onClose = jest.fn()
+    const onClose = vi.fn()
     const { store } = renderWithProviders(<StartMenu isOpen={true} onClose={onClose} />)
 
     const signOutItem = screen.getByRole('menuitem', { name: 'Sign Out' })
@@ -169,7 +173,7 @@ describe('StartMenu', () => {
 
   it('resets search query when menu closes via shortcut click', async () => {
     const user = userEvent.setup()
-    const onClose = jest.fn()
+    const onClose = vi.fn()
     const { rerender } = renderWithProviders(<StartMenu isOpen={true} onClose={onClose} />)
 
     const search = screen.getByRole('textbox', { name: /search/i })
