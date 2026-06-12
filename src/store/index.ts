@@ -10,17 +10,16 @@ const rootReducer = combineReducers({
   desktop: desktopReducer,
 })
 
-// Store factory. The app mounts the singleton `store` below, but tests need an
-// isolated store per test so state never leaks across cases — `setupStore` mints
-// a fresh one and accepts `preloadedState` to seed a specific scenario.
+// Store factory — the ONLY way a store comes into existence. There is no
+// module-level singleton: `ReduxProviderWrapper` mints one store per
+// request/mount (so SSR passes never share state across requests), and tests
+// mint an isolated store per case, seeding scenarios via `preloadedState`.
 export const setupStore = (preloadedState?: Partial<RootState>) => {
   return configureStore({
     reducer: rootReducer,
     preloadedState,
   })
 }
-
-export const store = setupStore()
 
 export type RootState = ReturnType<typeof rootReducer>
 export type AppStore = ReturnType<typeof setupStore>
