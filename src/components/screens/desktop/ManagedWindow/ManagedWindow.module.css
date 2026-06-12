@@ -7,6 +7,9 @@
   position: absolute;
   display: flex;
   flex-direction: column;
+  /* The parent .windowLayer disables pointer-events so empty space passes
+     clicks through to the icon layer — each window must re-enable them */
+  pointer-events: auto;
 }
 
 /* :global() required because .window is a 7.css global class, not a CSS module */
