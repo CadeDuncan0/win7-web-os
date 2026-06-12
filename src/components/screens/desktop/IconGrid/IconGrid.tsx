@@ -10,7 +10,9 @@ import styles from './IconGrid.module.css'
 import { useDesktopSensors } from '@/hooks/useDesktopSensors'
 import {
   CELL_HEIGHT,
+  CELL_WIDTH,
   GRID_PADDING,
+  TASKBAR_RESERVE,
   gridCellToPixels,
   pixelsToGridCell,
   isCellOccupied,
@@ -24,9 +26,6 @@ import {
   selectDesktopIcons,
 } from '@/store/slices/desktopSlice'
 import { openWindow, type WindowKind } from '@/store/slices/windowSlice'
-
-// Must stay in sync with --dsk-taskbar-reserve in globals.css
-const TASKBAR_RESERVE = 40
 
 interface IconGridProps {
   icons: Array<{
@@ -56,16 +55,20 @@ export function IconGrid({ icons: _icons }: IconGridProps) {
     })
   }, [dispatch, _icons])
 
-  const [maxRows, setMaxRows] = useState(1)
+  const [gridBounds, setGridBounds] = useState({ maxColumns: 1, maxRows: 1 })
 
   useEffect(() => {
-    const computeMaxRows = () => {
+    const computeGridBounds = () => {
       const availableHeight = window.innerHeight - TASKBAR_RESERVE - GRID_PADDING * 2
-      setMaxRows(Math.floor(availableHeight / CELL_HEIGHT))
+      const availableWidth = window.innerWidth - GRID_PADDING * 2
+      setGridBounds({
+        maxColumns: Math.max(1, Math.floor(availableWidth / CELL_WIDTH)),
+        maxRows: Math.max(1, Math.floor(availableHeight / CELL_HEIGHT)),
+      })
     }
-    computeMaxRows()
-    window.addEventListener('resize', computeMaxRows)
-    return () => window.removeEventListener('resize', computeMaxRows)
+    computeGridBounds()
+    window.addEventListener('resize', computeGridBounds)
+    return () => window.removeEventListener('resize', computeGridBounds)
   }, [])
 
   // Drop handler: convert pixel delta → grid cell → clamp → collision check → dispatch
@@ -83,18 +86,18 @@ export function IconGrid({ icons: _icons }: IconGridProps) {
 
     let gridCell = pixelsToGridCell(newPixels.x, newPixels.y)
 
-    // Clamp to grid bounds
+    // Clamp to grid bounds so an icon can never be dropped off-screen
     gridCell = {
-      column: Math.max(0, gridCell.column),
-      row: Math.max(0, Math.min(gridCell.row, maxRows - 1)),
+      column: Math.max(0, Math.min(gridCell.column, gridBounds.maxColumns - 1)),
+      row: Math.max(0, Math.min(gridCell.row, gridBounds.maxRows - 1)),
     }
 
     // If the target cell is taken, scan for the next free cell
     if (isCellOccupied(gridCell, desktopIcons, id)) {
-      gridCell = findNextFreeCell(gridCell, desktopIcons, id, maxRows)
+      gridCell = findNextFreeCell(gridCell, desktopIcons, id, gridBounds.maxRows)
     }
 
-    dispatch(setIconPosition({ ...icon, position: gridCell }))
+    dispatch(setIconPosition({ id, position: gridCell }))
   }
 
   // Only deselect when clicking the grid background itself, not a child icon
