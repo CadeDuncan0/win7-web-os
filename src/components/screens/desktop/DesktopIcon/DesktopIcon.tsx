@@ -47,11 +47,7 @@ export function DesktopIcon({ id, label, iconSrc, onOpen }: DesktopIconProps) {
       ref={setNodeRef}
       className={clsx(styles.icon, isSelected && styles.selected)}
       style={style}
-      onClick={() => {
-        if (icon) {
-          dispatch(setSelectedIcon(icon))
-        }
-      }}
+      onClick={() => dispatch(setSelectedIcon({ id }))}
       onDoubleClick={onOpen}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {

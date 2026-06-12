@@ -24,13 +24,7 @@ function createSeededStore(options?: { selected?: boolean; iconId?: string }) {
     })
   )
   if (options?.selected) {
-    s.dispatch(
-      setSelectedIcon({
-        id,
-        position: { column: 0, row: 0 },
-        defaultPosition: { column: 0, row: 0 },
-      })
-    )
+    s.dispatch(setSelectedIcon({ id }))
   }
   return s
 }

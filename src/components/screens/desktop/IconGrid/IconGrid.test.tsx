@@ -71,13 +71,7 @@ describe('IconGrid', () => {
         defaultPosition: { column: 0, row: 0 },
       })
     )
-    store.dispatch(
-      setSelectedIcon({
-        id: 'icon-1',
-        position: { column: 0, row: 0 },
-        defaultPosition: { column: 0, row: 0 },
-      })
-    )
+    store.dispatch(setSelectedIcon({ id: 'icon-1' }))
 
     renderWithProviders(<IconGrid icons={MOCK_ICONS} />, { store })
 
@@ -106,13 +100,7 @@ describe('IconGrid', () => {
     const expectedPixels = gridCellToPixels(newPos)
 
     act(() => {
-      store.dispatch(
-        setIconPosition({
-          id: 'icon-1',
-          position: newPos,
-          defaultPosition: { column: 0, row: 0 },
-        })
-      )
+      store.dispatch(setIconPosition({ id: 'icon-1', position: newPos }))
     })
 
     const icon1 = screen.getByRole('button', { name: 'My Computer' })

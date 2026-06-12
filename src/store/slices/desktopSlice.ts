@@ -1,5 +1,6 @@
 import { createSlice, createSelector, type PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from './../index'
+
+import type { RootState } from '@/store'
 import { setSession, clearSession } from '@/store/slices/sessionSlice'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -61,7 +62,7 @@ const desktopSlice = createSlice({
     },
 
     // ── setIconPosition ───────────────────────────────────────────────────
-    setIconPosition(state, action: PayloadAction<DesktopIcon>) {
+    setIconPosition(state, action: PayloadAction<{ id: string; position: GridCell }>) {
       const icon = state.iconsById[action.payload.id]
       if (!icon) {
         return
@@ -70,7 +71,7 @@ const desktopSlice = createSlice({
     },
 
     // ── setSelectedIcon ───────────────────────────────────────────────────
-    setSelectedIcon(state, action: PayloadAction<DesktopIcon>) {
+    setSelectedIcon(state, action: PayloadAction<{ id: string }>) {
       const icon = state.iconsById[action.payload.id]
       if (!icon) {
         return
