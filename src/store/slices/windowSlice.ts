@@ -6,7 +6,9 @@ import type { RootState } from '@/store'
 
 const DEFAULT_WINDOW_SIZE = { width: 640, height: 440 }
 const DEFAULT_WINDOW_POSITION = { x: 80, y: 80 }
-const MIN_WINDOW_SIZE = { width: 240, height: 160 }
+// Canonical minimum — the --mw-min-* tokens in globals.css are kept in sync
+// by src/lib/designTokens.test.ts.
+export const MIN_WINDOW_SIZE = { width: 240, height: 160 }
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -74,7 +76,7 @@ const windowSlice = createSlice({
       //   1. Generate the id from state.nextIdSeed.
       state.nextIdSeed++
       const id = `win-${state.nextIdSeed}`
-      //   2. Bump state.zCounter; the new window's zIndex = state.zCounter.dSeed
+      //   2. Bump state.zCounter; the new window's zIndex = state.zCounter
       state.zCounter++
       const zIndex = state.zCounter
       //   3. Default position to { x: 80, y: 80 } if not provided.

@@ -4,10 +4,13 @@
 
 import type { DesktopIcon, GridCell } from '@/store/slices/desktopSlice'
 
-// Must stay in sync with --dsk-grid-cell-w, --dsk-grid-cell-h, --dsk-grid-padding in globals.css
+// Canonical layout constants. Their CSS custom property counterparts in
+// globals.css (--dsk-grid-cell-w, --dsk-grid-cell-h, --dsk-grid-padding,
+// --dsk-taskbar-reserve) are kept in sync by src/lib/designTokens.test.ts.
 export const CELL_WIDTH = 75
 export const CELL_HEIGHT = 80
 export const GRID_PADDING = 12
+export const TASKBAR_RESERVE = 40
 
 export function gridCellToPixels(cell: GridCell): { x: number; y: number } {
   return {

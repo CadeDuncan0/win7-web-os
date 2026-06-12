@@ -8,6 +8,7 @@ import type { CSSProperties, ReactNode } from 'react'
 
 import styles from './ManagedWindow.module.css'
 import { Window } from '@/components/windows7/Window'
+import { TASKBAR_RESERVE } from '@/lib/gridMath'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   closeWindow,
@@ -54,7 +55,7 @@ export function ManagedWindow({ windowId, children }: ManagedWindowProps) {
       parseInt(
         getComputedStyle(document.documentElement).getPropertyValue('--dsk-taskbar-reserve'),
         10
-      ) || 40
+      ) || TASKBAR_RESERVE
     dispatch(
       toggleMaximize({
         id: windowId,
