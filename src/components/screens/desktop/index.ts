@@ -1,1 +1,5 @@
 export * from './Desktop'
+export * from './DesktopIcon'
+export * from './IconGrid'
+export * from './ManagedWindow'
+export * from './StartMenu'

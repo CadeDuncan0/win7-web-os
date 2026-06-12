@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Desktop } from '@/components/screens/desktop/Desktop'
 import { Transition } from '@/components/screens/Transition'
-import { Button } from '@/components/windows7/Button/Button'
+import { Button } from '@/components/windows7/Button'
 import { signOut } from '@/lib/auth'
 
 export default function DesktopPage() {
