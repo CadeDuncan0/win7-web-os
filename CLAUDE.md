@@ -89,19 +89,26 @@ Always verify against installed versions before acting on any API or convention 
   - `windowSlice` — open windows, z-index stack, minimize/maximize state, positions
   - `sessionSlice` — authenticated role (guest | admin), JWT, auth status
   - `desktopSlice` — icon positions, selected icon
-- **Provider pattern:** `ReduxProviderWrapper` client component mounts Redux `Provider` into
-  React Context tree. Wraps `ApolloProviderWrapper` so Redux state is accessible to Apollo link
-  chain (required for Admin JWT injection in Phase 1).
+- **Provider pattern:** `ReduxProviderWrapper` client component creates ONE store per
+  request/mount via the `setupStore()` factory (no module singleton — SSR passes must never
+  share state across requests) and mounts Redux `Provider` into the React Context tree. Wraps
+  `ApolloProviderWrapper` so Redux state is accessible to the Apollo link chain (required for
+  Admin JWT injection).
 
-### CSS Modules
+### CSS Modules + 7.css
 
-- **Role:** Scoped per-component styling with a centralized Aero Glass design token system
+- **Role:** Scoped per-component styling with a centralized Aero Glass design token system,
+  layered on top of the `7.css` base stylesheet
 - **Design Rationale:** Tailwind rejected — Aero Glass UI requires precise, named, intentional
-  design decisions that utility classes obscure. CSS custom properties define every color, shadow,
-  blur, gradient, and radius in the Windows 7 Aero theme. `backdrop-filter: blur()` for frosted
-  glass. Segoe UI typeface via system font stack.
-- **Key constraint:** All design tokens defined in `globals.css`. No magic values in component
-  stylesheets — all values reference custom properties.
+  design decisions that utility classes obscure. `7.css` is the one sanctioned styling library:
+  it supplies authentic Windows 7 widget chrome (window frames, title bars, buttons) and the
+  `--w7-*` custom property set, imported globally in `layout.tsx`. Project-specific CSS custom
+  properties define every additional color, shadow, blur, gradient, and radius in the Windows 7
+  Aero theme. `backdrop-filter: blur()` for frosted glass. Segoe UI typeface via system font
+  stack.
+- **Key constraint:** All project design tokens defined in `globals.css`; `--w7-*` tokens come
+  from `7.css`. No magic values in component stylesheets — all values reference custom
+  properties.
 
 ### Framer Motion
 
@@ -148,8 +155,10 @@ Always verify against installed versions before acting on any API or convention 
   anon key to Admin JWT read from Redux `sessionSlice`.
 - **Current imports:** `SetContextLink` from `@apollo/client/link/context` (not deprecated
   `setContext`). `HttpLink` class constructor (not deprecated `createHttpLink`).
-- **Provider pattern:** `ApolloProviderWrapper` client component. Nested inside
-  `ReduxProviderWrapper` in root layout.
+- **Provider pattern:** `ApolloProviderWrapper` client component, nested inside
+  `ReduxProviderWrapper` in root layout. Builds one client per request/mount via
+  `makeApolloClient(getAuthToken)` — the auth accessor reads the JWT from that request's
+  Redux store, so neither the client nor the link chain couples to a store singleton.
 
 ### Postman
 
@@ -181,11 +190,13 @@ Always verify against installed versions before acting on any API or convention 
 - **RLS state:** Enabled from initialization. Phase 0 uses permissive dev read policy
   (`USING (true)`). Phase 3 replaces with role-based policies.
 
-### Vitest / Jest + React Testing Library
+### Vitest + React Testing Library
 
-- **Role:** Unit/integration tests (Jest) + behavior-driven component tests (RTL).
+- **Role:** Unit/integration tests + behavior-driven component tests (RTL), all on a single
+  runner. The `unit` Vitest project (jsdom) is the former Jest suite; the `storybook` project
+  runs stories in a real browser via the Storybook Vitest addon.
 - **Key constraint:** RTL queries by accessible role/label/text — never by CSS selector or
-  component internals. Jest covers Redux slices, utilities, Apollo mocking.
+  component internals. Vitest covers Redux slices, utilities, Apollo mocking.
 
 ### Cypress
 
@@ -225,7 +236,8 @@ Always verify against installed versions before acting on any API or convention 
 - Two roles: `guest` (public, sessionStorage-scoped) and `admin` (owner, JWT-persisted)
 - Guest: no password, session expires on tab close, sees only `visibility = 'guest'` projects
 - Admin: password via Supabase Auth, JWT stored and injected into Apollo authLink, sees all rows
-- All routes under `/desktop` are server-side protected via Next.js middleware
+- All routes under `/desktop` are server-side protected via Next.js proxy
+  (`src/proxy.ts` — the App Router successor to `middleware.ts`)
 - Client-side role stored in Redux `sessionSlice`
 
 ## Content Visibility Rules
@@ -257,7 +269,8 @@ Always verify against installed versions before acting on any API or convention 
 ## Debug Logging Convention
 
 - All debug output routes through `src/lib/debug.ts` utility
-- `debug.log` internally calls `console.warn` with `[debug]` prefix
+- `debug.log` internally calls `console.warn` with `[debug]` prefix;
+  `debug.error` calls `console.error` under the same development-only guard
 - Guarded by `process.env.NODE_ENV === 'development'` — zero output in production
 - Label convention: `Module:Function → context description`
 - Raw `console.log` banned via ESLint `no-console: ['error']`
@@ -289,9 +302,10 @@ NEXT_PUBLIC_ADMIN_EMAIL           Admin account email for Supabase Auth sign-in
 
 - Pre-commit: lint-staged runs `npx eslint --fix --max-warnings=0` and `npx prettier --write`
   on all staged `.ts` `.tsx` `.css` files
-- ESLint flat config (`eslint.config.mjs`) — plain exported array, no `defineConfig` wrapper
+- ESLint flat config (`eslint.config.mjs`) — `defineConfig` from `eslint/config`
 - `curly: ['error', 'all']` — braces required on all control flow blocks
-- `import/order` — enforced import grouping: builtin → external → internal → parent → sibling
+- `import-x/order` (via `eslint-plugin-import-x`) — enforced import grouping:
+  builtin → external → internal → parent → sibling
 - `@typescript-eslint/no-unused-vars` — all vars, args after-used, `^_` pattern ignored
 - Short-circuit evaluation (`&&`, `?.`) preferred over braceless one-liner if statements
 
@@ -302,14 +316,19 @@ src/
   app/                    Next.js App Router pages and layouts
   components/
     providers/            Client-side context provider wrapper components only
+    screens/              Screen-level compositions (login, desktop, Transition)
+    windows7/             Reusable Windows 7 primitives built on 7.css
+  hooks/                  Shared React hooks (auth listener, dnd-kit sensors)
   lib/                    Third-party client initializations and shared utilities
-    supabase.ts           Supabase JS client (auth only)
+    supabase/             Supabase JS clients (auth only): client, server, proxy
     apollo-client.ts      Apollo Client with link chain
     debug.ts              NODE_ENV-aware debug logging utility
+  proxy.ts                Next.js route protection (App Router successor to middleware.ts)
   store/
     index.ts              Redux store configuration + RootState/AppDispatch exports
     hooks.ts              Typed useAppDispatch and useAppSelector
     slices/               One file per Redux domain slice
+  test-utils/             renderWithProviders and shared test helpers
 ```
 
 ## Anti-Patterns (DO NOT)
@@ -323,8 +342,9 @@ src/
 - **DO NOT** hardcode colors, shadows, blurs, radii, or gradients in CSS modules —
   reference CSS custom properties from `globals.css`.
 - **DO NOT** makeup css values — reference the links provided in `AGENTS.md` under `Visual Reference`
-- **DO NOT** install Tailwind, styled-components, or any other styling library.
-  Aero Glass requires named, intentional design tokens; CSS Modules are mandatory.
+- **DO NOT** install Tailwind, styled-components, or any other styling library. The sole
+  exception is `7.css`, the sanctioned Windows 7 base stylesheet. Aero Glass requires named,
+  intentional design tokens; CSS Modules are mandatory.
 - **DO NOT** route data fetches through the Supabase JS SDK. The SDK is for **auth only**
   (`supabase.auth.signInWithPassword`). All data access goes through Apollo + GraphQL.
 - **DO NOT** add `'use client'` to `src/app/layout.tsx` — it must remain a pure server
@@ -351,7 +371,7 @@ lint → build → deploy chain functions end-to-end.
 
 **Structural baselines established in Phase 0:**
 
-- Next.js 14 project initialized with TypeScript, App Router, `src/` directory
+- Next.js project initialized with TypeScript, App Router, `src/` directory
 - ESLint flat config, Prettier, Husky pre-commit hooks, commitlint
 - Redux Toolkit store scaffolded with typed hooks and placeholder slices
 - Supabase project provisioned with `projects` schema and RLS enabled
