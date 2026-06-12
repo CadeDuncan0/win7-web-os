@@ -69,6 +69,13 @@ const eslintConfig = defineConfig([
     },
   },
   {
+    // Node CLI scripts — console IS the output channel, not a debug leak
+    files: ['scripts/**/*.mjs'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
     files: ['cypress/**/*.ts'],
     ...cypressPlugin.configs.recommended,
   }, // Override default ignores of eslint-config-next
