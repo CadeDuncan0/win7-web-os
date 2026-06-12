@@ -1,6 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { GUEST_COOKIE_NAME } from '../guestCookie'
+import { GUEST_COOKIE_NAME } from '../guestSession'
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({

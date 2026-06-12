@@ -1,7 +1,8 @@
-import { AuthError } from '@supabase/supabase-js'
+import { AuthError, type Session } from '@supabase/supabase-js'
 import z from 'zod'
-import * as guestCookie from '@/lib/guestCookie'
+import * as guestSession from '@/lib/guestSession'
 import { createClient } from '@/lib/supabase/client'
+import { DEFAULT_USER_ICON } from '@/lib/userIcons'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -12,43 +13,34 @@ export type AuthResult<T> = { ok: true; data: T } | { ok: false; error: string }
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const supabase = createClient()
-//  Namespaced to prevent collisions with other sessionStorage consumers (browser extensions, embedded widgets).
-const GUEST_SESSION_KEY = 'portfolio.guestSession'
 
 export const AppSessionSchema = z.discriminatedUnion('role', [
-  // Schema for the 'guest' role
-  z.object({
-    role: z.literal('guest'),
-    jwt: z.null(),
-    startedAt: z.number(),
-  }),
+  // Schema for the 'guest' role — owned by the guest session module so the
+  // marker it persists and the union here can never drift apart.
+  guestSession.GuestSessionSchema,
   // Schema for the 'admin' role
   z.object({
     role: z.literal('admin'),
     jwt: z.string(),
     startedAt: z.number(),
+    // Sessions rehydrated from Supabase carry no logon pick — default it
+    avatar: z.string().catch(DEFAULT_USER_ICON),
   }),
 ])
 
 // ─── Guest Session ──────────────────────────────────────────────────────────
 
 /**
- * Begins a Guest session. No network call — Guest is a purely client-side
- * role assertion. Writes a marker to sessionStorage so the session survives
- * a page reload within the same tab, and ends when the tab closes.
+ * Begins a Guest session. Delegates to the guest session module, which owns
+ * the sessionStorage marker and the cookie; the avatar chosen on the logon
+ * screen rides along so the desktop can greet the visitor with it.
  */
-export function beginGuestSession(): AuthResult<AppSession> {
-  const guestSession: AppSession = {
-    role: 'guest',
-    jwt: null,
-    startedAt: Date.now(),
-  }
-  if (typeof window === 'undefined') {
+export function beginGuestSession(avatarSrc: string): AuthResult<AppSession> {
+  const session = guestSession.beginGuestSession(avatarSrc)
+  if (!session) {
     return { ok: false, error: 'window object is undefined' }
   }
-  window.sessionStorage.setItem(GUEST_SESSION_KEY, JSON.stringify(guestSession))
-  guestCookie.writeGuestCookie()
-  return { ok: true, data: guestSession }
+  return { ok: true, data: session }
 }
 
 // ─── Admin Sign-In ──────────────────────────────────────────────────────────
@@ -56,9 +48,13 @@ export function beginGuestSession(): AuthResult<AppSession> {
 /**
  * Authenticates the Admin via Supabase email + password.
  * The email is not a parameter — it is a build-time constant (the admin account
- * is fixed per deployment). The password comes from the login form.
+ * is fixed per deployment). The password comes from the login form; the avatar
+ * is the logon-screen pick, persisted into the session payload.
  */
-export async function signInAsAdmin(password: string): Promise<AuthResult<AppSession>> {
+export async function signInAsAdmin(
+  password: string,
+  avatarSrc: string
+): Promise<AuthResult<AppSession>> {
   const email = process.env.NEXT_PUBLIC_ADMIN_EMAIL
   if (!email) {
     return { ok: false, error: 'Admin email not configured' }
@@ -83,6 +79,7 @@ export async function signInAsAdmin(password: string): Promise<AuthResult<AppSes
     role: 'admin',
     jwt: authSession.access_token,
     startedAt: Date.now(),
+    avatar: avatarSrc,
   }
 
   return { ok: true, data: adminSession }
@@ -95,11 +92,9 @@ export async function signInAsAdmin(password: string): Promise<AuthResult<AppSes
  * exists — idempotent.
  */
 export async function signOut(): Promise<AuthResult<null>> {
-  // guest session cleared
-  if (typeof window !== 'undefined') {
-    window.sessionStorage.removeItem(GUEST_SESSION_KEY)
-    guestCookie.clearGuestCookie()
-  }
+  // guest session cleared (marker + cookie, both owned by the module)
+  guestSession.clearGuestSession()
+
   // admin session cleared
   const logoutResponse = await supabase.auth.signOut()
   const logoutError = logoutResponse.error
@@ -134,36 +129,33 @@ export async function getCurrentSession(): Promise<AppSession | null> {
       const adminSession: AppSession = {
         role: 'admin',
         jwt: authSession.access_token,
-        startedAt:
-          // fallback: current time - 1 hour
-          // types: all values should be in seconds
-          ((authSession.expires_at ?? Date.now() / 1000 - 3600) - authSession.expires_in) * 1000,
+        startedAt: sessionStartedAtMs(authSession),
+        // The logon pick is not persisted in Supabase — fall back to default
+        avatar: DEFAULT_USER_ICON,
       }
 
       return adminSession
     }
   }
-  // Step 2: If no Supabase session, check sessionStorage for a Guest marker
-  //   - Parse the JSON. If valid, return the Guest session.
-  //   - If malformed (corrupted or tampered), remove the key and return null.
-  if (typeof window === 'undefined') {
-    return null
-  }
-  const guestSession = window.sessionStorage.getItem(GUEST_SESSION_KEY)
-  if (guestSession) {
-    const validatedSession = AppSessionSchema.safeParse(JSON.parse(guestSession))
-    if (validatedSession.success) {
-      return validatedSession.data
-    }
-    // data was malformed or tampered, remove session from storage
-    window.sessionStorage.removeItem(GUEST_SESSION_KEY)
-  }
-  // Step 3: No session of either kind → return null
-  // no session or session malformed / tampered
-  return null
+
+  // No Supabase session — the guest session module reads and validates its
+  // own marker (evicting it if malformed or tampered).
+  return guestSession.readGuestSession()
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
+
+/**
+ * Derives a Supabase session's issued-at time in milliseconds. Supabase
+ * exposes expiry, not issuance — issued-at = expires_at − expires_in.
+ * Falls back to "now" if expires_at is ever absent.
+ */
+export function sessionStartedAtMs(session: Session): number {
+  if (session.expires_at === undefined) {
+    return Date.now()
+  }
+  return (session.expires_at - session.expires_in) * 1000
+}
 
 /**
  * Extracts a user-facing error message from a Supabase AuthError.

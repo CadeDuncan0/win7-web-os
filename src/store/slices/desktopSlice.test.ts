@@ -127,7 +127,7 @@ describe('desktopSlice', () => {
     it('GUEST: positions reset when the session is cleared', () => {
       // setSession(guest) → registerIcon → setIconPosition(moved) → clearSession.
       // Assert the icon is back at its defaultPosition.
-      const guest: AppSession = { role: 'guest', jwt: null, startedAt: 1000 }
+      const guest: AppSession = { role: 'guest', jwt: null, startedAt: 1000, avatar: 'a.bmp' }
       let state = reducer(INITIAL, setSession(guest))
       state = registerOne(state, 'icon-a', cell(0, 0))
       state = reducer(state, setIconPosition({ id: 'icon-a', position: cell(3, 3) }))
@@ -138,7 +138,7 @@ describe('desktopSlice', () => {
     it('ADMIN: positions are preserved when the session is cleared', () => {
       // setSession(admin) → registerIcon → setIconPosition(moved) → clearSession.
       // Assert the icon is STILL at the moved cell (durable layout).
-      const admin: AppSession = { role: 'admin', jwt: 'jwt', startedAt: 1000 }
+      const admin: AppSession = { role: 'admin', jwt: 'jwt', startedAt: 1000, avatar: 'a.bmp' }
       let state = reducer(INITIAL, setSession(admin))
       state = registerOne(state, 'icon-a', cell(0, 0))
       state = reducer(state, setIconPosition({ id: 'icon-a', position: cell(3, 3) }))
@@ -148,7 +148,7 @@ describe('desktopSlice', () => {
 
     it('resets persistPositions to false after any clear', () => {
       // setSession(admin) → clearSession → assert a subsequent guest-style clear would reset.
-      const admin: AppSession = { role: 'admin', jwt: 'jwt', startedAt: 1000 }
+      const admin: AppSession = { role: 'admin', jwt: 'jwt', startedAt: 1000, avatar: 'a.bmp' }
       let state = reducer(INITIAL, setSession(admin))
       state = registerOne(state, 'icon-a', cell(0, 0))
       state = reducer(state, setIconPosition({ id: 'icon-a', position: cell(3, 3) }))

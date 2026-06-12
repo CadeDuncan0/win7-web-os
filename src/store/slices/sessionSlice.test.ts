@@ -5,6 +5,7 @@ import reducer, {
   selectAuthStatus,
   selectJwt,
   selectIsAdmin,
+  selectAvatar,
   type SessionState,
 } from './sessionSlice'
 import type { AppSession } from '@/lib/auth'
@@ -15,7 +16,10 @@ const INITIAL: SessionState = {
   authStatus: 'unknown',
   jwt: null,
   startedAt: null,
+  avatar: null,
 }
+
+const AVATAR = '/imgs/windows7/user-icons/usertile10.bmp'
 
 // Helper to wrap a SessionState into something the selectors can consume.
 // We only need the .session slice — the rest of RootState is irrelevant here.
@@ -32,6 +36,7 @@ describe('sessionSlice', () => {
         role: 'admin',
         jwt: 'abc',
         startedAt: 1000,
+        avatar: AVATAR,
       } satisfies AppSession
 
       const testState = reducer(undefined, setSession(testSession))
@@ -40,6 +45,7 @@ describe('sessionSlice', () => {
       expect(testState.jwt).toEqual('abc')
       expect(testState.role).toEqual('admin')
       expect(testState.startedAt).toEqual(1000)
+      expect(testState.avatar).toEqual(AVATAR)
     })
 
     it('applies a guest session', () => {
@@ -47,6 +53,7 @@ describe('sessionSlice', () => {
         role: 'guest',
         jwt: null,
         startedAt: 1000,
+        avatar: AVATAR,
       } satisfies AppSession
 
       const testState = reducer(undefined, setSession(testSession))
@@ -55,15 +62,17 @@ describe('sessionSlice', () => {
       expect(testState.jwt).toEqual(null)
       expect(testState.role).toEqual('guest')
       expect(testState.startedAt).toEqual(1000)
+      expect(testState.avatar).toEqual(AVATAR)
     })
   })
 
   describe('clearSession', () => {
-    it('resets role/jwt/startedAt and sets authStatus to unauthenticated (NOT unknown)', () => {
+    it('resets role/jwt/startedAt/avatar and sets authStatus to unauthenticated (NOT unknown)', () => {
       const testPayload = {
         role: 'admin',
         jwt: 'abc',
         startedAt: 1000,
+        avatar: AVATAR,
       } satisfies AppSession
 
       const startState = reducer(undefined, setSession(testPayload))
@@ -73,15 +82,17 @@ describe('sessionSlice', () => {
       expect(testState.jwt).toEqual(null)
       expect(testState.role).toEqual(null)
       expect(testState.startedAt).toEqual(null)
+      expect(testState.avatar).toEqual(null)
     })
   })
 
   describe('selectors', () => {
-    it('selectRole, selectAuthStatus, selectJwt return the correct field', () => {
+    it('selectRole, selectAuthStatus, selectJwt, selectAvatar return the correct field', () => {
       const testPayload = {
         role: 'admin',
         jwt: 'test',
         startedAt: 1234,
+        avatar: AVATAR,
       } satisfies AppSession
 
       const testState = reducer(undefined, setSession(testPayload))
@@ -90,6 +101,7 @@ describe('sessionSlice', () => {
       expect(selectAuthStatus(testRootState)).toEqual('authenticated')
       expect(selectJwt(testRootState)).toEqual('test')
       expect(selectRole(testRootState)).toEqual('admin')
+      expect(selectAvatar(testRootState)).toEqual(AVATAR)
     })
 
     it('selectIsAdmin returns true only when role is admin', () => {
@@ -98,6 +110,7 @@ describe('sessionSlice', () => {
         role: 'admin',
         jwt: 'test',
         startedAt: 1000,
+        avatar: AVATAR,
       }
       let testState = reducer(undefined, setSession(testPayload))
       let testRootState = rootFrom(testState)
@@ -109,6 +122,7 @@ describe('sessionSlice', () => {
         role: 'guest',
         jwt: null,
         startedAt: 1000,
+        avatar: AVATAR,
       }
 
       testState = reducer(undefined, setSession(testPayload))

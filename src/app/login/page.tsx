@@ -3,12 +3,9 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react'
 
-import {
-  AccountSelection,
-  type AccountId,
-} from '@/components/screens/login/AccountSelection/AccountSelection'
-import { SignIn } from '@/components/screens/login/SignIn/SignIn'
-import { Transition } from '@/components/screens/Transition/Transition'
+import { AccountSelection, type AccountId } from '@/components/screens/login/AccountSelection'
+import { SignIn } from '@/components/screens/login/SignIn'
+import { Transition } from '@/components/screens/Transition'
 import { beginGuestSession, signInAsAdmin } from '@/lib/auth'
 import { debug } from '@/lib/debug'
 import { pickTwoDistinctIcons } from '@/lib/userIcons'
@@ -47,8 +44,11 @@ export default function LoginPage() {
   )
 
   const handleSelect = (id: AccountId) => {
+    if (!avatars) {
+      return
+    }
     if (id === 'guest') {
-      const r = beginGuestSession()
+      const r = beginGuestSession(avatars.guest)
       if (!r.ok) {
         debug.error(r.error)
         return
@@ -63,17 +63,21 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!password) {
+    if (!password || !avatars) {
       return
     }
     setSubmitting(true)
-    const r = await signInAsAdmin(password)
+    const r = await signInAsAdmin(password, avatars.admin)
     if (!r.ok) {
       setError(r.error)
       setPassword('')
       setSubmitting(false)
       passwordRef.current?.focus()
+      return
     }
+    // Dispatch immediately so the chosen avatar lands in the session before
+    // (or after — the listener preserves it) the SIGNED_IN event arrives.
+    dispatch(setSession(r.data))
   }
 
   const handleBack = () => {

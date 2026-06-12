@@ -14,8 +14,9 @@ import {
   type StartMenuShortcut,
 } from './startMenuItems'
 import { signOut } from '@/lib/auth'
-import { useAppDispatch } from '@/store/hooks'
-import { clearSession } from '@/store/slices/sessionSlice'
+import { DEFAULT_USER_ICON } from '@/lib/userIcons'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { clearSession, selectAvatar } from '@/store/slices/sessionSlice'
 import { openWindow } from '@/store/slices/windowSlice'
 
 /** Aero glass Start Menu panel. Controlled by parent via isOpen/onClose —
@@ -25,11 +26,12 @@ import { openWindow } from '@/store/slices/windowSlice'
 export interface StartMenuProps {
   isOpen: boolean
   onClose: () => void
-  avatarSrc?: string // Wired to session avatar in Task 15; falls back to default user icon
+  avatarSrc?: string // Optional override (stories); defaults to the session avatar
 }
 
 export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
   const dispatch = useAppDispatch()
+  const sessionAvatar = useAppSelector(selectAvatar)
   const router = useRouter()
   const panelRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
@@ -158,7 +160,7 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
               <div className={styles.avatarFrame}>
                 <Image
                   className={styles.avatarImage}
-                  src={avatarSrc ?? '/imgs/windows7/user-icons/user.bmp'}
+                  src={avatarSrc ?? sessionAvatar ?? DEFAULT_USER_ICON}
                   alt="User avatar"
                   width={48}
                   height={48}
