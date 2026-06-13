@@ -4,9 +4,10 @@
  *  by id, wires title-bar controls to dispatch actions, and composes the
  *  stateless 7.css <Window> primitive inside a positioned shell. */
 
-import type { CSSProperties, ReactNode } from 'react'
+import { motion } from 'framer-motion'
+import { type CSSProperties, type ReactNode, useRef } from 'react'
 
-import styles from './ManagedWindow.module.css'
+import styles from './WindowWrapper.module.css'
 import { Window } from '@/components/windows7/Window'
 import { useWindowDrag } from '@/hooks/useWindowDrag'
 import { TASKBAR_RESERVE } from '@/lib/gridMath'
@@ -20,15 +21,17 @@ import {
   toggleMaximize,
 } from '@/store/slices/windowSlice'
 
-export interface ManagedWindowProps {
+export interface WindowWrapperProps {
   windowId: string
   children?: ReactNode
 }
 
-export function ManagedWindow({ windowId, children }: ManagedWindowProps) {
+export function WindowWrapper({ windowId, children }: WindowWrapperProps) {
   const dispatch = useAppDispatch()
   const windowData = useAppSelector(selectWindowById(windowId))
   const topWindowId = useAppSelector(selectTopWindowId)
+
+  const exitModeRef = useRef<'close' | 'minimize'>('close')
 
   const drag = useWindowDrag({
     windowId,
@@ -49,28 +52,39 @@ export function ManagedWindow({ windowId, children }: ManagedWindowProps) {
   }
 
   function handleClose() {
+    exitModeRef.current = 'close'
     dispatch(closeWindow({ id: windowId }))
   }
 
   function handleMinimize() {
+    exitModeRef.current = 'minimize'
     dispatch(minimizeWindow({ id: windowId }))
   }
 
-  function handleToggleMaximize() {
+  function getViewport() {
     const taskbarHeight =
       parseInt(
         getComputedStyle(document.documentElement).getPropertyValue('--dsk-taskbar-reserve'),
         10
       ) || TASKBAR_RESERVE
-    dispatch(
-      toggleMaximize({
-        id: windowId,
-        viewport: {
-          width: window.innerWidth,
-          height: window.innerHeight - taskbarHeight,
-        },
-      })
-    )
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight - taskbarHeight,
+    }
+  }
+
+  function handleToggleMaximize() {
+    dispatch(toggleMaximize({ id: windowId, viewport: getViewport() }))
+  }
+
+  function handleDoubleClick(e: React.MouseEvent<HTMLDivElement>) {
+    if (!(e.target as Element).closest('.title-bar')) {
+      return
+    }
+    if ((e.target as Element).closest('.title-bar-controls')) {
+      return
+    }
+    dispatch(toggleMaximize({ id: windowId, viewport: getViewport() }))
   }
 
   const controls = (
@@ -84,9 +98,13 @@ export function ManagedWindow({ windowId, children }: ManagedWindowProps) {
     </>
   )
 
-  const wrapperClass = drag.isDragging
-    ? `${styles.managedWindow} ${styles.dragging}`
-    : styles.managedWindow
+  const wrapperClass = [
+    styles.WindowWrapper,
+    drag.isDragging && styles.dragging,
+    windowData.isMaximized && styles.maximized,
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   const style: CSSProperties = {
     position: 'absolute',
@@ -97,18 +115,33 @@ export function ManagedWindow({ windowId, children }: ManagedWindowProps) {
     zIndex: windowData.zIndex,
   }
 
+  const variants = {
+    initial: { opacity: 0, scale: 0.95 },
+    animate: { opacity: 1, scale: 1 },
+    exit: () =>
+      exitModeRef.current === 'minimize'
+        ? { opacity: 0, scale: 0.5, transition: { duration: 0.1, ease: 'easeOut' as const } }
+        : { opacity: 0, scale: 0.95, transition: { duration: 0.1, ease: 'easeOut' as const } },
+  }
+
   return (
-    <div
+    <motion.div
       className={wrapperClass}
       style={style}
       onPointerDown={handlePointerDown}
       onPointerMove={drag.handlePointerMove}
       onPointerUp={drag.handlePointerUp}
+      onDoubleClick={handleDoubleClick}
       data-testid={`managed-window-${windowId}`}
+      variants={variants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.12, ease: 'easeOut' }}
     >
       <Window title={windowData.title} active={isActive} glass controls={controls}>
         {children}
       </Window>
-    </div>
+    </motion.div>
   )
 }

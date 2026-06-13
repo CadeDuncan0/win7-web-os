@@ -50,8 +50,8 @@ const eslintConfig = defineConfig([
     files: [
       'src/components/**/Window/**/*.ts',
       'src/components/**/Window/**/*.tsx',
-      'src/components/**/ManagedWindow/**/*.ts',
-      'src/components/**/ManagedWindow/**/*.tsx',
+      'src/components/**/WindowWrapper/**/*.ts',
+      'src/components/**/WindowWrapper/**/*.tsx',
     ],
     rules: {
       'no-restricted-imports': [

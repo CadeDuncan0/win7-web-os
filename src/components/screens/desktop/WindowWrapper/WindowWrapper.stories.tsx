@@ -1,10 +1,11 @@
 /** Each story provides a pre-seeded Redux store with specific window state.
- *  The parent div needs position: relative since ManagedWindow uses absolute. */
+ *  The parent div needs position: relative since WindowWrapper uses absolute. */
 
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import { AnimatePresence } from 'framer-motion'
 import { Provider } from 'react-redux'
 
-import { ManagedWindow } from './ManagedWindow'
+import { WindowWrapper } from './WindowWrapper'
 import { setupStore } from '@/store'
 import type { WindowInstance, WindowState } from '@/store/slices/windowSlice'
 
@@ -30,8 +31,8 @@ function makeWindowState(overrides: Partial<WindowInstance> = {}): WindowState {
 }
 
 const meta = {
-  title: 'Desktop/ManagedWindow',
-  component: ManagedWindow,
+  title: 'Desktop/WindowWrapper',
+  component: WindowWrapper,
   parameters: { layout: 'fullscreen' },
   decorators: [
     (Story, context) => {
@@ -48,13 +49,15 @@ const meta = {
               background: 'var(--desktop-backdrop) center / cover no-repeat',
             }}
           >
-            <Story />
+            <AnimatePresence>
+              <Story />
+            </AnimatePresence>
           </div>
         </Provider>
       )
     },
   ],
-} satisfies Meta<typeof ManagedWindow>
+} satisfies Meta<typeof WindowWrapper>
 
 export default meta
 
@@ -136,6 +139,98 @@ export const Draggable: Story = {
       description: {
         story:
           'Grab the title bar and drag. The window clamps to all four viewport edges and never escapes the canvas. Test: left, right, top, bottom edges.',
+      },
+    },
+  },
+}
+
+export const DoubleClickMaximize: Story = {
+  args: {
+    windowId: 'win-1',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Double-click the title bar to maximize. Double-click again to restore to original size and position. The window should fill the viewport (minus the taskbar) when maximized and return exactly to its prior geometry on restore. Double-clicking control buttons should NOT maximize.',
+      },
+    },
+  },
+}
+
+const threeWindowState: WindowState = {
+  byId: {
+    'win-1': {
+      id: 'win-1',
+      kind: 'welcome',
+      title: 'Window A',
+      position: { x: 50, y: 30 },
+      size: { width: 480, height: 360 },
+      zIndex: 1,
+      isMinimized: false,
+      isMaximized: false,
+      prevGeometry: null,
+    },
+    'win-2': {
+      id: 'win-2',
+      kind: 'welcome',
+      title: 'Window B',
+      position: { x: 180, y: 80 },
+      size: { width: 480, height: 360 },
+      zIndex: 2,
+      isMinimized: false,
+      isMaximized: false,
+      prevGeometry: null,
+    },
+    'win-3': {
+      id: 'win-3',
+      kind: 'welcome',
+      title: 'Window C',
+      position: { x: 310, y: 130 },
+      size: { width: 480, height: 360 },
+      zIndex: 3,
+      isMinimized: false,
+      isMaximized: false,
+      prevGeometry: null,
+    },
+  },
+  ids: ['win-1', 'win-2', 'win-3'],
+  zCounter: 3,
+  nextIdSeed: 3,
+}
+
+export const ZIndexStacking: Story = {
+  args: {
+    windowId: 'win-1',
+  },
+  decorators: [
+    () => {
+      const store = setupStore({ window: threeWindowState })
+      return (
+        <Provider store={store}>
+          <div
+            style={{
+              position: 'relative',
+              width: '100vw',
+              height: '100vh',
+              background: 'var(--desktop-backdrop) center / cover no-repeat',
+            }}
+          >
+            <AnimatePresence>
+              <WindowWrapper windowId="win-1" key="win-1" />
+              <WindowWrapper windowId="win-2" key="win-2" />
+              <WindowWrapper windowId="win-3" key="win-3" />
+            </AnimatePresence>
+          </div>
+        </Provider>
+      )
+    },
+  ],
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Three overlapping windows. Click any window to bring it to the front. Only the focused window should show active title-bar chrome (blue gradient). The other two should show inactive chrome (grey). Verify: click each window in turn and confirm exactly one active title bar.',
       },
     },
   },
