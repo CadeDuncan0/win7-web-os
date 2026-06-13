@@ -30,7 +30,8 @@ _ALWAYS_ reference .claude/tasks to see if an in-depth markdown file exists outl
         - Hybrid (table = index, repo = content): the `projects` table stays the source of truth for the card grid (title, tech_stack, visibility, thumbnail) and drives listing + RLS; rich subpage content (copy, embedded demos, galleries) renders from repo-resident MDX/React.
         - All in Supabase: descriptions, image URLs (Storage), demo links, and body content all move into the `projects` table / added columns; subpages render fully from the DB.
         - All in repo: a static in-repo registry holds all project data and content; Supabase is auth-only. (Note: undercuts the GraphQL + RLS data-layer thesis in `CLAUDE.md`.)
-    - Decision: _pending — record the chosen approach and rationale here._
+    - Recommendation (Phase 3 roadmap, pending USER confirmation): **Hybrid**. Keeps the card grid + visibility + RLS DB-driven (honors the `CLAUDE.md` data-layer thesis) while long-form per-project bodies (copy, galleries, the embedded Super Mario Bros demo) render from repo-resident MDX/React keyed by a `slug` column. Full analysis in `.claude/phases/phase_3/phase_overview.md` → "Blocking Decision."
+    - Decision: _STILL UNRESOLVED — user has final say. Record the chosen approach + rationale here, then Phase 3 Task 8 may begin. This is a hard gate; do not start Band 3 (Tasks 8–12) until this line states a chosen approach._
 
 ## TODO
 
