@@ -1,0 +1,41 @@
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--tb-height);
+  z-index: var(--tb-z);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-1);
+  gap: var(--space-1);
+  background: var(--tb-bg);
+  border-top: var(--tb-border-top);
+  box-shadow: var(--tb-shadow);
+}
+
+.taskbar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(var(--tb-glass-blur));
+  -webkit-backdrop-filter: blur(var(--tb-glass-blur));
+  z-index: -1;
+  pointer-events: none;
+}
+
+.orbWrapper {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.buttonGroup {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow: hidden;
+  height: 100%;
+  padding: 4px 0;
+}

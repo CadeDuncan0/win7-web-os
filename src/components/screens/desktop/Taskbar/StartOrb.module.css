@@ -1,0 +1,32 @@
+.startOrb {
+  width: var(--tb-orb-size);
+  height: var(--tb-orb-size);
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-top: -4px;
+  background: radial-gradient(circle at 40% 35%, #4bc0f0 0%, #1a7ec5 45%, #0e5a8e 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transition: filter 0.1s ease;
+}
+
+.startOrb:hover {
+  filter: var(--windows7-focus);
+}
+
+.startOrb:active,
+.active {
+  filter: var(--windows7-active);
+}
+
+.logo {
+  width: 20px;
+  height: 20px;
+}
