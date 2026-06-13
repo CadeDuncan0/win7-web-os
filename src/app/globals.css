@@ -251,6 +251,67 @@
   --tb-clock-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   --tb-orb-size: 44px;
   --tb-z: var(--dsk-z-taskbar);
+
+  /* ─── SEMANTIC: Internet Explorer chrome ──────────────────────── */
+  --ie-toolbar-height: 36px;
+  --ie-toolbar-bg: linear-gradient(
+    to bottom,
+    rgba(240, 243, 248, 1) 0%,
+    rgba(218, 225, 234, 1) 100%
+  );
+  --ie-toolbar-border: 1px solid rgba(160, 170, 185, 0.5);
+  --ie-toolbar-padding: 4px 8px;
+  --ie-back-btn-size: 30px;
+  --ie-back-btn-bg: linear-gradient(
+    to bottom,
+    rgba(110, 175, 230, 1) 0%,
+    rgba(50, 120, 195, 1) 50%,
+    rgba(35, 95, 165, 1) 100%
+  );
+  --ie-back-btn-bg-hover: linear-gradient(
+    to bottom,
+    rgba(130, 195, 245, 1) 0%,
+    rgba(70, 145, 215, 1) 50%,
+    rgba(50, 115, 185, 1) 100%
+  );
+  --ie-back-btn-bg-disabled: linear-gradient(
+    to bottom,
+    rgba(200, 210, 220, 1) 0%,
+    rgba(170, 180, 195, 1) 100%
+  );
+  --ie-back-btn-border: 1px solid rgba(30, 80, 140, 0.6);
+  --ie-back-btn-arrow-color: #fff;
+  --ie-back-btn-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --ie-fwd-btn-size: 22px;
+  --ie-fwd-btn-bg: var(--ie-back-btn-bg);
+  --ie-fwd-btn-bg-hover: var(--ie-back-btn-bg-hover);
+  --ie-fwd-btn-bg-disabled: var(--ie-back-btn-bg-disabled);
+  --ie-fwd-btn-border: var(--ie-back-btn-border);
+  --ie-address-height: 24px;
+  --ie-address-bg: #fff;
+  --ie-address-border: 1px solid rgba(120, 140, 165, 0.5);
+  --ie-address-radius: 2px;
+  --ie-address-text: #333;
+  --ie-address-icon-size: 16px;
+  --ie-refresh-size: 18px;
+  --ie-refresh-color: rgba(80, 100, 130, 0.7);
+  --ie-refresh-color-hover: rgba(50, 70, 100, 1);
+  --ie-favbar-height: 24px;
+  --ie-favbar-bg: linear-gradient(
+    to bottom,
+    rgba(235, 239, 245, 1) 0%,
+    rgba(220, 226, 234, 1) 100%
+  );
+  --ie-favbar-border: 1px solid rgba(160, 170, 185, 0.3);
+  --ie-favbar-link-color: #1a3a5c;
+  --ie-favbar-link-hover-bg: rgba(180, 200, 225, 0.4);
+  --ie-favbar-link-radius: 2px;
+  --ie-favbar-star-color: rgba(200, 170, 50, 0.9);
+  --ie-content-bg: #fff;
+  --ie-external-card-bg: rgba(240, 243, 248, 0.8);
+  --ie-external-card-border: 1px solid var(--w7-el-bd);
+  --ie-external-card-radius: 4px;
+  --ie-external-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* =====================================================================

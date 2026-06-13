@@ -12,13 +12,13 @@
 
 ## Flags
 
-| Flag            | Value                                 |
-| --------------- | ------------------------------------- |
-| Phase           | 2                                     |
-| Status          | in-progress                           |
-| Tasks Complete  | 14 / 18                               |
-| Blocking Issues | None                                  |
-| Current Task    | Task 15 — Internet Explorer Component |
+| Flag            | Value                            |
+| --------------- | -------------------------------- |
+| Phase           | 2                                |
+| Status          | in-progress                      |
+| Tasks Complete  | 15 / 18                          |
+| Blocking Issues | None                             |
+| Current Task    | Task 16 — Compose /desktop Route |
 
 ---
 
@@ -232,7 +232,7 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
 | 12   | Z-Index Stacking + Focus Promotion               | ✅ Complete |
 | 13   | Framer Motion Window Transitions                 | ✅ Complete |
 | 14   | Taskbar Component                                | ✅ Complete |
-| 15   | Internet Explorer Component                      | ⬜ Pending  |
+| 15   | Internet Explorer Component                      | ✅ Complete |
 | 16   | Compose `/desktop` Route                         | ⬜ Pending  |
 | 17   | Cypress E2E Suite — Desktop Journeys             | ⬜ Pending  |
 | 18   | Validate Phase 2                                 | ⬜ Pending  |
