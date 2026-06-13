@@ -12,13 +12,13 @@
 
 ## Flags
 
-| Flag            | Value                                            |
-| --------------- | ------------------------------------------------ |
-| Phase           | 2                                                |
-| Status          | in-progress                                      |
-| Tasks Complete  | 11 / 19                                          |
-| Blocking Issues | None                                             |
-| Current Task    | Task 11 — Maximize / Restore / Minimize Geometry |
+| Flag            | Value                                 |
+| --------------- | ------------------------------------- |
+| Phase           | 2                                     |
+| Status          | in-progress                           |
+| Tasks Complete  | 14 / 18                               |
+| Blocking Issues | None                                  |
+| Current Task    | Task 15 — Internet Explorer Component |
 
 ---
 
@@ -93,7 +93,6 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
 | Storybook-first for every new UI primitive                            | Same gate as Phase 1: `<DesktopIcon>`, `<Taskbar>`, `<ContextMenu>`, `<StartMenu>`, `<InternetExplorerWindow>`, the wired `<Window>` shell — each lands in Storybook before composition. Stories cover idle / focused / active / disabled / maximized / minimized / open / closed variants per primitive.                                                                              |
 | Phase 2 expands to a "shippable shell," not just the window manager   | Per the product owner, the desktop must be _navigable and demoable_ to ship — so a working Start Menu (Iteration 1), a live taskbar clock, and a fake IE window are in. The hard boundary is **shell + launchers + stub content** in Phase 2; **real data + documents + subpages** in Phase 3. No GraphQL, Storage, or PDF rendering crosses into Phase 2.                             |
 | Internet Explorer is a `WindowKind`, not a real browser               | The fake IE renders Aero IE chrome around an internal route map (`about:home`, `/resume`, `/projects`, external-link cards). It never embeds a live web view or iframes a third-party origin. Navigation is controlled React state over an allow-list — no arbitrary URLs. This keeps it safe, deterministic, and unit-testable, and honors the "only specific URLs" note in the TODO. |
-| The logon-screen avatar is persisted into session state               | The Start Menu account header must show the _same_ avatar the visitor saw at logon. Today `login/page.tsx` picks it via `pickTwoDistinctIcons()` and discards it on navigation. Task 15 lifts the chosen avatar into Redux at sign-in so the desktop and Start Menu read one source of truth.                                                                                          |
 | Desktop shortcuts come from a **static in-repo registry** in Phase 2  | The TODO floats a Supabase table (with a `projects` FK) for shortcut metadata. That is deferred — Phase 2 declares the shortcut / icon set in a typed in-repo registry. Whether shortcuts become DB-backed is downstream of the unresolved project-content-storage decision recorded in `.claude/TASKS.md`.                                                                            |
 | Project-content storage is an **open decision that blocks Phase 3**   | Where per-project copy / images / demos live (Supabase vs repo vs hybrid) is unresolved. It does **not** block Phase 2 (stub content only), but an answer **must** be recorded before Phase 3 begins. Tracked in `.claude/TASKS.md` → "Open Design Decisions."                                                                                                                         |
 
@@ -122,7 +121,7 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
 - Task 1
   - Expand Window Slice Logic
   - Redux Toolkit · TypeScript · Jest
-  - State shape per `CLAUDE.md` Window Manager Rules (`id`, `title`, `position`, `size`, `zIndex`, `isMinimized`, `isMaximized`), reducers (`openWindow`, `closeWindow`, `minimizeWindow`, `restoreWindow`, `toggleMaximize`, `focusWindow`, `moveWindow`, `resizeWindow`), typed selectors (`selectOpenWindows`, `selectWindowById`, `selectTopWindowId`), exhaustive Jest unit coverage on every reducer. The `WindowKind` union grows to include `internet-explorer` (Task 16); Resume and Projects are IE _routes_, not separate window kinds.
+  - State shape per `CLAUDE.md` Window Manager Rules (`id`, `title`, `position`, `size`, `zIndex`, `isMinimized`, `isMaximized`), reducers (`openWindow`, `closeWindow`, `minimizeWindow`, `restoreWindow`, `toggleMaximize`, `focusWindow`, `moveWindow`, `resizeWindow`), typed selectors (`selectOpenWindows`, `selectWindowById`, `selectTopWindowId`), exhaustive Jest unit coverage on every reducer. The `WindowKind` union grows to include `internet-explorer` (Task 15); Resume and Projects are IE _routes_, not separate window kinds.
 
 - Task 2
   - Expand Desktop Slice Logic
@@ -158,13 +157,13 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
 - Task 8
   - Build Start Menu
   - React · CSS Modules · Framer Motion · Storybook · Redux
-  - Aero-glass Start Menu panel toggled by the taskbar Start orb (wired in Task 14); opens / closes with Framer Motion; dismisses on outside-click and Escape; full keyboard navigation with `menu` / `menuitem` ARIA. The account header sits top-middle of the right column and extends above the panel's top edge, showing the avatar persisted in Task 15 (reusing the logon account-icon primitive). Storybook stories: closed / open / open-with-search-active.
+  - Aero-glass Start Menu panel toggled by the taskbar Start orb (wired in Task 14); opens / closes with Framer Motion; dismisses on outside-click and Escape; full keyboard navigation with `menu` / `menuitem` ARIA. The account header sits top-middle of the right column and extends above the panel's top edge, showing the session avatar (reusing the logon account-icon primitive). Storybook stories: closed / open / open-with-search-active.
   - Left column: Resume and Projects row shortcuts (each dispatches `openWindow` for an IE window at the matching stub route). Right column: GitHub, LinkedIn, Source Code folder shortcuts (open IE external-link stub pages). A search box that filters the visible row shortcuts by label. The Sign Out action — relocated here from the Phase-1 placeholder button — calls `signOut()` and routes to `/login`. Keyboard-accessible; RTL test asserts search filtering and that a shortcut dispatches the correct `openWindow` payload.
 
 - Task 9
   - Wire Window Component to Redux State
   - React · CSS Modules · Storybook · Redux
-  - Extend the existing 7.css `<Window>` (`src/components/windows7/Window/`) into a `<ManagedWindow>` that reads its geometry / focus / min-max state from `windowSlice` by id and dispatches close / minimize / maximize from the title-bar controls; Storybook stories drive a mock store and demonstrate the full roundtrip on a single window instance
+  - Extend the existing 7.css `<Window>` (`src/components/windows7/Window/`) into a `<WindowWrapper>` that reads its geometry / focus / min-max state from `windowSlice` by id and dispatches close / minimize / maximize from the title-bar controls; Storybook stories drive a mock store and demonstrate the full roundtrip on a single window instance
 
 - Task 10
   - Window Dragging via Raw `pointermove` + Boundary Clamping
@@ -193,27 +192,22 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
   - One button per open window in `windowSlice`; click semantics match Windows 7 — clicking an inactive window's button focuses it, clicking the _active_ window's button minimizes it, clicking a _minimized_ window's button restores and focuses it; active vs inactive button styling; expose button refs to Task 13's minimize animation so it can resolve the target coordinates
 
 - Task 15
-  - Persist Logon Avatar to Session
-  - Redux · React · TypeScript · Jest
-  - Lift the avatar chosen on the logon screen into Redux so the desktop reads one source of truth. Today `src/app/login/page.tsx` picks avatars via `pickTwoDistinctIcons()` and discards them on navigation. Add an `avatar` field to the authenticated session payload (extend `sessionSlice`'s `setSession` plus the `beginGuestSession` / `signInAsAdmin` results in `src/lib/auth.ts`), dispatch the selected account's avatar at sign-in, and expose a `selectAvatar` selector. Jest covers the new field across the guest and admin paths.
-
-- Task 16
   - Internet Explorer Component
   - React · CSS Modules · Storybook
-  - New `<InternetExplorerWindow>` content component for the `internet-explorer` window kind: Windows 7 IE chrome — address bar, back / forward / refresh buttons, page title — composed inside `<ManagedWindow>` on the existing 7.css `<Window>`. Navigation is controlled React state (current route + a history stack for back / forward), never a live web view. New `--w7-*` tokens for the IE chrome. Storybook stories: home / a content route / back-disabled / forward-enabled.
+  - New `<InternetExplorerWindow>` content component for the `internet-explorer` window kind: Windows 7 IE chrome — address bar, back / forward / refresh buttons, page title — composed inside `<WindowWrapper>` on the existing 7.css `<Window>`. Navigation is controlled React state (current route + a history stack for back / forward), never a live web view. New `--w7-*` tokens for the IE chrome. Storybook stories: home / a content route / back-disabled / forward-enabled.
   - An allow-listed route registry mapping pseudo-URLs (`about:home`, `/resume`, `/projects`, and external-link cards for GitHub / LinkedIn / Source) to **stub page components**. Back / forward walk the history stack. The Resume route renders a placeholder document frame; the Projects route renders a stub card grid laid out per `public/imgs/desktop/projects_mockup.png` (asset is referenced in `TASKS.md` but not yet present — add it before build). No live data, no third-party iframes, no arbitrary URLs. Document inline that the live Projects grid, the real resume document, and per-project subpages are Phase 3.
 
-- Task 17
+- Task 16
   - Compose `/desktop` Route
   - Next.js · React · Redux
   - Replace the placeholder content of `src/app/desktop/page.tsx` with the full composition: `<Desktop>` + `<WindowManager>` + `<Taskbar>` + `<StartMenu>`; declare the typed window / shortcut registry for the Phase 2 ship set — Internet Explorer, a Resume launcher and a Projects launcher (both open an IE window at their stub route), plus "Welcome" / "About This PC"; wire the desktop launcher icons (double-click → `openWindow`); the existing centered placeholder sign-out button is retired and Sign Out relocates into the Start Menu (Task 8) with its `signOut()` → `/login` behavior preserved
 
-- Task 18
+- Task 17
   - Cypress E2E Suite — Desktop Journeys
   - Cypress
   - Four flows: (a) Guest full journey — login → desktop renders → drag an icon → open a window → move it → minimize it via title bar → restore from taskbar → close; (b) Admin full journey — same plus multi-window z-index stacking and the maximize/restore toggle; (c) Right-click menus — desktop right-click opens the desktop menu, icon right-click opens the icon menu, Escape and outside-click dismiss; (d) Start Menu + IE — open the Start Menu from the orb, the search box filters the shortcuts, open the Resume / Projects / IE windows from both a Start Menu shortcut and a desktop icon, confirm IE walks between stub routes via back / forward, and Sign Out from the Start Menu returns to `/login`; suite runs in CI per Task 4
 
-- Task 19
+- Task 18
   - Validate Phase 2
   - All Phase 2 tooling
   - Full integration sweep: Storybook green for every new primitive and variant, `npm run build` clean, `npm test` (Jest + RTL) green, Cypress green locally and in CI, design token coverage audit (zero raw color / shadow / blur / gradient literals in any `*.module.css` under `src/components/windows7/` or the new desktop / taskbar / window-manager / Start Menu / IE components), keyboard navigation sweep on `/desktop` from initial focus through icon traversal → window focus → control activation → Start Menu open / search / dismiss, accessibility audit on `<ContextMenu>` and `<StartMenu>` (role, focus trap, Escape), `no-console` rule clean
@@ -234,29 +228,28 @@ document, per-project subpages, and the data layer behind them remain Phase 3 (s
 | 8    | Start Menu                                       | ✅ Complete |
 | 9    | Wire Window Component to Redux State             | ✅ Complete |
 | 10   | Window Dragging via Raw `pointermove` + Clamping | ✅ Complete |
-| 11   | Maximize / Restore / Minimize Geometry           | ⬜ Pending  |
-| 12   | Z-Index Stacking + Focus Promotion               | ⬜ Pending  |
-| 13   | Framer Motion Window Transitions                 | ⬜ Pending  |
-| 14   | Taskbar Component                                | ⬜ Pending  |
-| 15   | Persist Logon Avatar to Session                  | ✅ Complete |
-| 16   | Internet Explorer Component                      | ⬜ Pending  |
-| 17   | Compose `/desktop` Route                         | ⬜ Pending  |
-| 18   | Cypress E2E Suite — Desktop Journeys             | ⬜ Pending  |
-| 19   | Validate Phase 2                                 | ⬜ Pending  |
+| 11   | Maximize / Restore / Minimize Geometry           | ✅ Complete |
+| 12   | Z-Index Stacking + Focus Promotion               | ✅ Complete |
+| 13   | Framer Motion Window Transitions                 | ✅ Complete |
+| 14   | Taskbar Component                                | ✅ Complete |
+| 15   | Internet Explorer Component                      | ⬜ Pending  |
+| 16   | Compose `/desktop` Route                         | ⬜ Pending  |
+| 17   | Cypress E2E Suite — Desktop Journeys             | ⬜ Pending  |
+| 18   | Validate Phase 2                                 | ⬜ Pending  |
 
 ---
 
 ## Suggested Task Ordering
 
-The 19 tasks fall into four natural dependency bands. Within a band, tasks are mostly
+The 18 tasks fall into four natural dependency bands. Within a band, tasks are mostly
 parallelizable. Across bands, the later band depends on the earlier.
 
 | Band                          | Tasks              | Why this order                                                                                                                                               |
 | ----------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1. State + Tooling Setup      | 1, 2, 3, 4, 5, 15  | Slices, tooling, and the avatar-to-session lift must exist before any component can be built or tested — no inter-dependencies; can interleave               |
-| 2. Components                 | 6, 7, 8, 9, 14, 16 | Desktop shell, icons (with grid/snap/drag), Start Menu, the wired window, taskbar, and IE — each is a self-contained component built Storybook-first         |
-| 3. Window Behaviors           | 10, 11, 12, 13     | Window dragging, maximize/restore/minimize geometry, z-index stacking, and Framer Motion transitions — all depend on the wired `<ManagedWindow>` from Task 9 |
-| 4. Composition + Verification | 17, 18, 19         | Route composition, full E2E, and the phase validation sweep land last and gate phase closure                                                                 |
+| 1. State + Tooling Setup      | 1, 2, 3, 4, 5      | Slices and tooling must exist before any component can be built or tested — no inter-dependencies; can interleave                                            |
+| 2. Components                 | 6, 7, 8, 9, 14, 15 | Desktop shell, icons (with grid/snap/drag), Start Menu, the wired window, taskbar, and IE — each is a self-contained component built Storybook-first         |
+| 3. Window Behaviors           | 10, 11, 12, 13     | Window dragging, maximize/restore/minimize geometry, z-index stacking, and Framer Motion transitions — all depend on the wired `<WindowWrapper>` from Task 9 |
+| 4. Composition + Verification | 16, 17, 18         | Route composition, full E2E, and the phase validation sweep land last and gate phase closure                                                                 |
 
 ---
 
@@ -279,6 +272,6 @@ A feature inside this phase is **done** when every one of these is true:
 6. **Lint + build** — `npm run lint`, `npm run build`, and `npm run build-storybook` all green;
    ESLint `no-console` and `curly` rules clean.
 
-The phase is **complete** when all 19 tasks are validated, both test suites are green locally
+The phase is **complete** when all 18 tasks are validated, both test suites are green locally
 and in CI, the Vercel preview deploy on this branch renders `/desktop` correctly for both
-roles, and Task 19's validation report is signed off by the Junior.
+roles, and Task 18's validation report is signed off by the Junior.
