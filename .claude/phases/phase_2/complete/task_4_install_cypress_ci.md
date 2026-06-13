@@ -11,7 +11,7 @@ Phase 1 had one trivial journey (log in), so manual checks sufficed. The desktop
 first **multi-step interactive surface** — drag an icon, open a window, move it, minimize, restore
 from the taskbar, close — and that is exactly the shape of test where end-to-end gives real value
 over unit/RTL. `CLAUDE.md` mandates Cypress in CI; this task lights that gate up. **You write no
-desktop journeys here** — those are Task 18. This task delivers the _harness_: install, config,
+desktop journeys here** — those are Task 17. This task delivers the _harness_: install, config,
 two reusable login commands against the real auth flow, one smoke spec proving the pipeline, and a
 CI job.
 
@@ -74,7 +74,7 @@ export default defineConfig({
     baseUrl: 'http://localhost:3000', // the port `next dev`/`next start` print on boot — confirm from the log
     // TODO: [Action Required: scope the harness] - 5 min
     //   1. setupNodeEvents(on, config) { return config }  ← keep the hook even if it just returns config;
-    //      it is where env plumbing/plugins land in Task 18.
+    //      it is where env plumbing/plugins land in Task 17.
     //   2. Leave specPattern at its default (cypress/e2e/**/*.cy.ts) unless you have a concrete reason.
     //   3. Do NOT turn video on — verify the installed default is off and keep it off in CI.
   },
@@ -162,7 +162,7 @@ Cypress.Commands.add('loginAsAdmin', () => {
 //   Add `export {}` if the file would otherwise not be treated as a module.
 ```
 
-### Step 6 — Smoke spec (proves the harness; **journeys are Task 18**)
+### Step 6 — Smoke spec (proves the harness; **journeys are Task 17**)
 
 ```ts
 // cypress/e2e/smoke.cy.ts
@@ -172,7 +172,7 @@ describe('Cypress harness smoke', () => {
     //   1. cy.loginAsGuest()
     //   2. cy.visit('/desktop'); assert the URL stays on '/desktop' (middleware honored the guest cookie).
     //   Keep it thin — this validates install + commands + auth + middleware, nothing more. The
-    //   /desktop route is still a placeholder until Task 17; do NOT assert desktop content here.
+    //   /desktop route is still a placeholder until Task 16; do NOT assert desktop content here.
   })
 })
 ```
@@ -462,4 +462,4 @@ the most likely cause is a missing or mistyped `CYPRESS_ADMIN_PASSWORD` secret.
 - **Secrets, not literals.** The seeded test-account password rides a `CYPRESS_`-prefixed GitHub
   secret → `Cypress.env('ADMIN_PASSWORD')`; never hardcode, never use the real owner account.
 - **Scope discipline:** this is the harness + login commands + one smoke spec. The Guest/Admin
-  desktop journeys are Task 18.
+  desktop journeys are Task 17.

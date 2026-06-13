@@ -183,7 +183,7 @@ These belong elsewhere:
 | ----------------------------------------- | ------------------------------------------------------ | ------- |
 | Boundary clamping (keep window on-screen) | Component-layer `pointermove` handler, before dispatch | Task 10 |
 | Snap-to-grid (windows do not snap)        | N/A — only icons snap; windows are free-form           | Task 7  |
-| What renders **inside** a window          | Window-content registry mapping `kind` → component     | Task 17 |
+| What renders **inside** a window          | Window-content registry mapping `kind` → component     | Task 16 |
 | Animations on open/close/minimize         | Framer Motion at the component layer                   | Task 13 |
 | Taskbar button per window                 | Subscribes to selectors from this slice                | Task 14 |
 
@@ -254,7 +254,7 @@ import type { RootState } from '@/store'
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 // Discriminator for what content renders inside the window. The slice is
-// content-agnostic — a registry component (Task 17) maps kind → React component.
+// content-agnostic — a registry component (Task 16) maps kind → React component.
 // Add new kinds here as windows are introduced in Phase 2 and Phase 3.
 export type WindowKind = 'welcome' | 'about-this-pc'
 
@@ -510,7 +510,7 @@ export const selectTopWindowId = createSelector([selectOpenWindows], (windows): 
 
 // TODO: [Action required by Junior] - Implement selectVisibleWindows
 // Returns: WindowInstance[] of windows where isMinimized === false.
-// Used by the WindowManager renderer (Task 17) to decide what to mount.
+// Used by the WindowManager renderer (Task 16) to decide what to mount.
 // Minimized windows are intentionally unmounted from the DOM — their state
 // survives in the slice; their components do not.
 export const selectVisibleWindows = createSelector([selectOpenWindows], (windows) => {

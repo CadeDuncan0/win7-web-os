@@ -145,10 +145,9 @@ earned its place and would be rebuilt the same way.
    `guestCookie.ts`, and the listener hook.
 
 7. **Carry presentation state in the session payload from the start.** The logon avatar is
-   picked at the login screen and discarded, and retrofitting it into the session (Task 15)
-   now touches the schema, both sign-in paths, and the slice. Designing `AppSession` with the
-   full set of "what the desktop needs to greet you" fields up front would have made that a
-   non-event.
+   picked at the login screen and discarded, and retrofitting it into the session now touches
+   the schema, both sign-in paths, and the slice. Designing `AppSession` with the full set of
+   "what the desktop needs to greet you" fields up front would have made that a non-event.
 
 ### What worked well and would be rebuilt the same way
 

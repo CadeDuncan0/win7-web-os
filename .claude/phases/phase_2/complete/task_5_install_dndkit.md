@@ -95,15 +95,15 @@ npm i @dnd-kit/core @dnd-kit/utilities
 
 ```js
 // Enforce the hard constraint: @dnd-kit is for icons ONLY. Any import from
-// @dnd-kit inside src/components/windows7/Window/ or a future ManagedWindow
+// @dnd-kit inside src/components/windows7/Window/ or a future WindowWrapper
 // component is a bug — window dragging uses raw pointermove (Task 10).
 //
 // TODO: [Action Required: add a no-restricted-imports rule scoped to window files] - 5-10 min
 //   1. Add a new config object to the defineConfig array, scoped to files matching
 //      window components. Use a file pattern broad enough to catch both the existing
-//      Window primitive and the future ManagedWindow:
+//      Window primitive and the future WindowWrapper:
 //        files: ['src/components/**/Window/**/*.ts', 'src/components/**/Window/**/*.tsx',
-//                'src/components/**/ManagedWindow/**/*.ts', 'src/components/**/ManagedWindow/**/*.tsx']
+//                'src/components/**/WindowWrapper/**/*.ts', 'src/components/**/WindowWrapper/**/*.tsx']
 //
 //   2. Set the rule:
 //        'no-restricted-imports': ['error', {
@@ -143,7 +143,7 @@ npm i @dnd-kit/core @dnd-kit/utilities
 | 3  | useDesktopSensors hook exports from src/hooks/useDesktopSensors.ts                | editor import resolution                                  | ⬜ Pending |
 | 4  | PointerSensor configured with distance activation constraint                      | code review of useDesktopSensors                          | ⬜ Pending |
 | 5  | KeyboardSensor present (no coordinateGetter override — that is Task 8)            | code review of useDesktopSensors                          | ⬜ Pending |
-| 6  | ESLint no-restricted-imports blocks @dnd-kit in Window/** and ManagedWindow/**    | add a test import in Window.tsx, run eslint, see error    | ⬜ Pending |
+| 6  | ESLint no-restricted-imports blocks @dnd-kit in Window/** and WindowWrapper/**    | add a test import in Window.tsx, run eslint, see error    | ⬜ Pending |
 | 7  | npx tsc --noEmit clean (no type collisions from new packages)                     | npx tsc --noEmit                                          | ⬜ Pending |
 | 8  | npx tsc -p cypress/tsconfig.json --noEmit clean                                  | npx tsc -p cypress/tsconfig.json --noEmit                 | ⬜ Pending |
 | 9  | npm test green (49 tests, no Jest regressions)                                    | npm test                                                  | ⬜ Pending |
@@ -167,7 +167,7 @@ Validated on: __________
   (Space to grab, arrows to move, Escape to cancel) — keyboard drag is an accessibility
   requirement, not an enhancement.
 - **Import boundary enforced via ESLint.** `no-restricted-imports` on `@dnd-kit/*` scoped to
-  `Window/**` and `ManagedWindow/**` makes the CLAUDE.md constraint ("window dragging uses raw
+  `Window/**` and `WindowWrapper/**` makes the CLAUDE.md constraint ("window dragging uses raw
   pointermove") a CI-enforced gate, not a convention.
 - **Sensor hook is the single tuning point.** `useDesktopSensors` encapsulates the activation
   distance and sensor list so every consumer inherits the same drag-vs-click threshold.

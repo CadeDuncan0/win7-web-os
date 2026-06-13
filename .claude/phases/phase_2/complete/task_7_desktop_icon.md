@@ -61,7 +61,7 @@ be client components. The parent `<Desktop>` shell remains a server component �
 the `<IconGrid>` via the `iconGrid` slot prop.
 
 **Decision 6 — the icon registry is NOT part of this task.** The static list of which icons
-exist (label, image path, which `WindowKind` they open) is defined in Task 17 (Compose
+exist (label, image path, which `WindowKind` they open) is defined in Task 16 (Compose
 `/desktop` Route) as a typed in-repo registry. This task builds the _renderer_ that maps
 a `DesktopIcon` from Redux into a visual element. Stories and tests use hardcoded mock data.
 
@@ -482,7 +482,7 @@ a `DesktopIcon` from Redux into a visual element. Stories and tests use hardcode
 //     placeholder story with aria-disabled="true" and reduced opacity.
 //
 //   NOTE: Icon images may not exist yet at the paths used in stories.
-//   Use placeholder paths and note that real assets are added in Task 17.
+//   Use placeholder paths and note that real assets are added in Task 16.
 //   Storybook will show a broken image — that's fine for now. Or use a
 //   simple colored div as a placeholder image.
 ```
@@ -641,7 +641,7 @@ research against a real Windows 7 desktop or a reference screenshot. Do not gues
 | 13 | RTL test: background click clears selection                                      | npm test                                                  | ⬜ Pending |
 | 14 | Keyboard: Enter on focused icon dispatches onOpen                                | manual test + RTL                                         | ⬜ Pending |
 | 15 | touch-action: none on icon button (required by @dnd-kit PointerSensor)           | code review                                               | ⬜ Pending |
-| 16 | No @dnd-kit imports in any Window/ or ManagedWindow/ file                        | npx eslint --max-warnings=0                               | ⬜ Pending |
+| 16 | No @dnd-kit imports in any Window/ or WindowWrapper/ file                        | npx eslint --max-warnings=0                               | ⬜ Pending |
 | 17 | npx tsc --noEmit clean (excluding pre-existing login casing issue)               | npx tsc --noEmit                                          | ⬜ Pending |
 | 18 | npx eslint --max-warnings=0 clean                                                | npx eslint --max-warnings=0                               | ⬜ Pending |
 | 19 | npm test green (all existing + new tests)                                         | npm test                                                  | ⬜ Pending |
@@ -665,5 +665,5 @@ Validated on: __________
 - **Column-first layout.** Icons fill top-to-bottom, then left-to-right — matching Windows 7.
 - **Selection halo tokens need research.** The exact `rgba` values for the Win7 icon selection
   highlight must be sourced from a reference — do not guess. Placeholder values are noted.
-- **Icon images may not exist yet.** Real icon assets are added when the registry is built in Task 17.
+- **Icon images may not exist yet.** Real icon assets are added when the registry is built in Task 16.
   Stories use placeholder paths or colored rectangles.

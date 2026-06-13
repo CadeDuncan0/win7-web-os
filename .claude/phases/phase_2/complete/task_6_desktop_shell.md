@@ -203,15 +203,15 @@ interface DesktopProps {
 ```css
 /* TODO: [Action Required: remove the old .main and .signOut styles] - 5 min
    1. The .main class duplicates what the <Desktop> shell now provides.
-      Delete .main. The page will import and render <Desktop> (Task 17),
+      Delete .main. The page will import and render <Desktop> (Task 16),
       so the page.module.css may become empty or minimal.
    2. The .signOut class is retired — Sign Out relocates to the Start Menu
       (Task 8). Delete .signOut and all its pseudo/state selectors.
    3. If page.module.css is now empty, keep the file but leave it blank —
-      Task 17 may add page-level composition styles.
+      Task 16 may add page-level composition styles.
    4. In page.tsx, remove the className={styles.main} reference on <main>.
       Replace <main className={styles.main}></main> with just <main></main>
-      (or keep the page minimal until Task 17 composes the full desktop).
+      (or keep the page minimal until Task 16 composes the full desktop).
       Clean up the commented-out sign-out code — it served its purpose. */
 ```
 

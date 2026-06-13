@@ -17,7 +17,7 @@ The architecture splits into three layers, each independently testable:
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│ ManagedWindow (Task 9, modified)                             │
+│ WindowWrapper (Task 9, modified)                             │
 │   render position = Redux position + transient drag offset   │
 │   delegates title-bar pointerdown → useWindowDrag            │
 ├──────────────────────────────────────────────────────────────┤
@@ -104,7 +104,7 @@ focus promotion happens first, then drag bookkeeping. One event, two orthogonal 
 // TODO: [Action Required: implement the pointer-capture drag hook] - 25 min
 //
 //   Signature (narrow on purpose — the hook does not read Redux itself,
-//   ManagedWindow passes what it already selected):
+//   WindowWrapper passes what it already selected):
 //
 //     interface UseWindowDragArgs {
 //       windowId: string
@@ -168,10 +168,10 @@ focus promotion happens first, then drag bookkeeping. One event, two orthogonal 
 //   The hook MAY use useAppDispatch (typed wrapper — never raw useDispatch).
 ```
 
-### Step 3 — Wire into the wrapper: `src/components/screens/desktop/ManagedWindow/ManagedWindow.tsx`
+### Step 3 — Wire into the wrapper: `src/components/screens/desktop/WindowWrapper/WindowWrapper.tsx`
 
 ```tsx
-// TODO: [Action Required: merge drag into ManagedWindow] - 15 min
+// TODO: [Action Required: merge drag into WindowWrapper] - 15 min
 //
 //   1. Call the hook after the existing selectors (AFTER the !windowData
 //      guard — hooks can't be conditional, so restructure: select first,
@@ -202,12 +202,12 @@ focus promotion happens first, then drag bookkeeping. One event, two orthogonal 
 //      (consumed in Step 4).
 ```
 
-### Step 4 — Drag styles: `src/components/screens/desktop/ManagedWindow/ManagedWindow.module.css`
+### Step 4 — Drag styles: `src/components/screens/desktop/WindowWrapper/WindowWrapper.module.css`
 
 ```css
 /* TODO: [Action Required: drag ergonomics styles] - 5 min
  *
- * .managedWindow :global(.title-bar)
+ * .WindowWrapper :global(.title-bar)
  *   touch-action: none;
  *     ↑ REQUIRED for Pointer Events: without it, touch input triggers
  *       scrolling/panning instead of pointermove. Mouse-only testing
@@ -223,7 +223,7 @@ focus promotion happens first, then drag bookkeeping. One event, two orthogonal 
  */
 ```
 
-### Step 5 — RTL drag tests: `src/components/screens/desktop/ManagedWindow/ManagedWindow.test.tsx`
+### Step 5 — RTL drag tests: `src/components/screens/desktop/WindowWrapper/WindowWrapper.test.tsx`
 
 ```tsx
 // TODO: [Action Required: extend the Task 9 suite with drag coverage] - 25 min
@@ -238,7 +238,7 @@ focus promotion happens first, then drag bookkeeping. One event, two orthogonal 
 //   target the element your handlers actually live on. Every event needs
 //   { clientX, clientY, pointerId: 1 }.
 //
-//   describe('ManagedWindow — dragging')
+//   describe('WindowWrapper — dragging')
 //
 //     it('commits the moved position to Redux on pointerup')
 //       - down on .title-bar at (150, 60) → move to (250, 160) → up
@@ -267,7 +267,7 @@ focus promotion happens first, then drag bookkeeping. One event, two orthogonal 
 //       - two-window state → drag win-1 → its zIndex bumps (focus + drag coexist)
 ```
 
-### Step 6 — Storybook story: `src/components/screens/desktop/ManagedWindow/ManagedWindow.stories.tsx`
+### Step 6 — Storybook story: `src/components/screens/desktop/WindowWrapper/WindowWrapper.stories.tsx`
 
 ```tsx
 // TODO: [Action Required: add a Draggable story] - 5 min
@@ -289,10 +289,10 @@ focus promotion happens first, then drag bookkeeping. One event, two orthogonal 
 | `src/lib/windowMath.ts`                                                  | Pure clamp geometry           | New          |
 | `src/lib/windowMath.test.ts`                                             | Clamp unit tests (6)          | New          |
 | `src/hooks/useWindowDrag.ts`                                             | Pointer-capture drag hook     | New          |
-| `src/components/screens/desktop/ManagedWindow/ManagedWindow.tsx`         | Drag wiring + transient style | Modified     |
-| `src/components/screens/desktop/ManagedWindow/ManagedWindow.module.css`  | touch-action / user-select    | Modified     |
-| `src/components/screens/desktop/ManagedWindow/ManagedWindow.test.tsx`    | +7 drag tests                 | Modified     |
-| `src/components/screens/desktop/ManagedWindow/ManagedWindow.stories.tsx` | +1 Draggable story            | Modified     |
+| `src/components/screens/desktop/WindowWrapper/WindowWrapper.tsx`         | Drag wiring + transient style | Modified     |
+| `src/components/screens/desktop/WindowWrapper/WindowWrapper.module.css`  | touch-action / user-select    | Modified     |
+| `src/components/screens/desktop/WindowWrapper/WindowWrapper.test.tsx`    | +7 drag tests                 | Modified     |
+| `src/components/screens/desktop/WindowWrapper/WindowWrapper.stories.tsx` | +1 Draggable story            | Modified     |
 
 ---
 

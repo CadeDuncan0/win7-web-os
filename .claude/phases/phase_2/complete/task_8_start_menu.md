@@ -15,8 +15,8 @@ not "this person drew a picture of it."
 Task 8 delivers the Start Menu as a **self-contained, Storybook-first component** that owns its
 own open/close animation (Framer Motion), dismissal logic (outside-click + Escape), keyboard
 navigation (ARIA `menu`/`menuitem`), search filtering, and the Sign Out action. The Taskbar
-(Task 14) wires the orb toggle; the avatar comes from session state (Task 15). Both dependencies
-are handled via props so this component is buildable and testable in isolation right now.
+(Task 14) wires the orb toggle; the avatar comes from session state. Both dependencies are
+handled via props so this component is buildable and testable in isolation right now.
 
 ### Windows 7 Start Menu anatomy
 
@@ -37,14 +37,14 @@ are handled via props so this component is buildable and testable in isolation r
 └──────────────────────────────────────────────────┘
 ```
 
-| Zone         | Description                                                                                                                 |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------- |
-| Left column  | "Pinned" program shortcuts — each dispatches `openWindow` for an IE window                                                  |
-| Right column | Folder/link shortcuts — each dispatches `openWindow` for an IE external-link stub                                           |
-| Avatar       | Reuses `<AccountIcon>` from `src/components/windows7/AccountIcon/` — reads from a prop (wired to session avatar in Task 15) |
-| Search bar   | Filters the left-column shortcuts by label substring match (case-insensitive)                                               |
-| Sign Out     | Calls `signOut()` from `src/lib/auth.ts`, dispatches `clearSession`, navigates to `/login`                                  |
-| Panel        | Aero glass background via `backdrop-filter: blur()`, opens/closes with Framer Motion                                        |
+| Zone         | Description                                                                                                      |
+| ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| Left column  | "Pinned" program shortcuts — each dispatches `openWindow` for an IE window                                       |
+| Right column | Folder/link shortcuts — each dispatches `openWindow` for an IE external-link stub                                |
+| Avatar       | Reuses `<AccountIcon>` from `src/components/windows7/AccountIcon/` — reads from a prop (wired to session avatar) |
+| Search bar   | Filters the left-column shortcuts by label substring match (case-insensitive)                                    |
+| Sign Out     | Calls `signOut()` from `src/lib/auth.ts`, dispatches `clearSession`, navigates to `/login`                       |
+| Panel        | Aero glass background via `backdrop-filter: blur()`, opens/closes with Framer Motion                             |
 
 ### What already exists
 
@@ -64,10 +64,10 @@ are handled via props so this component is buildable and testable in isolation r
 
 **Decision 1 — `WindowKind` must be extended before shortcuts can dispatch.** The left-column
 shortcuts open IE windows. `WindowKind` currently has only `'welcome' | 'about-this-pc'`.
-Task 16 adds `'internet-explorer'`, but the Start Menu needs it now. Add
+Task 15 adds `'internet-explorer'`, but the Start Menu needs it now. Add
 `'internet-explorer'` to the `WindowKind` union in `windowSlice.ts` as a prerequisite step
 so the dispatched payloads type-check. This is a one-line change that unblocks both Task 8
-and Task 16.
+and Task 15.
 
 **Decision 2 — `isOpen` state lives in the parent, not in Redux.** The Start Menu's
 open/closed state is purely local UI — no other component reads it except the Taskbar orb
@@ -87,9 +87,8 @@ Enter/Space activates. Escape closes the menu. This is the WAI-ARIA Menu pattern
 navigation (GitHub, LinkedIn, Source) that should always be visible. Search narrows the
 program shortcuts in the left column by case-insensitive substring match on the label.
 
-**Decision 6 — The avatar prop is a `string | undefined`.** Task 15 persists the avatar
-into `sessionSlice`. Until that's done, the Start Menu accepts `avatarSrc?: string` as a
-prop and falls back to the default user icon. This keeps Task 8 independent of Task 15.
+**Decision 6 — The avatar prop is a `string | undefined`.** The Start Menu accepts
+`avatarSrc?: string` as a prop and falls back to the session avatar or the default user icon.
 
 ---
 
@@ -109,7 +108,7 @@ File: `src/store/slices/windowSlice.ts`
 //   Change:   export type WindowKind = 'welcome' | 'about-this-pc' | 'internet-explorer'
 //
 //   This one-line change unblocks both Task 8 (Start Menu shortcuts dispatch
-//   openWindow with kind: 'internet-explorer') and Task 16 (IE component).
+//   openWindow with kind: 'internet-explorer') and Task 15 (IE component).
 //   No other code changes needed — the slice is kind-agnostic.
 ```
 
@@ -203,7 +202,7 @@ File: `src/store/slices/windowSlice.ts`
 //     - { id: 'sm-signout', label: 'Sign Out', iconSrc: '...', action: { type: 'signOut' } }
 //
 //   NOTE: Icon images may not exist yet. Use placeholder paths matching the
-//   pattern '/imgs/desktop/icons/{name}.png'. Real assets land in Task 17.
+//   pattern '/imgs/desktop/icons/{name}.png'. Real assets land in Task 16.
 //
 //   Import WindowKind from '@/store/slices/windowSlice'.
 ```
@@ -319,7 +318,7 @@ File: `src/store/slices/windowSlice.ts`
 //     interface StartMenuProps {
 //       isOpen: boolean
 //       onClose: () => void
-//       avatarSrc?: string      // from session — wired in Task 15
+//       avatarSrc?: string      // optional override; defaults to session avatar
 //     }
 //
 //   Implementation:
@@ -882,7 +881,7 @@ Validated on: __________
   Menu is a controlled component — `isOpen` to show, `onClose` to dismiss. No global state
   for a local UI concern.
 - **`WindowKind` must include `'internet-explorer'` before shortcuts can type-check.** This
-  is a one-line prerequisite change in `windowSlice.ts` that also unblocks Task 16.
+  is a one-line prerequisite change in `windowSlice.ts` that also unblocks Task 15.
 - **Visual tokens require research.** The Start Menu's two-tone background (white left, blue
   right), Aero glass blur, and item hover highlights must be sourced from a real Win7
   reference — not guessed. Structural tokens (dimensions) are defined; visual tokens are

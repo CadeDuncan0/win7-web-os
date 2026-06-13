@@ -15,12 +15,12 @@ needs windows that **know who they are** — reading their geometry, focus state
 flags from `windowSlice` by id, and dispatching `closeWindow`, `minimizeWindow`,
 `toggleMaximize`, and `focusWindow` from their title-bar controls.
 
-`<ManagedWindow>` is the bridge between the stateless 7.css primitive and the Redux window
+`<WindowWrapper>` is the bridge between the stateless 7.css primitive and the Redux window
 manager. It's a **composition**, not an extension — it wraps `<Window>`, it does not modify it.
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  <ManagedWindow windowId="win-3">                   │
+│  <WindowWrapper windowId="win-3">                   │
 │    ┌─────────────────────────────────────────────┐  │
 │    │  <Window title={...} active={...}           │  │
 │    │    controls={<Minimize><Maximize><Close>}    │  │
@@ -37,12 +37,12 @@ manager. It's a **composition**, not an extension — it wraps `<Window>`, it do
 | Layer              | Responsibility                                                                                                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `<Window>` (7.css) | Presentational chrome — title bar, body, glass effect, status bar slot. No Redux awareness.                                                                                    |
-| `<ManagedWindow>`  | Redux bridge — reads `WindowInstance` by id, injects position/size as inline styles, wires title-bar controls to dispatches, passes `active` based on top-of-stack comparison. |
-| Window content     | Passed as `children` — `<ManagedWindow>` is content-agnostic. Task 17 maps `WindowKind` to content components.                                                                 |
+| `<WindowWrapper>`  | Redux bridge — reads `WindowInstance` by id, injects position/size as inline styles, wires title-bar controls to dispatches, passes `active` based on top-of-stack comparison. |
+| Window content     | Passed as `children` — `<WindowWrapper>` is content-agnostic. Task 16 maps `WindowKind` to content components.                                                                 |
 
 ### Key decisions
 
-**Decision 1 — Composition over inheritance.** `<ManagedWindow>` wraps `<Window>` and passes
+**Decision 1 — Composition over inheritance.** `<WindowWrapper>` wraps `<Window>` and passes
 computed props down. The 7.css primitive stays untouched — it can still be used in Storybook
 stories or non-Redux contexts. This is the adapter pattern.
 
@@ -68,7 +68,7 @@ drives the visual.
 
 **Decision 6 — The outer wrapper uses `position: absolute` with `left`, `top`, `width`,
 `height` from Redux.** The CSS module defines the positioning context. The window-manager
-container (Task 17) provides the `position: relative` parent. Inline styles for geometry
+container (Task 16) provides the `position: relative` parent. Inline styles for geometry
 because these values are dynamic per-instance.
 
 ---
@@ -81,11 +81,11 @@ because these values are dynamic per-instance.
 ### Step 0 — Design tokens: `src/app/globals.css`
 
 ```css
-/* TODO: [Action Required: add ManagedWindow tokens to globals.css] - 5 min
+/* TODO: [Action Required: add WindowWrapper tokens to globals.css] - 5 min
  *
  * Add these inside :root, after the Start Menu section.
  *
- * The ManagedWindow wrapper needs minimal new tokens — 7.css handles all
+ * The WindowWrapper wrapper needs minimal new tokens — 7.css handles all
  * window chrome styling. These tokens control only the positioning layer
  * and the resize handle (future Task 11).
  *
@@ -93,13 +93,13 @@ because these values are dynamic per-instance.
  *   --mw-min-height: 160px         ← matches MIN_WINDOW_SIZE in windowSlice
  *
  * NOTE: The z-index layer for windows is already defined as --dsk-z-windows: 10.
- * ManagedWindow does NOT use this token directly — each window's z-index is a
+ * WindowWrapper does NOT use this token directly — each window's z-index is a
  * dynamic value from Redux (state.window.byId[id].zIndex). The token exists for
  * the parent container's base layer.
  */
 ```
 
-### Step 1 — ManagedWindow component: `src/components/screens/desktop/ManagedWindow/ManagedWindow.tsx`
+### Step 1 — WindowWrapper component: `src/components/screens/desktop/WindowWrapper/WindowWrapper.tsx`
 
 ```tsx
 'use client'
@@ -110,7 +110,7 @@ because these values are dynamic per-instance.
 //   wires title-bar controls to dispatch actions.
 //
 //   Props:
-//     interface ManagedWindowProps {
+//     interface WindowWrapperProps {
 //       windowId: string
 //       children?: ReactNode
 //     }
@@ -203,7 +203,7 @@ because these values are dynamic per-instance.
 //
 //   6. RENDER:
 //        <div
-//          className={styles.managedWindow}
+//          className={styles.WindowWrapper}
 //          style={style}
 //          onPointerDown={handlePointerDown}
 //        >
@@ -235,18 +235,18 @@ because these values are dynamic per-instance.
 //          not for maximize).
 ```
 
-### Step 2 — ManagedWindow styles: `src/components/screens/desktop/ManagedWindow/ManagedWindow.module.css`
+### Step 2 — WindowWrapper styles: `src/components/screens/desktop/WindowWrapper/WindowWrapper.module.css`
 
 ```css
 /* TODO: [Action Required: style the managed window wrapper] - 10 min
  *
- * The CSS module for ManagedWindow is minimal — 7.css handles all visual
+ * The CSS module for WindowWrapper is minimal — 7.css handles all visual
  * chrome. This module handles only:
  *   1. The positioning shell (absolute, with dimensions from inline styles)
  *   2. Making the inner <Window> fill the shell
  *   3. The display: flex column layout so the window body stretches
  *
- * .managedWindow
+ * .WindowWrapper
  *   position: absolute;         ← inline left/top/width/height/zIndex from Redux
  *   display: flex;
  *   flex-direction: column;
@@ -255,7 +255,7 @@ because these values are dynamic per-instance.
  *   (Redux state). The CSS module only establishes the flex container so the
  *   inner 7.css .window can stretch.
  *
- * .managedWindow :global(.window)
+ * .WindowWrapper :global(.window)
  *   width: 100%;
  *   height: 100%;
  *   display: flex;
@@ -265,7 +265,7 @@ because these values are dynamic per-instance.
  *   We need it to fill the managed wrapper. The :global() escape is
  *   required because .window is a 7.css global class, not a CSS module.
  *
- * .managedWindow :global(.window-body)
+ * .WindowWrapper :global(.window-body)
  *   flex: 1;
  *   overflow: auto;
  *
@@ -275,20 +275,20 @@ because these values are dynamic per-instance.
  */
 ```
 
-### Step 3 — Barrel export: `src/components/screens/desktop/ManagedWindow/index.ts`
+### Step 3 — Barrel export: `src/components/screens/desktop/WindowWrapper/index.ts`
 
 ```ts
 // TODO: [Action Required: create barrel export] - 1 min
-//   export { ManagedWindow } from './ManagedWindow'
-//   export type { ManagedWindowProps } from './ManagedWindow'
+//   export { WindowWrapper } from './WindowWrapper'
+//   export type { WindowWrapperProps } from './WindowWrapper'
 ```
 
-### Step 4 — Storybook stories: `src/components/screens/desktop/ManagedWindow/ManagedWindow.stories.tsx`
+### Step 4 — Storybook stories: `src/components/screens/desktop/WindowWrapper/WindowWrapper.stories.tsx`
 
 ```tsx
-// TODO: [Action Required: create ManagedWindow stories] - 25 min
+// TODO: [Action Required: create WindowWrapper stories] - 25 min
 //
-//   ManagedWindow reads from Redux, so every story must provide a pre-seeded
+//   WindowWrapper reads from Redux, so every story must provide a pre-seeded
 //   store via a decorator. The setupStore function accepts preloadedState.
 //
 //   IMPORTANT: You must construct the preloadedState manually to match
@@ -337,7 +337,7 @@ because these values are dynamic per-instance.
 //       )
 //     }
 //
-//   IMPORTANT: The parent div MUST have `position: relative` — ManagedWindow
+//   IMPORTANT: The parent div MUST have `position: relative` — WindowWrapper
 //   uses `position: absolute` and needs a positioned parent.
 //
 //   Story 1 — Active:
@@ -379,7 +379,7 @@ because these values are dynamic per-instance.
 //     Verify: content renders inside the window body below the title bar.
 ```
 
-### Step 5 — RTL integration tests: `src/components/screens/desktop/ManagedWindow/ManagedWindow.test.tsx`
+### Step 5 — RTL integration tests: `src/components/screens/desktop/WindowWrapper/WindowWrapper.test.tsx`
 
 ```tsx
 // TODO: [Action Required: test Redux wiring and control dispatches] - 25 min
@@ -409,14 +409,14 @@ because these values are dynamic per-instance.
 //       },
 //     }
 //
-//   describe('ManagedWindow')
+//   describe('WindowWrapper')
 //
 //     it('renders the window title from Redux state')
-//       - Render <ManagedWindow windowId="win-1" /> with SINGLE_WINDOW_STATE
+//       - Render <WindowWrapper windowId="win-1" /> with SINGLE_WINDOW_STATE
 //       - expect(screen.getByText('Test Window')).toBeInTheDocument()
 //
 //     it('renders nothing when windowId does not exist in state')
-//       - Render <ManagedWindow windowId="win-999" /> with SINGLE_WINDOW_STATE
+//       - Render <WindowWrapper windowId="win-999" /> with SINGLE_WINDOW_STATE
 //       - expect(screen.queryByText('Test Window')).not.toBeInTheDocument()
 //       - The component itself should be absent from the DOM
 //
@@ -439,7 +439,7 @@ because these values are dynamic per-instance.
 //
 //     it('passes active=false when another window is on top')
 //       - Create TWO_WINDOW_STATE with win-1 (zIndex: 1) and win-2 (zIndex: 2)
-//       - Render <ManagedWindow windowId="win-1" />
+//       - Render <WindowWrapper windowId="win-1" />
 //       - The .window div should NOT have the 'active' class
 //
 //     it('dispatches closeWindow when Close button is clicked')
@@ -460,13 +460,13 @@ because these values are dynamic per-instance.
 //
 //     it('shows Restore button when window is maximized')
 //       - Create MAXIMIZED_WINDOW_STATE with isMaximized: true
-//       - Render <ManagedWindow windowId="win-1" />
+//       - Render <WindowWrapper windowId="win-1" />
 //       - expect(screen.getByRole('button', { name: 'Restore' })).toBeInTheDocument()
 //       - expect(screen.queryByRole('button', { name: 'Maximize' })).not.toBeInTheDocument()
 //
 //     it('dispatches focusWindow on pointerdown')
 //       - Create TWO_WINDOW_STATE with win-1 at zIndex: 1, win-2 at zIndex: 2
-//       - Render <ManagedWindow windowId="win-1" />
+//       - Render <WindowWrapper windowId="win-1" />
 //       - fireEvent.pointerDown on the outer wrapper
 //       - Assert store.getState().window.byId['win-1'].zIndex > 1
 //         (it should now be 3 — zCounter was 2, bumped to 3)
@@ -487,25 +487,25 @@ because these values are dynamic per-instance.
 
 | File                                                                     | Type                       | New/Modified |
 | ------------------------------------------------------------------------ | -------------------------- | ------------ |
-| `src/app/globals.css`                                                    | ManagedWindow tokens       | Modified     |
-| `src/components/screens/desktop/ManagedWindow/ManagedWindow.tsx`         | Redux-wired window wrapper | New          |
-| `src/components/screens/desktop/ManagedWindow/ManagedWindow.module.css`  | Positioning styles         | New          |
-| `src/components/screens/desktop/ManagedWindow/index.ts`                  | Barrel export              | New          |
-| `src/components/screens/desktop/ManagedWindow/ManagedWindow.stories.tsx` | Storybook stories (4)      | New          |
-| `src/components/screens/desktop/ManagedWindow/ManagedWindow.test.tsx`    | RTL integration tests (11) | New          |
+| `src/app/globals.css`                                                    | WindowWrapper tokens       | Modified     |
+| `src/components/screens/desktop/WindowWrapper/WindowWrapper.tsx`         | Redux-wired window wrapper | New          |
+| `src/components/screens/desktop/WindowWrapper/WindowWrapper.module.css`  | Positioning styles         | New          |
+| `src/components/screens/desktop/WindowWrapper/index.ts`                  | Barrel export              | New          |
+| `src/components/screens/desktop/WindowWrapper/WindowWrapper.stories.tsx` | Storybook stories (4)      | New          |
+| `src/components/screens/desktop/WindowWrapper/WindowWrapper.test.tsx`    | RTL integration tests (11) | New          |
 
 ---
 
 ## Validation Checklist
 
 ```
-## Task 9 — ManagedWindow Validation Checklist
+## Task 9 — WindowWrapper Validation Checklist
 
 | #  | Gate                                                                                          | Verified by                    | Status     |
 | -- | --------------------------------------------------------------------------------------------- | ------------------------------ | ---------- |
 | 1  | --mw-* tokens added to globals.css                                                           | grep globals.css for --mw-     | ⬜ Pending |
-| 2  | ManagedWindow.tsx reads WindowInstance from Redux via selectWindowById                        | code review                    | ⬜ Pending |
-| 3  | ManagedWindow.tsx derives `active` from selectTopWindowId comparison                         | code review                    | ⬜ Pending |
+| 2  | WindowWrapper.tsx reads WindowInstance from Redux via selectWindowById                        | code review                    | ⬜ Pending |
+| 3  | WindowWrapper.tsx derives `active` from selectTopWindowId comparison                         | code review                    | ⬜ Pending |
 | 4  | Title-bar controls dispatch closeWindow, minimizeWindow, toggleMaximize                      | RTL test                       | ⬜ Pending |
 | 5  | Maximize/Restore button swaps aria-label based on isMaximized                                | RTL test + code review         | ⬜ Pending |
 | 6  | onPointerDown on outer wrapper dispatches focusWindow                                        | RTL test                       | ⬜ Pending |
@@ -528,7 +528,7 @@ Validated on: __________
 
 ## Summary
 
-- **Adapter pattern, not inheritance.** `<ManagedWindow>` wraps the stateless 7.css `<Window>`
+- **Adapter pattern, not inheritance.** `<WindowWrapper>` wraps the stateless 7.css `<Window>`
   and injects Redux-derived props. The primitive stays reusable in Storybook and non-Redux
   contexts. This is the same relationship `<StartMenuItem>` has to its shortcut data.
 - **`windowId` is the sole identity prop.** Everything — title, position, size, z-index, focus

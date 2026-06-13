@@ -14,7 +14,7 @@ reason from the differences, because two of them change the design materially:
 | Axis               | `windowSlice` (Task 1)                   | `desktopSlice` (this task)                                                 |
 | ------------------ | ---------------------------------------- | -------------------------------------------------------------------------- |
 | Membership         | Windows open/close at runtime, unbounded | Icons are a **fixed, seeded set** — registered once at desktop mount       |
-| Identity source    | Slice mints ids (`win-1`, `nextIdSeed`)  | Ids come from an **in-repo registry** (Task 17) — the slice is told the id |
+| Identity source    | Slice mints ids (`win-1`, `nextIdSeed`)  | Ids come from an **in-repo registry** (Task 16) — the slice is told the id |
 | Lifecycle trigger  | User actions only                        | User actions **plus a reaction to another slice** (`session` ending)       |
 | Persistence        | None — windows are pure runtime          | **Role-gated**: Admin layout durable, Guest layout resets on session end   |
 | Position semantics | Free-form pixels (`{x,y}`)               | **Snap-to-grid cells** (`{column,row}`) — pixels are derived, not stored   |
@@ -154,7 +154,7 @@ on every unrelated dispatch — exactly the 60fps trap Task 1 warned about, now 
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------- |
 | Cell ↔ pixel projection, snap math, drag preview | Grid component + `@dnd-kit`                                                                                              | Task 8  |
 | Collision ("cell occupied → next free cell")     | Grid component drop handler                                                                                              | Task 8  |
-| The static icon set (labels, images, targets)    | In-repo shortcut registry; dispatched via `registerIcon`                                                                 | Task 17 |
+| The static icon set (labels, images, targets)    | In-repo shortcut registry; dispatched via `registerIcon`                                                                 | Task 16 |
 | Cross-**reload** durability (localStorage)       | Out of Phase 2 scope — "persist" here means in-memory, across the session boundary, per `CLAUDE.md` ("persist in Redux") | —       |
 
 The slice holds **state**, never behavior. No reducer measures the grid, reads the DOM, or
@@ -205,7 +205,7 @@ export interface GridCell {
 
 // The slice stores ONLY the dynamic facts about an icon: where it is now, and
 // where it started. Static metadata (label, image, which window it opens) lives
-// in the in-repo registry (Task 17) and is looked up by id at render time —
+// in the in-repo registry (Task 16) and is looked up by id at render time —
 // never duplicated into Redux.
 export interface DesktopIcon {
   id: string
