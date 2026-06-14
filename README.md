@@ -27,8 +27,9 @@ This portfolio is engineered to serve two audiences simultaneously:
 - **Window manager** — open, close, minimize, maximize, focus, z-index stacking, and boundary
   clamping; animated via Framer Motion.
 - **Drag-and-drop desktop icons** — snap-to-grid repositioning via `@dnd-kit`.
-- **Database-driven content** — projects fetched via GraphQL (`pg_graphql`) from Supabase
-  Postgres, with role-based RLS enforcing visibility at the database layer.
+- **Repo-resident content** — project data lives in the repo as a typed registry + MDX/React
+  bodies (single source of truth, version-controlled); the resume PDF is served from Supabase
+  Storage. Role-based visibility (Guest vs Admin/WIP) is filtered by session role.
 - **Zero-cost infrastructure** — runs entirely on free tiers (Vercel, Supabase, GitHub).
 
 ## Architecture at a glance
@@ -38,12 +39,11 @@ This portfolio is engineered to serve two audiences simultaneously:
     ↕
 [ Next.js + React ]        — rendering, routing, server/client component split
     ↕
-[ Apollo Client ]          — GraphQL client, normalized cache, auth header injection
-    ↕
-[ GraphQL / pg_graphql ]   — query layer auto-generated from Postgres schema
-    ↕
-[ Supabase ]               — Postgres DB, Auth, Storage, RLS enforcement
+[ Supabase ]               — Auth (sign-in) + Storage (resume PDF) only.
+                             Postgres + RLS reserved for future per-user data.
 
+[ Repo content layer ]     — typed project registry + MDX/React bodies: the single
+                             source of truth for project data, compiled with the app
 [ Redux Toolkit ]          — horizontal across React layer; in-memory UI state only
 [ CSS Modules ]            — scoped per-component; Aero Glass design tokens
 ```
@@ -60,8 +60,8 @@ anti-patterns.
 | Styling       | CSS Modules + Aero Glass design tokens in `globals.css`            |
 | Animation     | Framer Motion (`AnimatePresence`, layout animations)               |
 | Drag & drop   | `@dnd-kit` (icons only — window dragging uses raw `pointermove`)   |
-| Data          | Apollo Client + GraphQL via Supabase `pg_graphql`                  |
-| Auth + DB     | Supabase (Postgres + Auth + Storage + RLS)                         |
+| Content       | Repo-resident typed registry + MDX/React bodies (project data)     |
+| Auth + Files  | Supabase Auth + Storage (resume PDF); Postgres/RLS for future use  |
 | Testing       | Jest + React Testing Library, Vitest, Playwright, Storybook + a11y |
 | Tooling       | ESLint flat config, Prettier, Husky, commitlint, lint-staged       |
 | CI / Hosting  | GitHub Actions → Vercel (Hobby tier)                               |
@@ -73,8 +73,8 @@ anti-patterns.
 
 - **Node.js 20** (matches the Dockerfile base image and CI runner)
 - **npm** (lockfile is npm-format)
-- A **Supabase** project with the `projects` table and RLS policies described in
-  [CLAUDE.md](CLAUDE.md#supabase)
+- A **Supabase** project for Auth + Storage (see [CLAUDE.md](CLAUDE.md#supabase)). No `projects`
+  table is required — project data is repo-resident.
 
 ### Install
 
@@ -91,7 +91,6 @@ Create `.env.local` in the project root:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<supabase-anon-key>
-NEXT_PUBLIC_GRAPHQL_URL=https://<project-ref>.supabase.co/graphql/v1
 NEXT_PUBLIC_ADMIN_EMAIL=<admin-account-email>
 ```
 
@@ -139,8 +138,8 @@ src/
     login/                Login-screen components
     providers/            Client-side context provider wrappers
   hooks/                  Custom React hooks
+  content/                Repo-resident project data: typed registry + MDX/React bodies
   lib/                    Third-party client initializations and shared utilities
-    apollo-client.ts        Apollo Client with link chain
     debug.ts                NODE_ENV-aware debug logger
     supabase/               Supabase clients (auth only)
   store/
@@ -164,13 +163,13 @@ root cause instead.
 
 ## Roadmap
 
-| Phase | Scope                                                                                                 |
-| ----- | ----------------------------------------------------------------------------------------------------- |
-| 0     | Environment & infrastructure: Next.js, Redux, Apollo, Supabase, Docker, CI/CD, Vercel — **complete**  |
-| 1     | Design tokens + pixel-perfect login screen, Guest/Admin auth, route protection — **in progress**      |
-| 2     | Desktop environment, icon grid, full window manager, taskbar with live clock                          |
-| 3     | Portfolio content: production RLS, GraphQL queries, ResumeWindow, ProjectsWindow, ProjectDetailWindow |
-| 4     | Polish, performance (Lighthouse 90+), a11y audit, cross-browser validation, `v1.0.0` launch           |
+| Phase | Scope                                                                                                  |
+| ----- | ------------------------------------------------------------------------------------------------------ |
+| 0     | Environment & infrastructure: Next.js, Redux, Supabase, Docker, CI/CD, Vercel — **complete**           |
+| 1     | Design tokens + pixel-perfect login screen, Guest/Admin auth, route protection — **in progress**       |
+| 2     | Desktop environment, icon grid, full window manager, taskbar with live clock                           |
+| 3     | Portfolio content: repo content layer, ResumeWindow (Storage PDF), ProjectsWindow, ProjectDetailWindow |
+| 4     | Polish, performance (Lighthouse 90+), a11y audit, cross-browser validation, `v1.0.0` launch            |
 
 Phase task documents live under [`.claude/phases/`](.claude/phases/).
 

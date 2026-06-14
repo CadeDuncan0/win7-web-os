@@ -27,7 +27,9 @@ experiencing the work as an interactive desktop environment.
 
 Extensible beyond a static portfolio — the desktop environment is designed to support future
 additions: Start Menu, Settings window, File Explorer, sound effects, and real-time visitor presence.
-The Admin account provides a private workspace for non-public projects and tooling.
+The Admin account provides a private workspace for non-public projects and tooling, and is the seam
+for planned per-user features (tailored apps for specific users, visitor-created accounts and
+persisted data) — the work that will reintroduce a server-side data layer when it genuinely needs one.
 
 ---
 
@@ -40,15 +42,18 @@ The Admin account provides a private workspace for non-public projects and tooli
     ↕
 [ Next.js + React ]        — rendering, routing, server/client component split
     ↕
-[ Apollo Client ]          — GraphQL client, normalized cache, auth header injection
-    ↕
-[ GraphQL / pg_graphql ]   — query layer auto-generated from Postgres schema
-    ↕
-[ Supabase ]               — Postgres DB, Auth, Storage, RLS enforcement
+[ Supabase ]               — Auth (sign-in) + Storage (resume PDF) only.
+                             Postgres + RLS reserved for future per-user data.
 
+[ Repo content layer ]     — typed project registry + MDX/React bodies: the single
+                             source of truth for project data, compiled with the app
 [ Redux Toolkit ]          — horizontal across React layer; in-memory UI state only
 [ CSS Modules ]            — scoped per-component; Aero Glass token system
 ```
+
+> **Project data is repo-resident, not database-backed.** The decision and its full rationale are
+> recorded in `.claude/docs/PROJECT_REDESIGN_SUPABASEPROJECTS.md`. Supabase remains for
+> authentication and resume Storage, and is retained for future per-user data features.
 
 ## Stack Reference
 
@@ -65,14 +70,15 @@ Always verify against installed versions before acting on any API or convention 
 - **Role:** Core framework — SSR, file-based routing, API routes, server/client component model
 - **Design Rationale:** App Router enables granular server vs client rendering decisions per
   component. Server components reduce client bundle size and enable SSR by default. Client
-  components opt in via `'use client'` directive. Provider components (Redux, Apollo) are
-  isolated as dedicated client components to preserve server component integrity of root layout.
+  components opt in via `'use client'` directive. The Redux provider is isolated as a dedicated
+  client component to preserve server component integrity of the root layout.
 - **Key constraint:** `src/app/layout.tsx` is a pure server component. All client-side context
   providers live in `src/components/providers/`.
 
 ### TypeScript
 
-- **Role:** Type safety across every layer (GraphQL schema, Redux state, props, Supabase responses).
+- **Role:** Type safety across every layer (the repo project-content registry, Redux state,
+  props, Supabase auth responses).
 - **Key constraint:** `strict` mode enabled. `!` non-null assertion used only where environment
   variables are guaranteed present. All Redux hooks are typed wrappers (`useAppDispatch`,
   `useAppSelector`) — never raw `useDispatch`/`useSelector`. Named prop interfaces over inlined types.
@@ -91,9 +97,8 @@ Always verify against installed versions before acting on any API or convention 
   - `desktopSlice` — icon positions, selected icon
 - **Provider pattern:** `ReduxProviderWrapper` client component creates ONE store per
   request/mount via the `setupStore()` factory (no module singleton — SSR passes must never
-  share state across requests) and mounts Redux `Provider` into the React Context tree. Wraps
-  `ApolloProviderWrapper` so Redux state is accessible to the Apollo link chain (required for
-  Admin JWT injection).
+  share state across requests) and mounts Redux `Provider` into the React Context tree as the
+  sole client-side context provider in the root layout.
 
 ### CSS Modules + 7.css
 
@@ -127,68 +132,39 @@ Always verify against installed versions before acting on any API or convention 
   boundary clamping and z-index promotion. Two distinct dragging problems require two distinct
   solutions.
 
-### GraphQL
+### Repo Content Layer (project data)
 
-- **Role:** Query language for structured, typed data fetching from Supabase via `pg_graphql`.
-- **Schema generation:** `pg_graphql` Postgres extension auto-generates full GraphQL schema from
-  table definitions. Relay Connection Spec (`edges/node`) used for pagination.
-- **Naming convention:** `pg_graphql` converts `snake_case` column names to `camelCase` field
-  names automatically (`tech_stack` → `techStack`).
-
-### Apollo Client
-
-- **Role:** GraphQL client with normalized cache and session-aware authentication header
-  injection
-- **Design Rationale:** Normalized `InMemoryCache` keys objects by UUID — data fetched once is
-  available to all components without redundant network requests. Link chain architecture
-  (authLink → httpLink) makes authentication injection composable and independently swappable.
-- **Link chain:**
-  ```
-  SetContextLink (authLink)   ← injects apikey + Authorization headers
-       ↓
-  HttpLink (httpLink)         ← POST to NEXT_PUBLIC_GRAPHQL_URL
-       ↓
-  InMemoryCache               ← normalizes response by id field (UUID)
-  ```
-- **Auth header pattern:** Both `apikey` (Supabase API gateway) and `Authorization: Bearer`
-  (RLS policy evaluation) required on every request. Phase 1: `Authorization` header swaps from
-  anon key to Admin JWT read from Redux `sessionSlice`.
-- **Current imports:** `SetContextLink` from `@apollo/client/link/context` (not deprecated
-  `setContext`). `HttpLink` class constructor (not deprecated `createHttpLink`).
-- **Provider pattern:** `ApolloProviderWrapper` client component, nested inside
-  `ReduxProviderWrapper` in root layout. Builds one client per request/mount via
-  `makeApolloClient(getAuthToken)` — the auth accessor reads the JWT from that request's
-  Redux store, so neither the client nor the link chain couples to a store singleton.
-
-### Postman
-
-- **Role:** Validates GraphQL queries and RLS behavior against the Supabase endpoint pre-Apollo.
-- **Required headers:** `Content-Type: application/json`, `apikey: <anon-key>`,
-  `Authorization: Bearer <anon-key>`.
+- **Role:** The single source of truth for all project content — both the index the card grid
+  and routing need (title, tech stack, links, thumbnail, visibility, ordering) and the rich
+  per-project body (long-form copy, galleries, and interactive demos such as the embedded Super
+  Mario Bros / Godot build).
+- **Design Rationale:** Project content is static, developer-authored, small (~10 records), and
+  read-only at runtime, with bodies that are inherently code. That is the profile of
+  version-controlled content, not database rows. Keeping it in the repo gives a single place to
+  add/edit/remove a project, end-to-end type safety, diffable history, atomic deploys, and zero
+  content network latency. Full rationale (and the pros/cons of the rejected DB/Hybrid approach)
+  in `.claude/docs/PROJECT_REDESIGN_SUPABASEPROJECTS.md`.
+- **Shape:** a typed registry (the index) plus per-project MDX/React bodies keyed by `slug`.
+  Bespoke interactive bodies (e.g. the Godot demo) are ordinary repo components/assets.
+- **Visibility:** role-based (guest vs admin/WIP) as a filter over the registry, driven by the
+  session role. This is a UX/structural gate today, **not** a hard data boundary — all project
+  content ships in the bundle, which is acceptable because none of it is confidential. A real
+  server-side boundary returns only if genuinely private content is ever introduced.
 
 ### Supabase
 
-- **Role:** Managed PostgreSQL database, authentication system, and file storage
-- **Design Rationale:** BaaS providing zero-server-code backend at zero cost for solo developer.
-  Postgres chosen for `pg_graphql` compatibility. Row Level Security (RLS) enforces data access
-  at database layer — Guest role reads `visibility = 'guest'` rows only; Admin reads all.
-  Supabase JS SDK used exclusively for authentication (`supabase.auth.signInWithPassword`). All
-  data fetching routes through Apollo Client + GraphQL only.
-- **Schema — `public.projects`:**
-  ```
-  id             uuid PRIMARY KEY DEFAULT gen_random_uuid()
-  title          text NOT NULL
-  description    text
-  tech_stack     text[] DEFAULT '{}'
-  live_url       text
-  github_url     text
-  thumbnail_url  text
-  visibility     text NOT NULL DEFAULT 'guest' CHECK (IN ('guest','admin'))
-  status         text NOT NULL DEFAULT 'complete' CHECK (IN ('complete','wip'))
-  created_at     timestamptz NOT NULL DEFAULT now()
-  ```
-- **RLS state:** Enabled from initialization. Phase 0 uses permissive dev read policy
-  (`USING (true)`). Phase 3 replaces with role-based policies.
+- **Role:** Authentication system and file storage. (Postgres + Row Level Security remain
+  available but are **not** used for project content — see "Repo Content Layer" above.)
+- **Design Rationale:** BaaS providing zero-server-code auth and storage at zero cost for a solo
+  developer. The Supabase JS SDK is used **exclusively** for authentication
+  (`supabase.auth.signInWithPassword` and session lifecycle) and for resolving the resume's
+  Storage URL. The Postgres database and RLS are retained for planned future per-user data
+  (tailored apps, visitor accounts) — not for project content.
+- **Storage:** a single `resume` bucket holds the current resume PDF as **one object**
+  (overwrite-on-upload, public read). This lets the resume be replaced without a redeploy. No
+  version history is kept.
+- **No project data in the database.** There is no `projects` table in the product's data flow;
+  see `.claude/docs/PROJECT_REDESIGN_SUPABASEPROJECTS.md`.
 
 ### Vitest + React Testing Library
 
@@ -196,7 +172,7 @@ Always verify against installed versions before acting on any API or convention 
   runner. The `unit` Vitest project (jsdom) is the former Jest suite; the `storybook` project
   runs stories in a real browser via the Storybook Vitest addon.
 - **Key constraint:** RTL queries by accessible role/label/text — never by CSS selector or
-  component internals. Vitest covers Redux slices, utilities, Apollo mocking.
+  component internals. Vitest covers Redux slices, utilities, and component behavior.
 
 ### Cypress
 
@@ -234,17 +210,21 @@ Always verify against installed versions before acting on any API or convention 
 ## Authentication Model
 
 - Two roles: `guest` (public, sessionStorage-scoped) and `admin` (owner, JWT-persisted)
-- Guest: no password, session expires on tab close, sees only `visibility = 'guest'` projects
-- Admin: password via Supabase Auth, JWT stored and injected into Apollo authLink, sees all rows
+- Guest: no password, session expires on tab close, sees only guest-visible projects
+- Admin: password via Supabase Auth, JWT (the Supabase access token) stored in Redux
+  `sessionSlice`, sees all projects including admin/WIP
 - All routes under `/desktop` are server-side protected via Next.js proxy
   (`src/proxy.ts` — the App Router successor to `middleware.ts`)
 - Client-side role stored in Redux `sessionSlice`
 
 ## Content Visibility Rules
 
-- `visibility = 'guest'` → visible to all authenticated sessions
-- `visibility = 'admin'` → visible to Admin session only
-- Enforcement occurs at two layers: Supabase RLS (database) + GraphQL filter (query)
+- Each project in the repo registry is marked `guest` or `admin` (and `complete` or `wip`)
+- `guest` → visible to all authenticated sessions; `admin`/`wip` → visible to Admin session only
+- Enforcement is a **role-based filter over the repo registry**, driven by the session role.
+  This is a UX/structural gate, not a hard data boundary — all project content ships in the
+  bundle. There is no DB/RLS visibility layer for projects; a server-side boundary returns only
+  if genuinely confidential content is introduced.
 - Admin-only cards visually distinguished in UI (badge/border treatment — Phase 3)
 
 ## Window Manager Rules
@@ -281,7 +261,6 @@ Always verify against installed versions before acting on any API or convention 
 ```
 NEXT_PUBLIC_SUPABASE_URL          Supabase project URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY     Supabase public anon key (safe to expose client-side)
-NEXT_PUBLIC_GRAPHQL_URL           Supabase GraphQL endpoint URL
 NEXT_PUBLIC_ADMIN_EMAIL           Admin account email for Supabase Auth sign-in
 ```
 
@@ -318,10 +297,11 @@ src/
     providers/            Client-side context provider wrapper components only
     screens/              Screen-level compositions (login, desktop, Transition)
     windows7/             Reusable Windows 7 primitives built on 7.css
+  content/                Repo-resident project data: typed registry (index) + per-project
+                          MDX/React bodies (the single source of truth for project content)
   hooks/                  Shared React hooks (auth listener, dnd-kit sensors)
   lib/                    Third-party client initializations and shared utilities
     supabase/             Supabase JS clients (auth only): client, server, proxy
-    apollo-client.ts      Apollo Client with link chain
     debug.ts              NODE_ENV-aware debug logging utility
   proxy.ts                Next.js route protection (App Router successor to middleware.ts)
   store/
@@ -335,8 +315,9 @@ src/
 
 - **DO NOT** use raw `useDispatch` / `useSelector` — always import the typed wrappers
   `useAppDispatch` / `useAppSelector` from `src/store/hooks.ts`.
-- **DO NOT** import deprecated Apollo APIs: `setContext` (use `SetContextLink`) or
-  `createHttpLink` (use `HttpLink` constructor).
+- **DO NOT** add a GraphQL / Apollo / relational data-fetching client for project content —
+  project data is repo-resident (a typed registry + MDX/React bodies). A query layer returns
+  only when a future feature genuinely needs server-delivered, per-user data.
 - **DO NOT** use `console.log` — banned by ESLint. Route through `src/lib/debug.ts`.
   `console.warn` / `console.error` are reserved for legitimate production signals.
 - **DO NOT** hardcode colors, shadows, blurs, radii, or gradients in CSS modules —
@@ -345,8 +326,9 @@ src/
 - **DO NOT** install Tailwind, styled-components, or any other styling library. The sole
   exception is `7.css`, the sanctioned Windows 7 base stylesheet. Aero Glass requires named,
   intentional design tokens; CSS Modules are mandatory.
-- **DO NOT** route data fetches through the Supabase JS SDK. The SDK is for **auth only**
-  (`supabase.auth.signInWithPassword`). All data access goes through Apollo + GraphQL.
+- **DO NOT** read application data through the Supabase JS SDK (`supabase.from(...)`). The SDK is
+  for **auth** (`supabase.auth.*`) and resolving the resume's Storage URL only. Project data is
+  repo-resident — there is no relational data client.
 - **DO NOT** add `'use client'` to `src/app/layout.tsx` — it must remain a pure server
   component. Client providers belong in `src/components/providers/`.
 - **DO NOT** use `@dnd-kit` for window dragging — it is for icon dragging only. Window
@@ -374,10 +356,8 @@ lint → build → deploy chain functions end-to-end.
 - Next.js project initialized with TypeScript, App Router, `src/` directory
 - ESLint flat config, Prettier, Husky pre-commit hooks, commitlint
 - Redux Toolkit store scaffolded with typed hooks and placeholder slices
-- Supabase project provisioned with `projects` schema and RLS enabled
-- GraphQL endpoint validated via Postman
-- Apollo Client configured with `SetContextLink` + `HttpLink` chain
-- Provider architecture established (`ReduxProviderWrapper`, `ApolloProviderWrapper`)
+- Supabase project provisioned (Auth + Storage; Postgres/RLS available for future per-user data)
+- Provider architecture established (`ReduxProviderWrapper`)
 - Docker local environment containerized
 - GitHub Actions CI/CD pipeline operational
 - Vercel production deployment live on custom domain
@@ -386,8 +366,8 @@ lint → build → deploy chain functions end-to-end.
 
 **Responsibility:** Establish the complete Aero Glass design token system and deliver a
 pixel-perfect, fully functional login screen. All UI components built in Storybook first.
-Authentication flows (Guest + Admin) implemented against Supabase Auth. Admin JWT injected into
-Apollo `authLink` from Redux `sessionSlice`. Route protection enforced via Next.js middleware.
+Authentication flows (Guest + Admin) implemented against Supabase Auth. Admin JWT (the Supabase
+access token) stored in Redux `sessionSlice`. Route protection enforced via Next.js middleware.
 
 ## Phase 2 — Desktop & Window Manager
 
@@ -399,19 +379,21 @@ E2E test coverage.
 
 ## Phase 3 — Portfolio Content
 
-**Responsibility:** Connect live Supabase data to the desktop window applications. Replace
-permissive dev RLS policy with production role-based policies. Implement GraphQL queries for
-public and admin project sets. Build ResumeWindow (PDF viewer + download), ProjectsWindow
-(role-filtered card grid), ProjectDetailWindow (full project metadata). Upload resume and
-thumbnails to Supabase Storage.
+**Responsibility:** Make the desktop shell a complete product by wiring in real content. Author
+the repo-resident project content layer (typed registry + per-project MDX/React bodies) and
+render it through the existing windows: ResumeWindow (PDF from Supabase Storage + download),
+ProjectsWindow (role-filtered card grid), ProjectDetailWindow (full project metadata + rich
+body). Upload the resume PDF to a Supabase Storage bucket. Role-based project visibility is a
+registry filter driven by the session role.
 
 ## Phase 4 — Polish, Performance & Launch
 
 **Responsibility:** Production readiness. Lighthouse 90+ across all four categories.
 Accessibility audit (full keyboard navigation, ARIA labels). Responsive degradation (tablet
 graceful, mobile friendly fallback screen). Cross-browser validation (Chrome, Firefox, Safari,
-Edge). Security review (RLS policies, JWT enforcement, no Admin data leakage). Final Cypress E2E
-suite. Tag `v1.0.0`, merge to `main`, confirm production URL on custom domain with active SSL.
+Edge). Security review (route protection, JWT/session enforcement, and confirming the
+admin/guest visibility gate behaves as designed). Final Cypress E2E suite. Tag `v1.0.0`, merge
+to `main`, confirm production URL on custom domain with active SSL.
 
 ## Definition of Done (Project-Level)
 
