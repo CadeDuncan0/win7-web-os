@@ -1,32 +1,16 @@
 ## TASK RULES
 
-_ALWAYS_ reference .claude/tasks to see if an in-depth markdown file exists outlining the requirements and documentation for a given task. If one does not exist, create the task file and edit it to include: - commented timestamp: `Started: {datetime}, Last Edited: {datetime}, Completed: {datetime}` - # Task Notes - Dev Thoughts (provided, not generated) - Dev Questions (provided, not generated) - # Task Description - What the main problem is - A breakdown of what needs to be fixed - # Task Goal - What is the required outcome to mark the task as complete - # Task Checklist (aka Task Requirements) - Step-by-step subtasks [main task should be broken up into these subtasks] - # Task Documentation - Important session-persisting information for LLMs - Design decisions - Design pitfalls - Instructed decisions (dos and donts) - etc. - Developer notes - Solutions attempted and their outcomes
+_ALWAYS_ reference .claude/docs to see if an in-depth markdown file exists outlining the requirements and documentation for a given task. If one does not exist, create the task file and edit it to include: - commented timestamp: `Started: {datetime}, Last Edited: {datetime}, Completed: {datetime}` - # Task Notes - Dev Thoughts (provided, not generated) - Dev Questions (provided, not generated) - # Task Description - What the main problem is - A breakdown of what needs to be fixed - # Task Goal - What is the required outcome to mark the task as complete - # Task Checklist (aka Task Requirements) - Step-by-step subtasks [main task should be broken up into these subtasks] - # Task Documentation - Important session-persisting information for LLMs - Design decisions - Design pitfalls - Instructed decisions (dos and donts) - etc. - Developer notes - Solutions attempted and their outcomes
 
-## SOURCE
+## Other (USER ONLY):
 
-    - logon screen: https://www.youtube.com/watch?v=64A0dQUThBM
+    - Setup Phase3 GitHub Tasks
 
-## IMPROVEMENTS
-
-    - Spinner should be smoother, with different timings depending on animation location
-        - See https://www.youtube.com/watch?v=64A0dQUThBM
-
-## ADJUSTMENTS
-
-    - AccountIcons should be renamed to 'LogonAccount'
-    - Any reference to a variable or file name 'Login' should be renamed to 'Logon'
-    - SubmitButton renamed to 'LogonSubmitButton'
-    - OsBranding renamed to 'LogonOsBranding'
-
-# Other (USER ONLY):
-
-    - Setup Phase2 GitHub Tasks
-
-# Logon page:
+## Logon page:
 
     - LogonAccount component needs accurate selected outline. https://github.com/world-windows-federation/AuthUX may be of help
 
-# Desktop page:
+## Desktop page:
 
     - Window state
     - Window component

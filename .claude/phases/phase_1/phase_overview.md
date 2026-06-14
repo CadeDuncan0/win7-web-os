@@ -10,13 +10,13 @@
 
 ## Flags
 
-| Flag            | Value                                                  |
-| --------------- | ------------------------------------------------------ |
-| Phase           | 1                                                      |
-| Status          | complete                                               |
-| Tasks Complete  | 11 / 12 (Task 12 deferred to Phase 4 — see note below) |
-| Blocking Issues | None                                                   |
-| Current Task    | Phase Complete                                         |
+| Flag            | Value          |
+| --------------- | -------------- |
+| Phase           | 1              |
+| Status          | complete       |
+| Tasks Complete  | 11 / 11        |
+| Blocking Issues | None           |
+| Current Task    | Phase Complete |
 
 ---
 
@@ -83,29 +83,18 @@ the edge.
 
 ## Tasks
 
-| #   | Task                                     | Tooling                                     | Deliverable                                                                                                                                                                                                                                                                             | Status                 |
-| --- | ---------------------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| 1   | Enable Supabase Auth Provider            | Supabase Dashboard                          | Email provider on; public sign-ups off; redirect URLs configured; admin user created                                                                                                                                                                                                    | ✅ Complete            |
-| 2   | Create Auth Utility Module               | `@supabase/supabase-js` · TypeScript        | `src/lib/auth.ts` — typed `signInAsAdmin`, `signInAsGuest`, `signOut`, `getCurrentSession` helpers with discriminated return types                                                                                                                                                      | ✅ Complete            |
-| 3   | Implement Session Slice Logic            | Redux Toolkit · TypeScript                  | `setSession`, `clearSession` reducers; typed selectors `selectRole`, `selectAuthStatus`, `selectJwt`; session shape finalized                                                                                                                                                           | ✅ Complete            |
-| 4   | Build Auth State Listener Hook           | React · Supabase · Redux                    | `useAuthListener` — subscribes to `supabase.auth.onAuthStateChange`, dispatches session updates, handles Guest sessionStorage rehydration                                                                                                                                               | ✅ Complete            |
-| 5   | Wire Dynamic JWT into Apollo Auth Link   | Apollo Client · Redux                       | `authLink` reads JWT from Redux store on every request; anon key fallback when unauthenticated; verified via DevTools Network tab                                                                                                                                                       | ✅ Complete            |
-| 6   | Establish Aero Glass Design Token System | CSS Modules · CSS Custom Properties         | `globals.css` defines full token scales — color, typography, glass (blur + gradient), shadow, radius, spacing; typography hierarchy enforced (Georgia 16pt / Georgia 13pt / Arial 12pt)                                                                                                 | ✅ Complete            |
-| 7   | Configure Storybook                      | Storybook · Next.js · CSS Modules           | Storybook installed, running on port 6006; global decorator applies `globals.css`; Next.js App Router compatibility configured                                                                                                                                                          | ✅ Complete            |
-| 8   | Build Login Screen Primitives            | React · CSS Modules · Storybook             | `AccountTile`, `PasswordInput`, `SignInButton` components — each with Storybook stories covering all state variants (default, focus, error, disabled)                                                                                                                                   | ✅ Complete            |
-| 9   | Assemble Login Screen Page               | React · CSS Modules · Framer Motion · Redux | `/login` route — authentic Windows 7 background, two account tiles (Guest + Admin), password gate on Admin selection, entrance and selection animations; Guest click dispatches session and routes to `/desktop`, Admin submit calls `signInAsAdmin` and routes on success              | ✅ Complete            |
-| 10  | Add Route Protection Proxy               | Next.js Proxy · Supabase                    | `proxy.ts` — intercepts `/desktop/*` requests; reads Supabase session cookie and Guest sessionStorage signal; redirects unauthenticated traffic to `/login` before render                                                                                                               | ✅ Complete            |
-| 11  | Validate Phase 1                         | All Phase 1 tooling                         | Full integration sweep: Guest flow, Admin sign-in, session persistence across reload, JWT in Apollo requests, `/desktop` protection, Storybook green, design token coverage audit                                                                                                       | ✅ Complete            |
-| 12  | Polish & Finalize UI                     | CSS Modules · Framer Motion · image diffs   | 1:1 visual recreation of the authentic Windows 7 login UI. Replaces the rough-draft mockup with the final draft. Verification: side-by-side eyeball test plus image comparison against reference screenshots stored in `public/imgs/login/` as `os_{n}.png` / `portfolio_{n}.png` pairs | ↪️ Deferred to Phase 4 |
+| #   | Task                                     | Tooling                                     | Deliverable                                                                                                                                                                                                                                                                | Status      |
+| --- | ---------------------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| 1   | Enable Supabase Auth Provider            | Supabase Dashboard                          | Email provider on; public sign-ups off; redirect URLs configured; admin user created                                                                                                                                                                                       | ✅ Complete |
+| 2   | Create Auth Utility Module               | `@supabase/supabase-js` · TypeScript        | `src/lib/auth.ts` — typed `signInAsAdmin`, `signInAsGuest`, `signOut`, `getCurrentSession` helpers with discriminated return types                                                                                                                                         | ✅ Complete |
+| 3   | Implement Session Slice Logic            | Redux Toolkit · TypeScript                  | `setSession`, `clearSession` reducers; typed selectors `selectRole`, `selectAuthStatus`, `selectJwt`; session shape finalized                                                                                                                                              | ✅ Complete |
+| 4   | Build Auth State Listener Hook           | React · Supabase · Redux                    | `useAuthListener` — subscribes to `supabase.auth.onAuthStateChange`, dispatches session updates, handles Guest sessionStorage rehydration                                                                                                                                  | ✅ Complete |
+| 5   | Wire Dynamic JWT into Apollo Auth Link   | Apollo Client · Redux                       | `authLink` reads JWT from Redux store on every request; anon key fallback when unauthenticated; verified via DevTools Network tab                                                                                                                                          | ✅ Complete |
+| 6   | Establish Aero Glass Design Token System | CSS Modules · CSS Custom Properties         | `globals.css` defines full token scales — color, typography, glass (blur + gradient), shadow, radius, spacing; typography hierarchy enforced (Georgia 16pt / Georgia 13pt / Arial 12pt)                                                                                    | ✅ Complete |
+| 7   | Configure Storybook                      | Storybook · Next.js · CSS Modules           | Storybook installed, running on port 6006; global decorator applies `globals.css`; Next.js App Router compatibility configured                                                                                                                                             | ✅ Complete |
+| 8   | Build Login Screen Primitives            | React · CSS Modules · Storybook             | `AccountTile`, `PasswordInput`, `SignInButton` components — each with Storybook stories covering all state variants (default, focus, error, disabled)                                                                                                                      | ✅ Complete |
+| 9   | Assemble Login Screen Page               | React · CSS Modules · Framer Motion · Redux | `/login` route — authentic Windows 7 background, two account tiles (Guest + Admin), password gate on Admin selection, entrance and selection animations; Guest click dispatches session and routes to `/desktop`, Admin submit calls `signInAsAdmin` and routes on success | ✅ Complete |
+| 10  | Add Route Protection Proxy               | Next.js Proxy · Supabase                    | `proxy.ts` — intercepts `/desktop/*` requests; reads Supabase session cookie and Guest sessionStorage signal; redirects unauthenticated traffic to `/login` before render                                                                                                  | ✅ Complete |
+| 11  | Validate Phase 1                         | All Phase 1 tooling                         | Full integration sweep: Guest flow, Admin sign-in, session persistence across reload, JWT in Apollo requests, `/desktop` protection, Storybook green, design token coverage audit                                                                                          | ✅ Complete |
 
 ---
-
-## Deferred Work
-
-### Task 12 — Polish & Finalize UI → Phase 4
-
-The login-screen polish pass is **intentionally deferred** to Phase 4 (Polish, Performance & Launch) rather than blocking Phase 1 closure. Rationale:
-
-- **Phase 1's functional contract is fully met.** The login screen authenticates Guest and Admin, persists sessions correctly, injects the right Apollo auth header for each role, and protects `/desktop` at the edge. No downstream phase depends on visual finalization to begin.
-- **Polish is cheaper after Phase 2 + 3 land.** Tile sizing, glow falloffs, and transition timing will be re-evaluated in the broader visual context of the desktop, taskbar, and window chrome. Polishing the login in isolation now risks rework once the surrounding aesthetic is locked.
-- **The task spec is preserved verbatim** at `.claude/phases/phase_1/deferred/task_12_polish_finalize_ui.md` and will be re-anchored to Phase 4's task list when that phase is generated.
