@@ -22,16 +22,13 @@ _ALWAYS_ reference .claude/tasks to see if an in-depth markdown file exists outl
 
     *Intentionally unresolved decisions. Each notes what it blocks. Do not begin the blocked work until an answer is recorded here.*
 
-# Project content storage — ⛔ BLOCKS PHASE 3
+# Project content storage — ✅ RESOLVED (2026-06-13)
 
     - Question: Where does per-project content live — descriptions, images, demos, links, long-form copy?
-    - Status: UNRESOLVED. Does NOT block Phase 2 (Resume/Projects render stub content only). An answer MUST be recorded here before any Phase 3 work begins.
-    - Candidate approaches:
-        - Hybrid (table = index, repo = content): the `projects` table stays the source of truth for the card grid (title, tech_stack, visibility, thumbnail) and drives listing + RLS; rich subpage content (copy, embedded demos, galleries) renders from repo-resident MDX/React.
-        - All in Supabase: descriptions, image URLs (Storage), demo links, and body content all move into the `projects` table / added columns; subpages render fully from the DB.
-        - All in repo: a static in-repo registry holds all project data and content; Supabase is auth-only. (Note: undercuts the GraphQL + RLS data-layer thesis in `CLAUDE.md`.)
-    - Recommendation (Phase 3 roadmap, pending USER confirmation): **Hybrid**. Keeps the card grid + visibility + RLS DB-driven (honors the `CLAUDE.md` data-layer thesis) while long-form per-project bodies (copy, galleries, the embedded Super Mario Bros demo) render from repo-resident MDX/React keyed by a `slug` column. Full analysis in `.claude/phases/phase_3/phase_overview.md` → "Blocking Decision."
-    - Decision: _STILL UNRESOLVED — user has final say. Record the chosen approach + rationale here, then Phase 3 Task 8 may begin. This is a hard gate; do not start Band 3 (Tasks 8–12) until this line states a chosen approach._
+    - Status: RESOLVED. Chosen approach: **All in repo**. Phase 3 is no longer blocked.
+    - Decision (2026-06-13): Project data — metadata AND body — lives entirely in the repo as a typed registry plus per-project MDX/React bodies keyed by `slug`. Supabase holds NO project data: the `projects` table, project RLS, and the Apollo/GraphQL query path are removed (Apollo/GraphQL removed in commit `ac1e619`). Supabase is retained for auth and for the resume PDF — a single overwrite-on-upload object in a `resume` Storage bucket (no version history). Role-based project visibility (guest vs admin/wip) is a filter over the registry driven by the session role — a UX/structural gate, not a DB boundary, which is acceptable while no project content is confidential.
+    - Rationale (summary): the data is static, developer-authored, ~10 records, read-only, with code-shaped bodies (the Godot/Mario embed) — the profile of version-controlled content, not database rows. One source of truth; match the tool to the requirement. The backend stays for auth and planned future per-user data features (tailored apps, visitor accounts), where a server-side data layer (and possibly a query layer) returns with a real consumer.
+    - Full record: `.claude/docs/PROJECT_REDESIGN_SUPABASEPROJECTS.md`. Reflected in `CLAUDE.md` + `README.md` (docs commit `5e323a6`) and the restructured `.claude/phases/phase_3/phase_overview.md`.
 
 ## TODO
 
