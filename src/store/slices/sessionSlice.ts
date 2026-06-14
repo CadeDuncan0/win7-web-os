@@ -54,7 +54,7 @@ export const { setSession, clearSession } = sessionSlice.actions
 export default sessionSlice.reducer
 
 // ─── Selectors ──────────────────────────────────────────────────────────────
-// Every component and every Apollo link reads through these — never through state.session.* directly.
+// Every component reads through these — never through state.session.* directly.
 
 export const selectRole = (state: RootState): 'guest' | 'admin' | null => {
   return state.session.role

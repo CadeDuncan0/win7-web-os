@@ -1,5 +1,3 @@
-import { useApolloClient } from '@apollo/client/react'
-
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { registerIcon, selectDesktopIcons } from '@/store/slices/desktopSlice'
 import { selectRole } from '@/store/slices/sessionSlice'
@@ -33,13 +31,6 @@ function StoreProbe() {
       </button>
     </div>
   )
-}
-
-// Calling useApolloClient throws if no Apollo context is present — rendering it
-// without error proves MockedProvider wired the client.
-function ApolloProbe() {
-  const client = useApolloClient()
-  return <p>{client ? 'apollo-ready' : 'apollo-missing'}</p>
 }
 
 describe('renderWithProviders', () => {
@@ -78,10 +69,5 @@ describe('renderWithProviders', () => {
     const second = renderWithProviders(<StoreProbe />)
     expect(second.store.getState().desktop.iconIds).toEqual([])
     expect(screen.getByText('icons: 0')).toBeInTheDocument()
-  })
-
-  it('provides a network-free Apollo client via MockedProvider', () => {
-    renderWithProviders(<ApolloProbe />)
-    expect(screen.getByText('apollo-ready')).toBeInTheDocument()
   })
 })
