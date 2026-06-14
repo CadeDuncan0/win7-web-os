@@ -206,8 +206,7 @@ redirects.
 - Design · docs · `TASKS.md` — **complete**
 - The visible first step of the phase: resolve the content-storage blocking decision in favor of
   **All in repo**, remove the Apollo/GraphQL data layer, and adopt a single-object Supabase Storage
-  resume. Authored the ADR (`.claude/docs/PROJECT_REDESIGN_SUPABASEPROJECTS.md`), recorded the
-  decision in `TASKS.md`, removed Apollo/GraphQL (commit `ac1e619`), aligned `CLAUDE.md` + `README.md`
+  resume. Authored the ADR (`.claude/docs/PROJECT_REDESIGN_SUPABASEPROJECTS.md`), removed Apollo/GraphQL (commit `ac1e619`), aligned `CLAUDE.md` + `README.md`
   (commit `5e323a6`), and re-scoped this roadmap. No further action — this entry documents the
   decisions that govern the rest of the phase.
 

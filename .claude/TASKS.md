@@ -18,22 +18,6 @@ _ALWAYS_ reference .claude/tasks to see if an in-depth markdown file exists outl
     - SubmitButton renamed to 'LogonSubmitButton'
     - OsBranding renamed to 'LogonOsBranding'
 
-## OPEN DESIGN DECISIONS
-
-    *Intentionally unresolved decisions. Each notes what it blocks. Do not begin the blocked work until an answer is recorded here.*
-
-# Project content storage — ✅ RESOLVED (2026-06-13)
-
-    - Question: Where does per-project content live — descriptions, images, demos, links, long-form copy?
-    - Status: RESOLVED. Chosen approach: **All in repo**. Phase 3 is no longer blocked.
-    - Decision (2026-06-13): Project data — metadata AND body — lives entirely in the repo as a typed registry plus per-project MDX/React bodies keyed by `slug`. Supabase holds NO project data: the `projects` table, project RLS, and the Apollo/GraphQL query path are removed (Apollo/GraphQL removed in commit `ac1e619`). Supabase is retained for auth and for the resume PDF — a single overwrite-on-upload object in a `resume` Storage bucket (no version history). Role-based project visibility (guest vs admin/wip) is a filter over the registry driven by the session role — a UX/structural gate, not a DB boundary, which is acceptable while no project content is confidential.
-    - Rationale (summary): the data is static, developer-authored, ~10 records, read-only, with code-shaped bodies (the Godot/Mario embed) — the profile of version-controlled content, not database rows. One source of truth; match the tool to the requirement. The backend stays for auth and planned future per-user data features (tailored apps, visitor accounts), where a server-side data layer (and possibly a query layer) returns with a real consumer.
-    - Full record: `.claude/docs/PROJECT_REDESIGN_SUPABASEPROJECTS.md`. Reflected in `CLAUDE.md` + `README.md` (docs commit `5e323a6`) and the restructured `.claude/phases/phase_3/phase_overview.md`.
-
-## TODO
-
-_The `# Desktop page` items below are now planned in `.claude/phases/phase_2/phase_overview.md` (Tasks 1–19), scoped as "shell + launchers + stub content." Live data, real rendering, and per-project subpages remain Phase 3 — see Open Design Decisions above._
-
 # Other (USER ONLY):
 
     - Setup Phase2 GitHub Tasks
