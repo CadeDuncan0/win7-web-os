@@ -1,0 +1,19 @@
+/* =====================================================================
+   Spinner — faster throbber.
+
+   7.css animates the `loading` variant with an embedded GIF whose 18
+   frames are each tagged at a 1cs (10ms) delay. Browsers clamp any GIF
+   frame delay below 2cs up to 100ms, so it actually plays at ~10fps
+   (1.8s/loop) — sluggish, and unfixable from CSS because the timing
+   lives inside the GIF. `spinner-throbber.gif` is a re-encode of that
+   exact asset whose 18 frame delays sum to exactly 1.00s/loop (18fps);
+   we swap it in here.
+
+   Specificity: 7.css's rule is `.loader.animate` (two classes). Pairing
+   our local class with the two global ones makes three, so the faster
+   asset wins without `!important` or depending on stylesheet order.
+   ===================================================================== */
+
+.fast:global(.loader.animate) {
+  background-image: url('./spinner-throbber.gif');
+}

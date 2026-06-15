@@ -12,7 +12,7 @@ export function Transition({ message }: TransitionProps) {
     <div className={login.main} role="status" aria-live="polite">
       <div className={styles.loading}>
         <Spinner variant="loading" aria-label="Loading" />
-        <span>{message}</span>
+        <span className={styles.message}>{message}</span>
       </div>
       <OsBranding />
     </div>

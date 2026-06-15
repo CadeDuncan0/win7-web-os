@@ -87,7 +87,7 @@
 
   /* ─── SEMANTIC: Text shadows on the lock-screen image ──────────── */
   --logon-text-shadow: 0 1px 2px var(--color-neutral-900);
-  --logon-name-shadow: 0 1px 4px var(--color-neutral-900);
+  --logon-name-shadow: 0 1px 3px var(--color-neutral-900);
   --logon-brand-shadow: 1px 3px 3px var(--alpha-black-53);
 
   /* ─── SEMANTIC: Avatar (consumed by AccountIcon.module.css) ────── */

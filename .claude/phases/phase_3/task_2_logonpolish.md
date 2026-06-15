@@ -11,30 +11,33 @@ This task will cover all logon page and React components. The user will manually
 
 ## Sub Tasks
 
-- Spinner should be smoother, with different timings depending on animation location
-  - See https://www.youtube.com/watch?v=64A0dQUThBM
+Working list of all modifications that need to be made. Tasks are added as the user reviews each item in the `checklist`
 
-- AccountIcon outline needs to be more dynamic against the wallpaper, and appear more 'inset'.
-  - Reference all `accountIconBorderOutlineShaded` images in `public/imgs/windows7/assets`
-  - May want to create two different outlines for each current account in the AccountSelection page.
-  - Determine if a dynamic solution is possible, or if svgs are the most flexible solution.
+- Transition Page
+  - Spinner Should be smoother and faster [✅]
+  - Spinner & Message should be higher on the page [✅]
+  - Spinner should be at the top of the message, with the message extending below the spinner [✅]
+
+- AccountIcon: See @./task_2_1_accounticon.md
 
 ## Checklist
+
+Lists all pages and components related to the current scope. Each item must be manually reviewed and checked off by the user.
 
 | Task | Name                   | Status          |
 | ---- | ---------------------- | --------------- |
 | 1    | Account Selection Page | ❌ Not Verified |
 | 1.1  | Account Icon           | ❌ Not Verified |
-| 2    | Sign In Page           | ✅ Not Verified |
-| 2.1  | Sign In Button         | ✅ Not Verified |
-| 2.2  | Password Input         | ✅ Not Verified |
-| 2.3  | Switch User Button     | ✅ Not Verified |
-| 2.4  | Sign In Avatar Icon    | ✅ Not Verified |
-| 3    | Logo + Project Label   | ✅ Not Verified |
-| 4    | Transition Page        | ❌ Not Verified |
-| 4.1  | Spinner                | ❌ Not Verified |
-| 4.2  | Transition Message     | ❌ Not Verified |
+| 2    | Sign In Page           | ✅ Verified     |
+| 2.1  | Sign In Button         | ✅ Verified     |
+| 2.2  | Password Input         | ✅ Verified     |
+| 2.3  | Switch User Button     | ✅ Verified     |
+| 2.4  | Sign In Avatar Icon    | ✅ Verified     |
+| 3    | Logo + Project Label   | ✅ Verified     |
+| 4    | Transition Page        | ✅ Verified     |
+| 4.1  | Spinner                | ✅ Verified     |
+| 4.2  | Transition Message     | ✅ Verified     |
 
 ## Sources
 
-    - logon screen: https://www.youtube.com/watch?v=64A0dQUThBM
+- logon screen: https://www.youtube.com/watch?v=64A0dQUThBM
