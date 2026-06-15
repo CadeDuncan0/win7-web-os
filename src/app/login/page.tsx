@@ -88,7 +88,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (authStatus === 'authenticated') {
-      const t = setTimeout(() => router.replace('/desktop'), 160000)
+      const t = setTimeout(() => router.replace('/desktop'), 1600)
       return () => clearTimeout(t)
     }
   }, [authStatus, router])

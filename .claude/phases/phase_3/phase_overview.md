@@ -350,7 +350,7 @@ redirects.
 | Task | Name                                               | Band | Status           |
 | ---- | -------------------------------------------------- | ---- | ---------------- |
 | 1    | Content-Storage Redesign: Decision & Re-scope      | —    | ✅ Complete      |
-| 2    | Logon Screen Verification & Polish                 | 1    | 🔒 User Sign-Off |
+| 2    | Logon Screen Verification & Polish                 | 1    | ✅ Complete      |
 | 3    | Desktop, Wallpaper, Icons & Grid Verification      | 1    | 🔒 User Sign-Off |
 | 4    | Window Manager Verification & Polish               | 1    | 🔒 User Sign-Off |
 | 5    | Taskbar & Start Menu Verification & Polish         | 1    | 🔒 User Sign-Off |
