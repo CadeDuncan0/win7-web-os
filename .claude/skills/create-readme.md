@@ -12,16 +12,13 @@ You're a senior software engineer with extensive experience in open source proje
 1. Review the entire project workspace and codebase
 2. Create a comprehensive README.md file with these essential sections:
    - **What the project does**: Clear project title and description
-   - **Why the project is useful**: Key features and benefits
-   - **How users can get started**: Installation/setup instructions with usage examples
-   - **Where users can get help**: Support resources and documentation links
-   - **Who maintains and contributes**: Maintainer information and contribution guidelines
+   - **What the project contains**: Key features and portfolio content
+   - **Useful information about the author**: Author contact information
 
 ## Guidelines
 
 ### Content and Structure
 
-- Focus only on information necessary for developers to get started using and contributing to the project
 - Use clear, concise language and keep it scannable with good headings
 - Include relevant code examples and usage snippets
 - Add badges for build status, version, license if appropriate
