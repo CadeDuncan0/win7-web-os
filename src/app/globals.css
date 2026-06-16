@@ -101,6 +101,11 @@
   --avatar-image-border: 1px solid var(--color-logon-avatar-border);
   --avatar-drop-shadow: drop-shadow(2px 2px 8px var(--alpha-black-53));
   --avatar-glow: drop-shadow(0 0 12px var(--color-aero-cyandark));
+  --avatar-outline-band-dark: rgb(3, 24, 37);
+  --avatar-outline-glow-color: rgb(99 195 255 / 0.65);
+  --avatar-outline-band-dark-w: 1px;
+  --avatar-outline-glow-w: 8px;
+  --avatar-outline-glow-blur: 4px;
   /* Explicit ellipse extents (180% × 90%) instead of `farthest-corner`
      so Chrome and Firefox compute the gloss radius identically — the
      legacy keyword sized the gradient against the engine-specific

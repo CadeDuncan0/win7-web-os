@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import { userEvent } from 'storybook/test'
 
 import { AccountIcon } from './AccountIcon'
 import { USER_ICONS, pickTwoDistinctIcons } from '@/lib/userIcons'
@@ -39,6 +40,23 @@ export const Admin: Story = {
   args: {
     iconSrc: randomIcon2,
     subtitle: 'Cade Duncan',
+  },
+}
+
+// ─── Selected state ──────────────────────────────────────────────────────────
+
+// Focuses the button so the :has(:focus) rule reveals the selection outline.
+// Reviewed against the win7-login background to confirm the inset glow blends
+// with the wallpaper (compare to accountIconBorderOutlineShaded_OG.png).
+export const Selected: Story = {
+  args: {
+    iconSrc: randomIcon1,
+    subtitle: 'Guest',
+    // eslint-disable-next-line no-console
+    onClick: () => console.warn('AccountIcon clicked'),
+  },
+  play: async () => {
+    await userEvent.tab()
   },
 }
 
