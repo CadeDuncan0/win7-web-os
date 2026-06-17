@@ -5,6 +5,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { Provider } from 'react-redux'
 
 import { IconGrid } from './IconGrid'
+import { assetPaths } from '@/lib/assetPaths'
 import { setupStore } from '@/store'
 
 const meta = {
@@ -42,21 +43,21 @@ export const DefaultLayout: Story = {
       {
         id: 'icon-1',
         label: 'My Computer',
-        iconSrc: '/imgs/desktop/icons/computer.png',
+        iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'welcome',
         windowTitle: 'My Computer',
       },
       {
         id: 'icon-2',
         label: 'Recycle Bin',
-        iconSrc: '/imgs/desktop/icons/recycle-bin.png',
+        iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'welcome',
         windowTitle: 'Recycle Bin',
       },
       {
         id: 'icon-3',
         label: 'Internet Explorer',
-        iconSrc: '/imgs/desktop/icons/ie.png',
+        iconSrc: assetPaths.desktopIcons.internetExplorer,
         windowKind: 'welcome',
         windowTitle: 'Internet Explorer',
       },
@@ -70,21 +71,21 @@ export const WithSelectedIcon: Story = {
       {
         id: 'icon-1',
         label: 'My Computer',
-        iconSrc: '/imgs/desktop/icons/computer.png',
+        iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'welcome',
         windowTitle: 'My Computer',
       },
       {
         id: 'icon-2',
         label: 'Recycle Bin',
-        iconSrc: '/imgs/desktop/icons/recycle-bin.png',
+        iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'welcome',
         windowTitle: 'Recycle Bin',
       },
       {
         id: 'icon-3',
         label: 'Internet Explorer',
-        iconSrc: '/imgs/desktop/icons/ie.png',
+        iconSrc: assetPaths.desktopIcons.internetExplorer,
         windowKind: 'welcome',
         windowTitle: 'Internet Explorer',
       },
@@ -98,56 +99,56 @@ export const ManyIcons: Story = {
       {
         id: 'icon-1',
         label: 'My Computer',
-        iconSrc: '/imgs/desktop/icons/computer.png',
+        iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'welcome',
         windowTitle: 'My Computer',
       },
       {
         id: 'icon-2',
         label: 'Recycle Bin',
-        iconSrc: '/imgs/desktop/icons/recycle-bin.png',
+        iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'welcome',
         windowTitle: 'Recycle Bin',
       },
       {
         id: 'icon-3',
         label: 'Internet Explorer',
-        iconSrc: '/imgs/desktop/icons/ie.png',
+        iconSrc: assetPaths.desktopIcons.internetExplorer,
         windowKind: 'welcome',
         windowTitle: 'Internet Explorer',
       },
       {
         id: 'icon-4',
         label: 'Projects',
-        iconSrc: '/imgs/desktop/icons/folder.png',
+        iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'welcome',
         windowTitle: 'Projects',
       },
       {
         id: 'icon-5',
         label: 'Resume',
-        iconSrc: '/imgs/desktop/icons/document.png',
+        iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'welcome',
         windowTitle: 'Resume',
       },
       {
         id: 'icon-6',
         label: 'Control Panel',
-        iconSrc: '/imgs/desktop/icons/settings.png',
+        iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'welcome',
         windowTitle: 'Control Panel',
       },
       {
         id: 'icon-7',
         label: 'Network',
-        iconSrc: '/imgs/desktop/icons/network.png',
+        iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'welcome',
         windowTitle: 'Network',
       },
       {
         id: 'icon-8',
         label: 'Notepad',
-        iconSrc: '/imgs/desktop/icons/notepad.png',
+        iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'welcome',
         windowTitle: 'Notepad',
       },

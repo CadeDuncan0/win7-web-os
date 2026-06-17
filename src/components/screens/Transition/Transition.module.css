@@ -7,7 +7,8 @@
 .loading {
   position: relative;
   display: flex;
-  bottom: 5.25%; /* positioned on the green line */
+  align-items: center;
+  bottom: 5%; /* positioned on the green line */
   gap: var(--space-2);
   text-shadow: var(--logon-name-shadow);
   font-size: var(--font-size-xl);

@@ -114,7 +114,7 @@ describe('InternetExplorerWindow', () => {
 
   it('renders the IE favicon in the address bar', () => {
     const { container } = renderWithProviders(<InternetExplorerWindow />)
-    const favicon = container.querySelector('img[src*="internetexplorer_logo"]')
+    const favicon = container.querySelector('img[src*="internet-explorer-logo"]')
     expect(favicon).toBeInTheDocument()
   })
 

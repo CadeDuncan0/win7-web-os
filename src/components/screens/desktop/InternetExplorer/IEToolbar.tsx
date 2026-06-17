@@ -1,6 +1,7 @@
 'use client'
 
 import styles from './IEToolbar.module.css'
+import { assetPaths } from '@/lib/assetPaths'
 
 interface IEToolbarProps {
   currentUrl: string
@@ -50,7 +51,7 @@ export function IEToolbar({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className={styles.favicon}
-          src="/imgs/windows7/assets/internetexplorer_logo.png"
+          src={assetPaths.desktopIcons.internetExplorer}
           alt=""
           aria-hidden="true"
         />

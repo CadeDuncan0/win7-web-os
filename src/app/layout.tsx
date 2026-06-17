@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 
 import ReduxProviderWrapper from '@/components/providers/ReduxProvider'
 
-import '7.css'
+// globals.css imports 7.css into a low cascade layer (see globals.css header)
 import './globals.css'
 
 export default function RootLayout({ children }: { children: ReactNode }) {

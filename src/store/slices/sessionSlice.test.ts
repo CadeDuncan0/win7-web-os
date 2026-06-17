@@ -19,7 +19,7 @@ const INITIAL: SessionState = {
   avatar: null,
 }
 
-const AVATAR = '/imgs/windows7/user-icons/usertile10.bmp'
+const AVATAR = '/assets/account-icons/usertile10.bmp'
 
 // Helper to wrap a SessionState into something the selectors can consume.
 // We only need the .session slice — the rest of RootState is irrelevant here.

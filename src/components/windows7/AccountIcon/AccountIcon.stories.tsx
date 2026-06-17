@@ -47,12 +47,12 @@ export const Admin: Story = {
 
 // Focuses the button so the :has(:focus) rule reveals the selection outline.
 // Reviewed against the win7-login background to confirm the inset glow blends
-// with the wallpaper (compare to accountIconBorderOutlineShaded_OG.png).
+// with the wallpaper (compare to docs/design-reference/accountIconBorderOutlineShaded_OG.png).
 export const Selected: Story = {
   args: {
     iconSrc: randomIcon1,
     subtitle: 'Guest',
-    // eslint-disable-next-line no-console
+
     onClick: () => console.warn('AccountIcon clicked'),
   },
   play: async () => {
@@ -72,7 +72,7 @@ export const Clickable: Story = {
   args: {
     iconSrc: randomIcon1,
     subtitle: 'Guest',
-    // eslint-disable-next-line no-console
+
     onClick: () => console.warn('AccountIcon clicked'),
   },
 }

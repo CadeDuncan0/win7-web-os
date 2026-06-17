@@ -48,7 +48,7 @@
   display: none;
 }
 
-/* The ::after overlay layers the accountIconBorder.png on top of the
+/* The ::after overlay layers the account-icon-border.png on top of the
    button's own background-image. The original kept both paint paths —
    we preserve that here. globals.css 7.css applies its own ::after
    chrome to bare buttons; this overrides it for AccountIcon only. */

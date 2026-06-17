@@ -88,7 +88,7 @@
    defaults (23px / 75px) which would otherwise compete with the
    lockscreen-specific sizing tokens below. Pushes well below the
    password row so the form reads as input ▸ (breathing room) ▸
-   secondary action, mirroring public/imgs/login/os_signin.png. */
+   secondary action, mirroring the Win7 sign-in screen reference. */
 .switchUser {
   color: inherit;
   min-width: var(--logon-button-min-width);

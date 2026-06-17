@@ -5,6 +5,7 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { IconGrid } from './IconGrid'
+import { assetPaths } from '@/lib/assetPaths'
 import { gridCellToPixels } from '@/lib/gridMath'
 import { setupStore } from '@/store'
 import { registerIcon, setIconPosition, setSelectedIcon } from '@/store/slices/desktopSlice'
@@ -14,14 +15,14 @@ const MOCK_ICONS = [
   {
     id: 'icon-1',
     label: 'My Computer',
-    iconSrc: '/imgs/desktop/icons/computer.png',
+    iconSrc: assetPaths.branding.windowsLogoPng,
     windowKind: 'welcome' as const,
     windowTitle: 'My Computer',
   },
   {
     id: 'icon-2',
     label: 'Recycle Bin',
-    iconSrc: '/imgs/desktop/icons/recycle-bin.png',
+    iconSrc: assetPaths.branding.windowsLogoPng,
     windowKind: 'welcome' as const,
     windowTitle: 'Recycle Bin',
   },

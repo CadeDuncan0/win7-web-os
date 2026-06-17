@@ -1,4 +1,6 @@
-const DIR = '/imgs/windows7/user-icons'
+import { assetPaths } from '@/lib/assetPaths'
+
+const DIR = assetPaths.accountIcons.dir
 
 const FILES = [
   'guest.bmp',

@@ -3,6 +3,7 @@ import { Provider } from 'react-redux'
 import { fn, userEvent, within } from 'storybook/test'
 
 import { StartMenu } from './StartMenu'
+import { assetPaths } from '@/lib/assetPaths'
 import { setupStore } from '@/store'
 
 // Each story wraps in a fresh Redux store + desktop wallpaper backdrop
@@ -65,6 +66,6 @@ export const OpenWithAvatar: Story = {
   args: {
     isOpen: true,
     onClose: fn(),
-    avatarSrc: '/imgs/windows7/user-icons/user.bmp',
+    avatarSrc: assetPaths.accountIcons.user,
   },
 }

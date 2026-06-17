@@ -14,12 +14,28 @@
    component. If you find yourself adding a class selector for a single
    component here, it belongs in that component's module instead.
 
-   Every value below is sourced directly from
-   public/copycats/signin/* and public/copycats/accountselection/*.
-   That source IS the textbook — primitives mirror the exact rgba()
-   stops, drop-shadow geometry, and dimension constants used by the
-   win7simu .logon__* classes.
+   Every value below is sourced directly from the win7simu reference
+   captured in docs/copycats/ (gitignored). That source IS the textbook —
+   primitives mirror the exact rgba() stops, drop-shadow geometry, and
+   dimension constants used by the win7simu .logon__* classes.
    ===================================================================== */
+
+/* =====================================================================
+   Cascade layers — make in-house CSS always beat 7.css.
+
+   Layer priority runs lowest → highest: reset, seven-css, then UNLAYERED.
+   Unlayered rules (every *.module.css and the design tokens / component
+   rules in this file) outrank both layers regardless of selector
+   specificity or import order, so in-house styling always wins.
+
+   7.css lives in `seven-css` so its chrome loses to our components but
+   still beats the generic element reset — otherwise broad reset selectors
+   like `ul` would clobber 7.css menus and tree views. The reset therefore
+   sits in the lowest layer. 7.css ships zero !important declarations, so
+   the layer-priority reversal that applies to !important is moot here.
+   ===================================================================== */
+@layer reset, seven-css;
+@import '7.css' layer(seven-css);
 
 :root {
   /* ─── PRIMITIVE: Color ─────────────────────────────────────────── */
@@ -30,6 +46,11 @@
   --color-logon-input-border: #666666;
   --color-logon-input-text: #000000;
   --color-logon-avatar-border: #3f3f3f;
+  /* Aero selection blues — desktop icon hover/active (matches win7simu) */
+  --color-aero-select-border: #b8d6fc;
+  --alpha-aero-select-hover: rgba(242, 247, 254, 0.4666666667);
+  --alpha-aero-select-top: rgba(220, 235, 252, 0.6666666667);
+  --alpha-aero-select-bottom: rgba(193, 220, 252, 0.6666666667);
 
   /* ─── PRIMITIVE: Alpha-white scale (button gradient + gloss) ───── */
   --alpha-white-13: rgba(255, 255, 255, 0.1333333333);
@@ -39,6 +60,7 @@
   --alpha-white-50: rgba(255, 255, 255, 0.5019607843);
   --alpha-white-53: rgba(255, 255, 255, 0.5333333333);
   --alpha-white-60: rgba(255, 255, 255, 0.6);
+  --alpha-white-67: rgba(255, 255, 255, 0.6666666667);
 
   /* ─── PRIMITIVE: Alpha-black scale (text shadows + button halo) ── */
   --alpha-black-13: rgba(0, 0, 0, 0.1333333333);
@@ -82,8 +104,8 @@
      =================================================================== */
 
   /* ─── SEMANTIC: Backdrop image ─────────────────────────────────── */
-  --logon-backdrop: url('/imgs/login/background.jpg');
-  --desktop-backdrop: url('/imgs/desktop/background.jpg');
+  --logon-backdrop: url('/assets/backgrounds/login.jpg');
+  --desktop-backdrop: url('/assets/backgrounds/desktop.jpg');
 
   /* ─── SEMANTIC: Text shadows on the lock-screen image ──────────── */
   --logon-text-shadow: 0 1px 2px var(--color-neutral-900);
@@ -93,7 +115,7 @@
   /* ─── SEMANTIC: Avatar (consumed by AccountIcon.module.css) ────── */
   --avatar-size: 144px;
   --avatar-image-size: 98px;
-  --avatar-frame: url(/imgs/windows7/assets/accountIconBorder.png);
+  --avatar-frame: url(/assets/account-icon-border.png);
   --avatar-frame-padding: 23px;
   --avatar-frame-bg: var(--color-neutral-0);
   --avatar-frame-radius: 4px;
@@ -194,10 +216,20 @@
 
   /* ─── SEMANTIC: Desktop icons ────────────────────────────────────── */
   --dsk-icon-image-size: 48px;
-  --dsk-icon-label-size: 11px;
-  --dsk-icon-label-shadow: 1px 1px 2px var(--alpha-black-80);
-  --dsk-icon-select-bg: rgba(170, 221, 250, 0.35);
-  --dsk-icon-select-border: rgba(170, 221, 250, 0.7);
+  --dsk-icon-label-size: 12px;
+  --dsk-icon-pad-x: 2px;
+  /* Triple-stacked shadow keeps the white label legible over any wallpaper */
+  --dsk-icon-label-shadow:
+    0 1px 2px var(--color-neutral-900), 0 1px 2px var(--color-neutral-900),
+    0 1px 3px var(--color-neutral-900);
+  --dsk-icon-hover-bg: var(--alpha-aero-select-hover);
+  --dsk-icon-hover-ring: inset 0 0 0 1px var(--alpha-white-67);
+  --dsk-icon-select-bg: linear-gradient(
+    var(--alpha-aero-select-top),
+    var(--alpha-aero-select-bottom)
+  );
+  --dsk-icon-select-border: var(--color-aero-select-border);
+  --dsk-icon-select-ring: inset 0 0 0 1px var(--alpha-white-67);
   --dsk-icon-select-radius: 3px;
 
   /* ─── SEMANTIC: Start Menu ──────────────────────────────────────── */
@@ -340,19 +372,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* Generic element baseline. Lives in the lowest cascade layer so 7.css
+   component chrome (e.g. ul[role=menu], ul.tree-view padding) is not
+   overridden by these broad selectors, while in-house component CSS — and
+   even 7.css — still layer above it. */
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-ul,
-ol {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
+  ul,
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
-button {
-  font-family: inherit;
+  button {
+    font-family: inherit;
+  }
 }

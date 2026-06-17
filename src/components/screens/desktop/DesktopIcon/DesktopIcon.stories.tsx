@@ -7,6 +7,7 @@ import { Provider } from 'react-redux'
 import { userEvent, within } from 'storybook/test'
 
 import { DesktopIcon } from './DesktopIcon'
+import { assetPaths } from '@/lib/assetPaths'
 import { setupStore } from '@/store'
 import { registerIcon, setSelectedIcon } from '@/store/slices/desktopSlice'
 
@@ -68,7 +69,7 @@ export const Idle: Story = {
   args: {
     id: MOCK_ICON_ID,
     label: 'My Computer',
-    iconSrc: '/imgs/desktop/icons/computer.png',
+    iconSrc: assetPaths.branding.windowsLogoPng,
     onOpen: noop,
   },
 }
@@ -77,7 +78,7 @@ export const Selected: Story = {
   args: {
     id: MOCK_ICON_ID,
     label: 'My Computer',
-    iconSrc: '/imgs/desktop/icons/computer.png',
+    iconSrc: assetPaths.branding.windowsLogoPng,
     onOpen: noop,
   },
 }
@@ -86,7 +87,7 @@ export const Focused: Story = {
   args: {
     id: MOCK_ICON_ID,
     label: 'My Computer',
-    iconSrc: '/imgs/desktop/icons/computer.png',
+    iconSrc: assetPaths.branding.windowsLogoPng,
     onOpen: noop,
   },
   play: async ({ canvasElement }) => {
@@ -101,7 +102,7 @@ export const LongLabel: Story = {
   args: {
     id: MOCK_LONG_ID,
     label: 'Windows Media Player with a Very Long Name',
-    iconSrc: '/imgs/desktop/icons/computer.png',
+    iconSrc: assetPaths.branding.windowsLogoPng,
     onOpen: noop,
   },
   decorators: [

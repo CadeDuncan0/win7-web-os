@@ -42,7 +42,13 @@ describe('renderWithProviders', () => {
   it('seeds the Redux store from preloadedState', () => {
     renderWithProviders(<StoreProbe />, {
       preloadedState: {
-        session: { role: 'admin', authStatus: 'authenticated', jwt: 'jwt', startedAt: 1000 },
+        session: {
+          role: 'admin',
+          authStatus: 'authenticated',
+          jwt: 'jwt',
+          startedAt: 1000,
+          avatar: null,
+        },
       },
     })
     expect(screen.getByText('role: admin')).toBeInTheDocument()

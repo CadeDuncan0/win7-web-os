@@ -1,6 +1,7 @@
 import Image from 'next/image'
 
 import styles from './OsBranding.module.css'
+import { assetPaths } from '@/lib/assetPaths'
 
 interface OsBrandingProps {
   subtitle?: string
@@ -12,7 +13,7 @@ export function OsBranding({ subtitle = 'Portfolio', className }: OsBrandingProp
   return (
     <div className={merged}>
       <Image
-        src="/imgs/login/windows-logo.webp"
+        src={assetPaths.branding.windowsLogoWebp}
         alt=""
         width={32}
         height={32}

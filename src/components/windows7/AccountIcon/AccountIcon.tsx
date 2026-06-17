@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useId } from 'react'
 
 import styles from './AccountIcon.module.css'
+import { assetPaths } from '@/lib/assetPaths'
 
 interface AccountIconProps {
   className?: string
@@ -90,9 +91,7 @@ export function AccountIcon({
       >
         <span className={styles.mask}>
           <Image
-            src={
-              iconSrc ? '/imgs/windows7/user-icons/user.bmp' : '/imgs/windows7/user-icons/user.bmp'
-            }
+            src={iconSrc ?? assetPaths.accountIcons.user}
             alt="User avatar"
             className={styles.image}
             width={width}

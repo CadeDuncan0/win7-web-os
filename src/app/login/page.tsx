@@ -5,9 +5,8 @@ import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react'
 
 import { AccountSelection, type AccountId } from '@/components/screens/login/AccountSelection'
 import { SignIn } from '@/components/screens/login/SignIn'
-import { Transition } from '@/components/screens/Transition'
+import { Transition } from '@/components/screens/transition'
 import { beginGuestSession, signInAsAdmin } from '@/lib/auth'
-import { debug } from '@/lib/debug'
 import { pickTwoDistinctIcons } from '@/lib/userIcons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { selectAuthStatus, setSession } from '@/store/slices/sessionSlice'
@@ -50,7 +49,7 @@ export default function LoginPage() {
     if (id === 'guest') {
       const r = beginGuestSession(avatars.guest)
       if (!r.ok) {
-        debug.error(r.error)
+        console.error(r.error)
         return
       }
       dispatch(setSession(r.data))

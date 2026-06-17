@@ -1,3 +1,4 @@
+import { assetPaths } from '@/lib/assetPaths'
 import type { WindowKind } from '@/store/slices/windowSlice'
 
 /** Static shortcut registry for the Start Menu's two-column layout.
@@ -13,7 +14,7 @@ export interface StartMenuShortcut {
 
 // TODO: [Action Required: replace the windows-logo placeholder below with real
 // per-shortcut icon assets in Task 17]
-const PLACEHOLDER_ICON = '/imgs/login/windows-logo.png'
+const PLACEHOLDER_ICON = assetPaths.branding.windowsLogoPng
 
 export const LEFT_COLUMN_SHORTCUTS: StartMenuShortcut[] = [
   {

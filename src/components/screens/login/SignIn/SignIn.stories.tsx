@@ -2,8 +2,9 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useState } from 'react'
 
 import { SignIn } from './SignIn'
+import { assetPaths } from '@/lib/assetPaths'
 
-const ADMIN_AVATAR = '/imgs/windows7/user-icons/user.bmp'
+const ADMIN_AVATAR = assetPaths.accountIcons.user
 
 const meta = {
   title: 'Screens/login/SignIn',
