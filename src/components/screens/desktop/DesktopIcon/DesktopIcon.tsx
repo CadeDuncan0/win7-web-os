@@ -30,6 +30,15 @@ export function DesktopIcon({ id, label, iconSrc, onOpen }: DesktopIconProps) {
 
   const position = icon ? gridCellToPixels(icon.position) : { x: 0, y: 0 }
 
+  // Dragging is pointer-only (no KeyboardSensor), so drop dnd-kit's
+  // keyboard-drag announcements — aria-roledescription="draggable" and the
+  // aria-describedby pointing at "press space/enter to pick up" instructions.
+  const {
+    'aria-roledescription': _ariaRoleDescription,
+    'aria-describedby': _ariaDescribedBy,
+    ...iconAttributes
+  } = attributes
+
   // CSS.Translate (not CSS.Transform) — we only need translation, no scale/rotate
   const style: CSSProperties = {
     position: 'absolute',
@@ -49,14 +58,17 @@ export function DesktopIcon({ id, label, iconSrc, onOpen }: DesktopIconProps) {
       style={style}
       onClick={() => dispatch(setSelectedIcon({ id }))}
       onDoubleClick={onOpen}
+      aria-label={label}
+      {...iconAttributes}
+      {...listeners}
+      // Enter opens the selected icon (authentic Win7: select, then Enter).
+      // Dragging is pointer-only — there is no KeyboardSensor — so there is
+      // no sensor onKeyDown to compose with here.
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
           onOpen()
         }
       }}
-      aria-label={label}
-      {...attributes}
-      {...listeners}
     >
       <Image
         className={styles.image}

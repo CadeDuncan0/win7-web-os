@@ -5,16 +5,37 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: var(--space-1);
+  padding: var(--space-1) var(--dsk-icon-pad-x);
   gap: var(--space-1);
   background: transparent;
+  /* 1px solid transparent reserves the border box so selecting an icon
+     swaps the color without nudging layout by a pixel. */
   border: 1px solid transparent;
+  border-color: none;
   border-radius: var(--dsk-icon-select-radius);
   cursor: default;
   user-select: none;
   outline: none;
   -webkit-user-drag: none;
   touch-action: none;
+  box-shadow: none;
+  transition: none;
+  animation: none;
+}
+
+.icon:hover {
+  background: var(--dsk-icon-hover-bg);
+  transition: opacity 0.2s;
+}
+
+.icon:hover::before,
+.icon:hover::after {
+  opacity: 0.25;
+}
+
+.icon::before,
+.icon::after {
+  opacity: 0;
 }
 
 .icon:focus-visible {
@@ -22,7 +43,9 @@
   outline-offset: -2px;
 }
 
-.selected {
+/* Selected wins over hover: declared after .icon:hover at equal specificity. */
+.selected,
+.selected:hover {
   background: var(--dsk-icon-select-bg);
   border-color: var(--dsk-icon-select-border);
 }
