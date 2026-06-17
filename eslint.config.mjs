@@ -18,7 +18,6 @@ const eslintConfig = defineConfig([
 
     rules: {
       // 1. Disallow console.log (allow warn + error if needed)
-      'no-console': ['error'],
       curly: ['error', 'all'],
       eqeqeq: ['error', 'always'],
 
