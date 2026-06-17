@@ -1,4 +1,22 @@
-.next/
-.husky/
+# Prettier checks first-party source only — mirror eslint.config.mjs ignores.
+
+# Dependencies & generated output
 node_modules/
+.next/
+out/
+build/
+storybook-static/
+coverage/
+next-env.d.ts
+*.tsbuildinfo
+
+# Vendored win7simu reference dump & Claude tooling (not first-party source)
+.docs/
+.claude/
+
+# Self-contained MCP sub-package (own toolchain)
+mcp-servers/
+
+# Tooling scripts & static assets
+.husky/
 public/

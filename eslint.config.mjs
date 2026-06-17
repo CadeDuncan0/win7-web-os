@@ -78,7 +78,21 @@ const eslintConfig = defineConfig([
     files: ['cypress/**/*.ts'],
     ...cypressPlugin.configs.recommended,
   }, // Override default ignores of eslint-config-next
-  globalIgnores(['.next/**', 'out/**', 'build/**', 'storybook-static/**', 'next-env.d.ts']),
+  // Lint first-party app source only. Excluded: generated output (.next, out,
+  // build, storybook-static, coverage, next-env.d.ts), the vendored win7simu
+  // reference dump (.docs), Claude tooling (.claude), and the self-contained
+  // MCP sub-package (mcp-servers — its own package.json/tsconfig/toolchain).
+  globalIgnores([
+    '.next/**',
+    'out/**',
+    'build/**',
+    'storybook-static/**',
+    'coverage/**',
+    'next-env.d.ts',
+    '.docs/**',
+    '.claude/**',
+    'mcp-servers/**',
+  ]),
   ...storybook.configs['flat/recommended'],
 ])
 
