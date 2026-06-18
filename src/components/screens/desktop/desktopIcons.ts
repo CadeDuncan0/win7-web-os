@@ -22,22 +22,15 @@ export const DESKTOP_ICONS: DesktopIconDefinition[] = [
   {
     id: 'icon-resume',
     label: 'Resume',
-    iconSrc: FOLDER_ICON,
+    iconSrc: FOLDER_ICON, // replace with pdf icon
     windowKind: 'internet-explorer',
     windowTitle: 'Resume',
   },
   {
     id: 'icon-projects',
     label: 'Projects',
-    iconSrc: FOLDER_ICON,
+    iconSrc: FOLDER_ICON, // replace with IE shortcut icon or create a new Windows Explorer window and put projects there
     windowKind: 'internet-explorer',
     windowTitle: 'Projects',
-  },
-  {
-    id: 'icon-welcome',
-    label: 'Welcome',
-    iconSrc: FOLDER_ICON,
-    windowKind: 'welcome',
-    windowTitle: 'Welcome',
   },
 ]

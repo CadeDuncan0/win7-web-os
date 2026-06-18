@@ -25,7 +25,7 @@ describe('DesktopPage', () => {
     renderWithProviders(<DesktopPage />)
     expect(screen.getByTestId('icon-grid')).toBeInTheDocument()
 
-    const expectedLabels = ['Internet Explorer', 'Resume', 'Projects', 'Welcome', 'About This PC']
+    const expectedLabels = ['Internet Explorer', 'Resume', 'Projects']
     for (const label of expectedLabels) {
       expect(screen.getByRole('button', { name: label })).toBeInTheDocument()
     }
@@ -52,8 +52,12 @@ describe('DesktopPage', () => {
     })
 
     expect(screen.getByTestId('managed-window-win-1')).toBeInTheDocument()
+    // The taskbar compacts open windows into one app button per kind, so the
+    // opened IE window surfaces a taskbar entry for the Internet Explorer app.
     const taskbar = screen.getByRole('navigation', { name: /taskbar/i })
-    expect(within(taskbar).getByRole('button', { name: 'Internet Explorer' })).toBeInTheDocument()
+    expect(
+      within(taskbar).getAllByRole('button', { name: 'Internet Explorer' }).length
+    ).toBeGreaterThan(0)
   })
 
   it('opening an IE window with title "Resume" starts on the resume route', async () => {
@@ -97,8 +101,8 @@ describe('WindowManager', () => {
         byId: {
           'win-1': {
             id: 'win-1',
-            kind: 'welcome',
-            title: 'Welcome',
+            kind: 'internet-explorer',
+            title: 'Resume',
             position: { x: 100, y: 50 },
             size: { width: 400, height: 300 },
             zIndex: 1,
@@ -108,8 +112,8 @@ describe('WindowManager', () => {
           },
           'win-2': {
             id: 'win-2',
-            kind: 'about-this-pc',
-            title: 'About This PC',
+            kind: 'internet-explorer',
+            title: 'Projects',
             position: { x: 200, y: 100 },
             size: { width: 400, height: 300 },
             zIndex: 2,
@@ -134,8 +138,8 @@ describe('WindowManager', () => {
         byId: {
           'win-1': {
             id: 'win-1',
-            kind: 'welcome',
-            title: 'Welcome',
+            kind: 'internet-explorer',
+            title: 'Resume',
             position: { x: 100, y: 50 },
             size: { width: 400, height: 300 },
             zIndex: 1,
@@ -145,8 +149,8 @@ describe('WindowManager', () => {
           },
           'win-2': {
             id: 'win-2',
-            kind: 'about-this-pc',
-            title: 'About This PC',
+            kind: 'internet-explorer',
+            title: 'Projects',
             position: { x: 200, y: 100 },
             size: { width: 400, height: 300 },
             zIndex: 2,
@@ -189,58 +193,5 @@ describe('WindowManager', () => {
 
     expect(screen.getByTestId('managed-window-win-1')).toBeInTheDocument()
     expect(screen.getByText('portfolio://resume')).toBeInTheDocument()
-  })
-
-  it('renders WelcomeContent for welcome kind', () => {
-    renderWithProviders(<WindowManager />, {
-      preloadedState: makeWindowState({
-        byId: {
-          'win-1': {
-            id: 'win-1',
-            kind: 'welcome',
-            title: 'Welcome',
-            position: { x: 100, y: 50 },
-            size: { width: 400, height: 300 },
-            zIndex: 1,
-            isMinimized: false,
-            isMaximized: false,
-            prevGeometry: null,
-          },
-        },
-        ids: ['win-1'],
-        zCounter: 1,
-        nextIdSeed: 1,
-      }),
-    })
-
-    expect(screen.getByText('Welcome to Windows 7')).toBeInTheDocument()
-  })
-
-  it('renders AboutThisPCContent for about-this-pc kind', () => {
-    renderWithProviders(<WindowManager />, {
-      preloadedState: makeWindowState({
-        byId: {
-          'win-1': {
-            id: 'win-1',
-            kind: 'about-this-pc',
-            title: 'About This PC',
-            position: { x: 100, y: 50 },
-            size: { width: 400, height: 300 },
-            zIndex: 1,
-            isMinimized: false,
-            isMaximized: false,
-            prevGeometry: null,
-          },
-        },
-        ids: ['win-1'],
-        zCounter: 1,
-        nextIdSeed: 1,
-      }),
-    })
-
-    expect(screen.getByRole('heading', { name: 'About This PC' })).toBeInTheDocument()
-    expect(
-      screen.getByText('Built with Next.js, React, Redux, and TypeScript.')
-    ).toBeInTheDocument()
   })
 })

@@ -14,8 +14,8 @@ export const MIN_WINDOW_SIZE = { width: 240, height: 160 }
 
 // Discriminator for what content renders inside the window. The slice is
 // content-agnostic — a registry component (Task 17) maps kind → React component.
-// Add new kinds here as windows are introduced in Phase 2 and Phase 3.
-export type WindowKind = 'welcome' | 'about-this-pc' | 'internet-explorer'
+// Add new kinds here as windows are introduced.
+export type WindowKind = 'internet-explorer'
 
 export interface WindowGeometry {
   x: number

@@ -12,7 +12,7 @@ import type { WindowInstance, WindowState } from '@/store/slices/windowSlice'
 function makeWindowState(overrides: Partial<WindowInstance> = {}): WindowState {
   const instance: WindowInstance = {
     id: 'win-1',
-    kind: 'welcome',
+    kind: 'internet-explorer',
     title: 'Welcome',
     position: { x: 100, y: 60 },
     size: { width: 480, height: 360 },
@@ -77,7 +77,7 @@ export const Inactive: Story = {
       byId: {
         'win-1': {
           id: 'win-1',
-          kind: 'welcome',
+          kind: 'internet-explorer',
           title: 'Background Window',
           position: { x: 80, y: 40 },
           size: { width: 480, height: 360 },
@@ -88,7 +88,7 @@ export const Inactive: Story = {
         },
         'win-2': {
           id: 'win-2',
-          kind: 'welcome',
+          kind: 'internet-explorer',
           title: 'Foreground Window',
           position: { x: 200, y: 100 },
           size: { width: 480, height: 360 },
@@ -162,7 +162,7 @@ const threeWindowState: WindowState = {
   byId: {
     'win-1': {
       id: 'win-1',
-      kind: 'welcome',
+      kind: 'internet-explorer',
       title: 'Window A',
       position: { x: 50, y: 30 },
       size: { width: 480, height: 360 },
@@ -173,7 +173,7 @@ const threeWindowState: WindowState = {
     },
     'win-2': {
       id: 'win-2',
-      kind: 'welcome',
+      kind: 'internet-explorer',
       title: 'Window B',
       position: { x: 180, y: 80 },
       size: { width: 480, height: 360 },
@@ -184,7 +184,7 @@ const threeWindowState: WindowState = {
     },
     'win-3': {
       id: 'win-3',
-      kind: 'welcome',
+      kind: 'internet-explorer',
       title: 'Window C',
       position: { x: 310, y: 130 },
       size: { width: 480, height: 360 },

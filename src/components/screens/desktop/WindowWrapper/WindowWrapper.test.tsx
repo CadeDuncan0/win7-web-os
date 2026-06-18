@@ -13,7 +13,7 @@ const SINGLE_WINDOW: Partial<RootState> = {
     byId: {
       'win-1': {
         id: 'win-1',
-        kind: 'welcome',
+        kind: 'internet-explorer',
         title: 'Test Window',
         position: { x: 100, y: 50 },
         size: { width: 400, height: 300 },
@@ -35,7 +35,7 @@ const TWO_WINDOWS: Partial<RootState> = {
     byId: {
       'win-1': {
         id: 'win-1',
-        kind: 'welcome',
+        kind: 'internet-explorer',
         title: 'Back Window',
         position: { x: 80, y: 40 },
         size: { width: 400, height: 300 },
@@ -46,7 +46,7 @@ const TWO_WINDOWS: Partial<RootState> = {
       },
       'win-2': {
         id: 'win-2',
-        kind: 'welcome',
+        kind: 'internet-explorer',
         title: 'Front Window',
         position: { x: 200, y: 100 },
         size: { width: 400, height: 300 },
@@ -67,7 +67,7 @@ const THREE_WINDOWS: Partial<RootState> = {
     byId: {
       'win-1': {
         id: 'win-1',
-        kind: 'welcome',
+        kind: 'internet-explorer',
         title: 'Window A',
         position: { x: 50, y: 30 },
         size: { width: 400, height: 300 },
@@ -78,7 +78,7 @@ const THREE_WINDOWS: Partial<RootState> = {
       },
       'win-2': {
         id: 'win-2',
-        kind: 'welcome',
+        kind: 'internet-explorer',
         title: 'Window B',
         position: { x: 150, y: 80 },
         size: { width: 400, height: 300 },
@@ -89,7 +89,7 @@ const THREE_WINDOWS: Partial<RootState> = {
       },
       'win-3': {
         id: 'win-3',
-        kind: 'welcome',
+        kind: 'internet-explorer',
         title: 'Window C',
         position: { x: 250, y: 130 },
         size: { width: 400, height: 300 },
@@ -110,7 +110,7 @@ const MAXIMIZED_WINDOW: Partial<RootState> = {
     byId: {
       'win-1': {
         id: 'win-1',
-        kind: 'welcome',
+        kind: 'internet-explorer',
         title: 'Maximized Window',
         position: { x: 0, y: 0 },
         size: { width: 1280, height: 680 },

@@ -34,16 +34,19 @@ const openOne = (
   state: WindowState = INITIAL,
   overrides: Partial<Parameters<typeof openWindow>[0]> = {}
 ): { state: WindowState; window: WindowInstance } => {
-  const next = reducer(state, openWindow({ kind: 'welcome', title: 'Welcome', ...overrides }))
+  const next = reducer(
+    state,
+    openWindow({ kind: 'internet-explorer', title: 'Welcome', ...overrides })
+  )
   const id = next.ids[next.ids.length - 1]
   return { state: next, window: next.byId[id] }
 }
 
 // Opens three windows (A, B, C) in insertion order; C ends up on top.
 const openABC = (): WindowState => {
-  let state = reducer(INITIAL, openWindow({ kind: 'welcome', title: 'A' }))
-  state = reducer(state, openWindow({ kind: 'welcome', title: 'B' }))
-  state = reducer(state, openWindow({ kind: 'welcome', title: 'C' }))
+  let state = reducer(INITIAL, openWindow({ kind: 'internet-explorer', title: 'A' }))
+  state = reducer(state, openWindow({ kind: 'internet-explorer', title: 'B' }))
+  state = reducer(state, openWindow({ kind: 'internet-explorer', title: 'C' }))
   return state
 }
 
@@ -139,8 +142,8 @@ describe('windowSlice', () => {
 
   describe('restoreWindow', () => {
     it('sets isMinimized=false and promotes to top', () => {
-      let state = reducer(INITIAL, openWindow({ kind: 'welcome', title: 'A' }))
-      state = reducer(state, openWindow({ kind: 'welcome', title: 'B' }))
+      let state = reducer(INITIAL, openWindow({ kind: 'internet-explorer', title: 'A' }))
+      state = reducer(state, openWindow({ kind: 'internet-explorer', title: 'B' }))
       const [aId, bId] = state.ids
       state = reducer(state, minimizeWindow({ id: aId }))
       state = reducer(state, restoreWindow({ id: aId }))
@@ -222,8 +225,8 @@ describe('windowSlice', () => {
     })
 
     it('selectTopWindowId ignores minimized windows', () => {
-      let state = reducer(INITIAL, openWindow({ kind: 'welcome', title: 'A' }))
-      state = reducer(state, openWindow({ kind: 'welcome', title: 'B' }))
+      let state = reducer(INITIAL, openWindow({ kind: 'internet-explorer', title: 'A' }))
+      state = reducer(state, openWindow({ kind: 'internet-explorer', title: 'B' }))
       const [aId, bId] = state.ids
       state = reducer(state, minimizeWindow({ id: bId }))
       expect(selectTopWindowId(rootFrom(state))).toBe(aId)
@@ -233,15 +236,15 @@ describe('windowSlice', () => {
       // No windows open at all.
       expect(selectTopWindowId(rootFrom(INITIAL))).toBeNull()
       // A single window that is minimized — nothing is visually on top.
-      let state = reducer(INITIAL, openWindow({ kind: 'welcome', title: 'A' }))
+      let state = reducer(INITIAL, openWindow({ kind: 'internet-explorer', title: 'A' }))
       const [aId] = state.ids
       state = reducer(state, minimizeWindow({ id: aId }))
       expect(selectTopWindowId(rootFrom(state))).toBeNull()
     })
 
     it('selectVisibleWindows omits minimized windows', () => {
-      let state = reducer(INITIAL, openWindow({ kind: 'welcome', title: 'A' }))
-      state = reducer(state, openWindow({ kind: 'welcome', title: 'B' }))
+      let state = reducer(INITIAL, openWindow({ kind: 'internet-explorer', title: 'A' }))
+      state = reducer(state, openWindow({ kind: 'internet-explorer', title: 'B' }))
       const [aId, bId] = state.ids
       state = reducer(state, minimizeWindow({ id: bId }))
       const visibleIds = selectVisibleWindows(rootFrom(state)).map((w) => w.id)

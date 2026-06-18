@@ -16,14 +16,14 @@ const MOCK_ICONS = [
     id: 'icon-1',
     label: 'My Computer',
     iconSrc: assetPaths.branding.windowsLogoPng,
-    windowKind: 'welcome' as const,
+    windowKind: 'internet-explorer' as const,
     windowTitle: 'My Computer',
   },
   {
     id: 'icon-2',
     label: 'Recycle Bin',
     iconSrc: assetPaths.branding.windowsLogoPng,
-    windowKind: 'welcome' as const,
+    windowKind: 'internet-explorer' as const,
     windowTitle: 'Recycle Bin',
   },
 ]
