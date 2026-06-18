@@ -9,9 +9,9 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "PowerShell(gh search repos \"windows 7 start menu css\" --limit 5 --json name,url,description 2>&1)",
       "WebFetch(domain:visnalize.github.io)",
-      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 50)"
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 50)",
+      "PowerShell(npx eslint --fix src/components/screens/desktop/Taskbar/TaskbarButton.tsx --max-warnings=0 2>&1; Write-Output \"EXIT:$LASTEXITCODE\")"
     ]
   },
-  "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["proxy-verifier"]
+  "enableAllProjectMcpServers": true
 }

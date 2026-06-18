@@ -10,10 +10,6 @@ coverage/
 next-env.d.ts
 *.tsbuildinfo
 
-# Vendored win7simu reference dump & Claude tooling (not first-party source)
-.docs/
-.claude/
-
 # Self-contained MCP sub-package (own toolchain)
 mcp-servers/
 

@@ -1,0 +1,1 @@
+- git-commitmsg-review (reviews all git commits not currently pushed to the current branch for best practice. outputs the terminal commands needed to apply suggestions)
