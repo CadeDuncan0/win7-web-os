@@ -162,7 +162,7 @@ src/
     screens/
       login/              Login screen (AccountSelection, SignIn)
       desktop/            Desktop, IconGrid, Taskbar, StartMenu, WindowManager, InternetExplorer
-      Transition/         Boot / welcome transition
+      transition/         Boot / welcome transition
     windows7/             Reusable Windows 7 primitives built on 7.css (+ Storybook stories)
   content/                (Phase 3) repo-resident project registry + MDX/React bodies
   hooks/                  Shared React hooks (auth listener, dnd-kit sensors)

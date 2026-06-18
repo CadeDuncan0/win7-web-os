@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
-import { Transition } from './Transition'
+import { Transition } from './transition'
 
 const meta = {
   title: 'Screens/login/Welcome',

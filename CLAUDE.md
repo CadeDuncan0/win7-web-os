@@ -295,7 +295,7 @@ src/
   app/                    Next.js App Router pages and layouts
   components/
     providers/            Client-side context provider wrapper components only
-    screens/              Screen-level compositions (login, desktop, Transition)
+    screens/              Screen-level compositions (login, desktop, transition)
     windows7/             Reusable Windows 7 primitives built on 7.css
   content/                Repo-resident project data: typed registry (index) + per-project
                           MDX/React bodies (the single source of truth for project content)
