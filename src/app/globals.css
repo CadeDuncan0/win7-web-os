@@ -269,28 +269,63 @@
 
   /* ─── SEMANTIC: Taskbar ────────────────────────────────────────── */
   --tb-height: 40px;
-  --tb-bg: rgba(37, 44, 56, 0.75);
+  /* Aero glass: a light, translucent blue body the backdrop blur (below)
+     shows through — bright at the top edge, faintly deeper at the base.
+     Low alphas let the wallpaper tint it so it reads as glass, not paint. */
+  --tb-bg: linear-gradient(
+    to bottom,
+    rgba(188, 214, 238, 0.5) 0%,
+    rgba(138, 178, 214, 0.42) 9%,
+    rgba(104, 150, 195, 0.4) 52%,
+    rgba(86, 132, 180, 0.48) 100%
+  );
   --tb-glass-blur: 12px;
-  --tb-border-top: 1px solid rgba(255, 255, 255, 0.15);
+  --tb-border-top: 1px solid rgba(255, 255, 255, 0.45);
   --tb-shadow: 0 -2px 6px rgba(0, 0, 0, 0.3);
-  --tb-btn-height: 32px;
-  --tb-btn-min-width: 48px;
-  --tb-btn-max-width: 180px;
-  --tb-btn-radius: 3px;
-  --tb-btn-bg: rgba(255, 255, 255, 0.08);
-  --tb-btn-bg-hover: rgba(255, 255, 255, 0.18);
-  --tb-btn-bg-active: rgba(255, 255, 255, 0.25);
-  --tb-btn-border: 1px solid rgba(255, 255, 255, 0.12);
-  --tb-btn-border-active: 1px solid rgba(255, 255, 255, 0.3);
-  --tb-btn-text: rgba(255, 255, 255, 0.9);
-  --tb-btn-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-  --tb-clock-text: rgba(255, 255, 255, 0.9);
-  --tb-clock-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --tb-orb-size: 44px;
-  --tb-orb-bg: radial-gradient(circle at 40% 35%, #4bc0f0 0%, #1a7ec5 45%, #0e5a8e 100%);
-  --tb-orb-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3),
-    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+
+  /* Square, grouped app-icon buttons. No chrome at rest — a soft frame
+     appears only on hover/active (never a persistent solid white border). */
+  --tb-item-width: 58px;
+  --tb-item-height: 40px;
+  --tb-item-icon-size: 36px;
+  --tb-item-radius: 3px;
+  --tb-item-bg-hover: rgba(255, 255, 255, 0.22);
+  --tb-item-bg-active: rgba(255, 255, 255, 0.3);
+  --tb-item-selector-hover: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+  --tb-item-selector-active: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+
+  /* Hover/click popup listing an app's open windows — light Aero glass. */
+  --tb-popup-bg: rgba(216, 231, 245, 0.82);
+  --tb-popup-blur: 12px;
+  --tb-popup-border: 1px solid rgba(255, 255, 255, 0.65);
+  --tb-popup-radius: 6px;
+  --tb-popup-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --tb-popup-min-width: 200px;
+  --tb-popup-offset: 8px;
+  --tb-popup-icon-size: 16px;
+  --tb-popup-text: #1c2433;
+  --tb-popup-item-radius: 3px;
+  /* Each entry's frame shows only on hover. */
+  --tb-popup-item-hover-bg: rgba(255, 255, 255, 0.55);
+  --tb-popup-item-hover-border: 1px solid var(--color-aero-select-border);
+  /* Win7 red close button (revealed on entry hover). */
+  --tb-popup-close-size: 18px;
+  --tb-popup-close-bg: linear-gradient(#fb9d8b, #ee6d56 45%, #d42809 50%);
+  --tb-popup-close-bg-hover: linear-gradient(#ffb4a4, #f47c66 45%, #e6360f 50%);
+  --tb-popup-close-border: 1px solid rgba(130, 18, 0, 0.65);
+
+  --tb-text: rgba(255, 255, 255, 0.92);
+  --tb-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  --tb-clock-text: rgba(255, 255, 255, 0.95);
+  --tb-clock-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+
+  --tb-orb-size: 36px;
+  --tb-orb-img: url('/assets/desktop-icons/taskbar-startmenu.png');
+  --tb-orb-border: 1px solid white inset;
+  --tb-orb-border-radius: 100%;
+  /* Hover glow: brighten + saturate so the whole orb (flag colors included)
+     lights up, plus an aero halo. */
+  --tb-orb-glow: brightness(1.15) saturate(1.4) drop-shadow(0 0 6px rgba(140, 215, 255, 0.95));
   --tb-z: var(--dsk-z-taskbar);
 
   /* ─── SEMANTIC: Internet Explorer chrome ──────────────────────── */

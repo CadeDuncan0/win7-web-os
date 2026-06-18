@@ -1,29 +1,33 @@
 .startOrb {
+  /* min-width/padding reset neutralizes the 7.css `button` defaults
+     (min-width: 75px; padding: 0 12px) that otherwise stretch the orb. */
   width: var(--tb-orb-size);
   height: var(--tb-orb-size);
-  border-radius: var(--radius-full);
-  border: none;
+  min-width: var(--tb-orb-size);
+  min-height: var(--tb-orb-size);
+  padding: 0;
+  border: var(--tb-orb-border);
+  border-radius: var(--tb-orb-border-radius);
+  box-shadow: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
-  margin-top: -4px;
-  background: var(--tb-orb-bg);
-  box-shadow: var(--tb-orb-shadow);
+  background: var(--tb-orb-img) center / contain no-repeat;
+  filter: drop-shadow(var(--tb-orb-shadow));
   transition: filter 0.1s ease;
+  animation: none;
 }
 
 .startOrb:hover {
-  filter: var(--windows7-focus);
+  filter: var(--tb-orb-glow);
 }
 
 .startOrb:active,
 .active {
-  filter: var(--windows7-active);
+  filter: var(--tb-orb-glow) brightness(1.1);
+  border: none;
 }
 
-.logo {
-  width: 20px;
-  height: 20px;
+.startOrb::after,
+.startOrb::before {
+  opacity: 0;
 }

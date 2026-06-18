@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { StartOrb } from './StartOrb'
 import { SystemTray } from './SystemTray'
@@ -8,12 +8,29 @@ import styles from './Taskbar.module.css'
 import { TaskbarButton } from './TaskbarButton'
 import { StartMenu } from '@/components/screens/desktop/StartMenu'
 import { useAppSelector } from '@/store/hooks'
-import { selectOpenWindows } from '@/store/slices/windowSlice'
+import { selectOpenWindows, type WindowInstance, type WindowKind } from '@/store/slices/windowSlice'
+
+// Compact open windows into one entry per application (`kind`), preserving the
+// order in which each app's first window was opened.
+function groupByKind(
+  windows: WindowInstance[]
+): Array<{ kind: WindowKind; windows: WindowInstance[] }> {
+  const groups: Array<{ kind: WindowKind; windows: WindowInstance[] }> = []
+  for (const win of windows) {
+    const group = groups.find((g) => g.kind === win.kind)
+    if (group) {
+      group.windows.push(win)
+    } else {
+      groups.push({ kind: win.kind, windows: [win] })
+    }
+  }
+  return groups
+}
 
 export function Taskbar() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const openWindows = useAppSelector(selectOpenWindows)
-  const buttonRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  const groups = useMemo(() => groupByKind(openWindows), [openWindows])
 
   return (
     <nav className={styles.taskbar} role="navigation" aria-label="Taskbar">
@@ -25,14 +42,8 @@ export function Taskbar() {
       </div>
 
       <div className={styles.buttonGroup}>
-        {openWindows.map((win) => (
-          <TaskbarButton
-            key={win.id}
-            windowId={win.id}
-            ref={(el) => {
-              buttonRefs.current[win.id] = el
-            }}
-          />
+        {groups.map((group) => (
+          <TaskbarButton key={group.kind} kind={group.kind} windows={group.windows} />
         ))}
       </div>
 

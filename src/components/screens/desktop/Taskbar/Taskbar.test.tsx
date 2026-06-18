@@ -24,13 +24,15 @@ const NO_WINDOWS: Partial<RootState> = {
   } satisfies WindowState,
 }
 
-const TWO_WINDOWS: Partial<RootState> = {
+// Two windows of the SAME app (kind) — they compact into one taskbar button.
+// win-2 has the higher zIndex, so it is the active (top) window.
+const TWO_IE_WINDOWS: Partial<RootState> = {
   window: {
     byId: {
       'win-1': {
         id: 'win-1',
-        kind: 'welcome',
-        title: 'Window A',
+        kind: 'internet-explorer',
+        title: 'Resume',
         position: { x: 80, y: 80 },
         size: { width: 640, height: 440 },
         zIndex: 1,
@@ -40,8 +42,8 @@ const TWO_WINDOWS: Partial<RootState> = {
       },
       'win-2': {
         id: 'win-2',
-        kind: 'welcome',
-        title: 'Window B',
+        kind: 'internet-explorer',
+        title: 'Projects',
         position: { x: 200, y: 100 },
         size: { width: 640, height: 440 },
         zIndex: 2,
@@ -56,13 +58,34 @@ const TWO_WINDOWS: Partial<RootState> = {
   } satisfies WindowState,
 }
 
+const SINGLE_WINDOW: Partial<RootState> = {
+  window: {
+    byId: {
+      'win-1': {
+        id: 'win-1',
+        kind: 'internet-explorer',
+        title: 'Resume',
+        position: { x: 80, y: 80 },
+        size: { width: 640, height: 440 },
+        zIndex: 1,
+        isMinimized: false,
+        isMaximized: false,
+        prevGeometry: null,
+      },
+    },
+    ids: ['win-1'],
+    zCounter: 1,
+    nextIdSeed: 1,
+  } satisfies WindowState,
+}
+
 const MINIMIZED_WINDOW: Partial<RootState> = {
   window: {
     byId: {
       'win-1': {
         id: 'win-1',
-        kind: 'welcome',
-        title: 'Minimized Win',
+        kind: 'internet-explorer',
+        title: 'Resume',
         position: { x: 80, y: 80 },
         size: { width: 640, height: 440 },
         zIndex: 1,
@@ -100,51 +123,65 @@ describe('Taskbar', () => {
     expect(times.length).toBeGreaterThanOrEqual(2)
   })
 
-  it('renders one button per open window', () => {
-    renderWithProviders(<Taskbar />, { preloadedState: TWO_WINDOWS })
+  it('compacts windows of the same app into one button that lists each window', () => {
+    renderWithProviders(<Taskbar />, { preloadedState: TWO_IE_WINDOWS })
 
-    expect(screen.getByRole('button', { name: 'Window A' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Window B' })).toBeInTheDocument()
+    // One app button for the Internet Explorer group...
+    expect(screen.getByRole('button', { name: 'Internet Explorer' })).toBeInTheDocument()
+    // ...whose popup lists every open window.
+    expect(screen.getByRole('button', { name: 'Resume' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Projects' })).toBeInTheDocument()
   })
 
-  it('still shows a button for minimized windows', () => {
+  it('still shows a button for an app whose only window is minimized', () => {
     renderWithProviders(<Taskbar />, { preloadedState: MINIMIZED_WINDOW })
 
-    expect(screen.getByRole('button', { name: 'Minimized Win' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Internet Explorer' })).toBeInTheDocument()
   })
 })
 
-describe('TaskbarButton — click semantics', () => {
-  it('clicking an inactive window button focuses it', () => {
-    const { store } = renderWithProviders(<Taskbar />, {
-      preloadedState: TWO_WINDOWS,
-    })
+describe('TaskbarButton — app button click (single window)', () => {
+  it('minimizes the active window', () => {
+    const { store } = renderWithProviders(<Taskbar />, { preloadedState: SINGLE_WINDOW })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Window A' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Internet Explorer' }))
+
+    expect(store.getState().window.byId['win-1'].isMinimized).toBe(true)
+  })
+
+  it('restores a minimized window', () => {
+    const { store } = renderWithProviders(<Taskbar />, { preloadedState: MINIMIZED_WINDOW })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Internet Explorer' }))
+
+    expect(store.getState().window.byId['win-1'].isMinimized).toBe(false)
+  })
+})
+
+describe('TaskbarButton — window popup', () => {
+  it('clicking an inactive window focuses it', () => {
+    const { store } = renderWithProviders(<Taskbar />, { preloadedState: TWO_IE_WINDOWS })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Resume' }))
 
     const state = store.getState().window
     expect(state.byId['win-1'].zIndex).toBeGreaterThan(state.byId['win-2'].zIndex)
   })
 
-  it('clicking the active window button minimizes it', () => {
-    const { store } = renderWithProviders(<Taskbar />, {
-      preloadedState: TWO_WINDOWS,
-    })
+  it('clicking the active window minimizes it', () => {
+    const { store } = renderWithProviders(<Taskbar />, { preloadedState: TWO_IE_WINDOWS })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Window B' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Projects' }))
 
     expect(store.getState().window.byId['win-2'].isMinimized).toBe(true)
   })
 
-  it('clicking a minimized window button restores and focuses it', () => {
-    const { store } = renderWithProviders(<Taskbar />, {
-      preloadedState: MINIMIZED_WINDOW,
-    })
+  it('clicking a window close button closes that window', () => {
+    const { store } = renderWithProviders(<Taskbar />, { preloadedState: TWO_IE_WINDOWS })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Minimized Win' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Close Resume' }))
 
-    const state = store.getState().window
-    expect(state.byId['win-1'].isMinimized).toBe(false)
+    expect(store.getState().window.byId['win-1']).toBeUndefined()
   })
 })
 

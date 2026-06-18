@@ -20,7 +20,7 @@ function makeWindowState(
   for (const win of windows) {
     byId[win.id] = {
       id: win.id,
-      kind: 'welcome',
+      kind: 'internet-explorer',
       title: win.title,
       position: { x: 80, y: 80 },
       size: { width: 640, height: 440 },
@@ -85,36 +85,35 @@ export const Idle: Story = {
 export const WithWindows: Story = {
   args: {
     __windowState: makeWindowState([
-      { id: 'win-1', title: 'Welcome', zIndex: 1 },
-      { id: 'win-2', title: 'Internet Explorer', zIndex: 2 },
+      { id: 'win-1', title: 'Resume', zIndex: 1 },
+      { id: 'win-2', title: 'Projects', zIndex: 2 },
     ]),
   },
   parameters: {
     docs: {
       description: {
         story:
-          'Two open windows. The second window is active (higher zIndex). Click buttons to switch focus or minimize.',
+          'Two Internet Explorer windows compacted under one app button. The square selector marks the active app; hover the button to reveal the window list.',
       },
     },
   },
 }
 
-export const WithManyWindows: Story = {
+export const ManyWindows: Story = {
   args: {
     __windowState: makeWindowState([
-      { id: 'win-1', title: 'Welcome', zIndex: 1 },
-      { id: 'win-2', title: 'Internet Explorer - Portfolio', zIndex: 2 },
-      { id: 'win-3', title: 'About This PC', zIndex: 3 },
-      { id: 'win-4', title: 'Projects - All Categories', zIndex: 4 },
-      { id: 'win-5', title: 'Resume - Cade Duncan', zIndex: 5 },
-      { id: 'win-6', title: 'File Explorer - Documents', zIndex: 6 },
+      { id: 'win-1', title: 'Portfolio', zIndex: 1 },
+      { id: 'win-2', title: 'Resume', zIndex: 2 },
+      { id: 'win-3', title: 'Projects', zIndex: 3 },
+      { id: 'win-4', title: 'GitHub', zIndex: 4 },
+      { id: 'win-5', title: 'LinkedIn', zIndex: 5 },
     ]),
   },
   parameters: {
     docs: {
       description: {
         story:
-          'Six open windows. Buttons share space equally and truncate long titles with ellipsis.',
+          'Five Internet Explorer windows compacted into a single app button. Hover the button to reveal the full window list in the popup.',
       },
     },
   },
@@ -123,15 +122,15 @@ export const WithManyWindows: Story = {
 export const MinimizedWindow: Story = {
   args: {
     __windowState: makeWindowState([
-      { id: 'win-1', title: 'Welcome', zIndex: 1, isMinimized: true },
-      { id: 'win-2', title: 'Internet Explorer', zIndex: 2 },
+      { id: 'win-1', title: 'Resume', zIndex: 1, isMinimized: true },
+      { id: 'win-2', title: 'Projects', zIndex: 2 },
     ]),
   },
   parameters: {
     docs: {
       description: {
         story:
-          'One window minimized, one active. The minimized window button has de-emphasized styling (lower opacity). Click it to restore.',
+          'One window minimized, one active — both belong to the same Internet Explorer app button. Hover the button to see and restore each window.',
       },
     },
   },

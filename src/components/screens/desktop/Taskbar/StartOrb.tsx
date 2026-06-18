@@ -18,8 +18,6 @@ export function StartOrb({ isMenuOpen, onClick }: StartOrbProps) {
       aria-expanded={isMenuOpen}
       aria-haspopup="menu"
       type="button"
-    >
-      <span className={styles.logo} aria-hidden="true" />
-    </button>
+    />
   )
 }

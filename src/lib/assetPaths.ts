@@ -31,6 +31,10 @@ export const assetPaths = {
     folderNested: `${ASSETS}/desktop-icons/folder-nested.ico`,
     folderWithDocuments: `${ASSETS}/desktop-icons/folder-with-documents.ico`,
   },
+  /** Start orb. Mirrored by hand in globals.css `--tb-orb-img`. */
+  taskbar: {
+    startOrb: `${ASSETS}/desktop-icons/taskbar-startmenu.png`,
+  },
   /** Directory of authentic Win7 user-tile avatars (see lib/userIcons.ts). */
   accountIcons: {
     dir: `${ASSETS}/account-icons`,
