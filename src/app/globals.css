@@ -269,6 +269,7 @@
 
   /* ─── SEMANTIC: Taskbar ────────────────────────────────────────── */
   --tb-height: 40px;
+  --tb-height-fill: 41px;
   /* Aero glass: a light, translucent blue body the backdrop blur (below)
      shows through — bright at the top edge, faintly deeper at the base.
      Low alphas let the wallpaper tint it so it reads as glass, not paint. */
@@ -280,8 +281,8 @@
     rgba(86, 132, 180, 0.48) 100%
   );
   --tb-glass-blur: 12px;
-  --tb-border-top: 1px solid rgba(255, 255, 255, 0.45);
-  --tb-shadow: 0 -2px 6px rgba(0, 0, 0, 0.3);
+  --tb-border-top: 1px solid rgba(255, 255, 255, 0.6);
+  --tb-shadow: 0 -1px 0px rgba(0, 0, 0, 1);
 
   /* Square, grouped app-icon buttons. No chrome at rest — a soft frame
      appears only on hover/active (never a persistent solid white border). */
@@ -294,35 +295,69 @@
   --tb-item-selector-hover: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
   --tb-item-selector-active: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
 
-  /* Hover/click popup listing an app's open windows — light Aero glass. */
-  --tb-popup-bg: rgba(216, 231, 245, 0.82);
+  /* Hover/click popup listing an app's open windows — Win7 jump-list glass:
+     a slate-blue translucent body (darkening toward the base) framed by a dark
+     outer edge and a bright inner highlight. Values sampled from the reference. */
+  --tb-popup-bg: linear-gradient(to bottom, rgba(136, 154, 175, 0.85), rgba(118, 135, 154, 0.85));
   --tb-popup-blur: 12px;
-  --tb-popup-border: 1px solid rgba(255, 255, 255, 0.65);
+  --tb-popup-border: 1px solid rgba(70, 80, 92, 0.85);
   --tb-popup-radius: 6px;
-  --tb-popup-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  /* Bright inner highlight (1px inset) over a soft drop shadow. */
+  --tb-popup-shadow: inset 0 0 0 1px rgba(199, 215, 233, 0.6), 0 6px 18px rgba(0, 0, 0, 0.45);
   --tb-popup-min-width: 200px;
   --tb-popup-offset: 8px;
   --tb-popup-icon-size: 16px;
-  --tb-popup-text: #1c2433;
+  /* Labels are near-white on the slate glass (matches the reference). */
+  --tb-popup-text: rgba(255, 255, 255, 0.95);
   --tb-popup-item-radius: 3px;
-  /* Each entry's frame shows only on hover. */
-  --tb-popup-item-hover-bg: rgba(255, 255, 255, 0.55);
-  --tb-popup-item-hover-border: 1px solid var(--color-aero-select-border);
-  /* Win7 red close button (revealed on entry hover). */
+  /* Each entry's frame shows only on hover/focus — the Aero "hot" selection
+     (same light-blue gradient + border as the desktop-icon selection). */
+  --tb-popup-item-hover-bg: linear-gradient(
+    var(--alpha-aero-select-top),
+    var(--alpha-aero-select-bottom)
+  );
+  --tb-popup-item-hover-border: 1px solid white;
+  /* Win7 red close button (revealed on entry hover). Mirrors the 7.css
+     title-bar Close control: a muted red face shown whenever the button is
+     revealed, plus a brighter face with a warm glow that fades in only on
+     hover (the ::before overlay). The 'x' glyph sits on top of both faces so
+     it is always visible while the button is revealed. */
   --tb-popup-close-size: 18px;
-  --tb-popup-close-bg: linear-gradient(#fb9d8b, #ee6d56 45%, #d42809 50%);
-  --tb-popup-close-bg-hover: linear-gradient(#ffb4a4, #f47c66 45%, #e6360f 50%);
   --tb-popup-close-border: 1px solid rgba(130, 18, 0, 0.65);
+  /* Rendered size of the 'x' glyph (native PNG is ~11px) — kept a touch
+     smaller than native so it reads as a crisp mark, not a heavy block. */
+  --tb-popup-close-glyph-size: 9px;
+  --tb-popup-close-glyph: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAKCAYAAABi8KSDAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACUSURBVHgBlZFNCoQwDIVbmRvOMHOAAd0K/uDGlYKiCG4VPICi9yu0oCSQoFUXFtKEl6+voZXvr7sKay1TL690FOexY+Hz87i2decOuDKQsNGVe8AGYTRJIh0Y+orBvxszCPllOymlxN06jNE26Qnwg4zdHQLrMhFaawwAqAadDPE1ijwUxhiMKCmxCZk06OMYTz5lAx3xWDeXkLNAAAAAAElFTkSuQmCC')
+    no-repeat 50% / var(--tb-popup-close-glyph-size);
+  /* Soft white gloss shared by both faces. */
+  --tb-popup-close-gloss: linear-gradient(
+    #ffffff80,
+    #ffffff4d 45%,
+    #0000001a 50%,
+    #0000001a 75%,
+    #ffffff80
+  );
+  /* Resting (muted) red — side shadows + a desaturated red base. */
+  --tb-popup-close-rest:
+    var(--tb-popup-close-gloss), radial-gradient(circle at -60% 50%, #0007 5% 10%, #0000 50%),
+    radial-gradient(circle at 160% 50%, #0007 5% 10%, #0000 50%),
+    linear-gradient(#e0a197e5, #cf796a 25% 50%, #d54f36 50%);
+  /* Hover face — warm yellow glow, deeper side shadows, brighter red. */
+  --tb-popup-close-hover:
+    var(--tb-popup-close-gloss), radial-gradient(circle at 50% 170%, #f4e676 10% 20%, #0000 60%),
+    radial-gradient(circle at -60% 50%, #000a 5% 10%, #0000 50%),
+    radial-gradient(circle at 160% 50%, #000a 5% 10%, #0000 50%),
+    linear-gradient(#fb9d8b, #ee6d56 25% 50%, #d42809 50%);
+  /* Subtle outer halo, hover only (toned down from the 7.css 7px/3px). */
+  --tb-popup-close-halo: 0 0 4px 1px #e68e75;
 
   --tb-text: rgba(255, 255, 255, 0.92);
   --tb-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   --tb-clock-text: rgba(255, 255, 255, 0.95);
   --tb-clock-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
 
-  --tb-orb-size: 36px;
+  --tb-orb-size: 40px;
   --tb-orb-img: url('/assets/desktop-icons/taskbar-startmenu.png');
-  --tb-orb-border: 1px solid white inset;
-  --tb-orb-border-radius: 100%;
   /* Hover glow: brighten + saturate so the whole orb (flag colors included)
      lights up, plus an aero halo. */
   --tb-orb-glow: brightness(1.15) saturate(1.4) drop-shadow(0 0 6px rgba(140, 215, 255, 0.95));

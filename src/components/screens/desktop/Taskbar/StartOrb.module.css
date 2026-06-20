@@ -6,8 +6,7 @@
   min-width: var(--tb-orb-size);
   min-height: var(--tb-orb-size);
   padding: 0;
-  border: var(--tb-orb-border);
-  border-radius: var(--tb-orb-border-radius);
+  border: none;
   box-shadow: none;
   cursor: pointer;
   position: relative;

@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react'
 import { StartOrb } from './StartOrb'
 import { SystemTray } from './SystemTray'
 import styles from './Taskbar.module.css'
-import { TaskbarButton } from './TaskbarButton'
+import { TaskbarIcon } from './TaskbarIcon'
 import { StartMenu } from '@/components/screens/desktop/StartMenu'
 import { useAppSelector } from '@/store/hooks'
 import { selectOpenWindows, type WindowInstance, type WindowKind } from '@/store/slices/windowSlice'
@@ -33,7 +33,7 @@ export function Taskbar() {
   const groups = useMemo(() => groupByKind(openWindows), [openWindows])
 
   return (
-    <nav className={styles.taskbar} role="navigation" aria-label="Taskbar">
+    <nav className={styles.taskbar + ' glass'} role="navigation" aria-label="Taskbar">
       <div onMouseDown={(e) => e.stopPropagation()} className={styles.orbWrapper}>
         <StartOrb
           isMenuOpen={isStartMenuOpen}
@@ -43,7 +43,7 @@ export function Taskbar() {
 
       <div className={styles.buttonGroup}>
         {groups.map((group) => (
-          <TaskbarButton key={group.kind} kind={group.kind} windows={group.windows} />
+          <TaskbarIcon key={group.kind} kind={group.kind} windows={group.windows} />
         ))}
       </div>
 

@@ -140,7 +140,7 @@ describe('Taskbar', () => {
   })
 })
 
-describe('TaskbarButton — app button click (single window)', () => {
+describe('TaskbarIcon — app button click (single window)', () => {
   it('minimizes the active window', () => {
     const { store } = renderWithProviders(<Taskbar />, { preloadedState: SINGLE_WINDOW })
 
@@ -158,7 +158,7 @@ describe('TaskbarButton — app button click (single window)', () => {
   })
 })
 
-describe('TaskbarButton — window popup', () => {
+describe('TaskbarIcon — window popup', () => {
   it('clicking an inactive window focuses it', () => {
     const { store } = renderWithProviders(<Taskbar />, { preloadedState: TWO_IE_WINDOWS })
 

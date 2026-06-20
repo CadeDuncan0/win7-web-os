@@ -1,7 +1,7 @@
 'use client'
 
 import { taskbarAppMeta } from './taskbarApps'
-import styles from './TaskbarButton.module.css'
+import styles from './TaskbarIcon.module.css'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   closeWindow,
@@ -12,14 +12,14 @@ import {
   type WindowKind,
 } from '@/store/slices/windowSlice'
 
-export interface TaskbarButtonProps {
+export interface TaskbarIconProps {
   // All open windows of a single application (same `kind`), compacted into one
   // square taskbar button. Hover/focus reveals a popup listing each window.
   kind: WindowKind
   windows: WindowInstance[]
 }
 
-export function TaskbarButton({ kind, windows }: TaskbarButtonProps) {
+export function TaskbarIcon({ kind, windows }: TaskbarIconProps) {
   const dispatch = useAppDispatch()
   const topWindowId = useAppSelector(selectTopWindowId)
 
@@ -52,7 +52,7 @@ export function TaskbarButton({ kind, windows }: TaskbarButtonProps) {
     }
   }
 
-  const buttonClass = [styles.taskbarButton, isActive && styles.active].filter(Boolean).join(' ')
+  const buttonClass = [styles.TaskbarIcon, isActive && styles.active].filter(Boolean).join(' ')
 
   return (
     <div className={styles.group}>
@@ -94,9 +94,7 @@ export function TaskbarButton({ kind, windows }: TaskbarButtonProps) {
               aria-label={`Close ${win.title}`}
               title={`Close ${win.title}`}
               type="button"
-            >
-              ✕
-            </button>
+            ></button>
           </li>
         ))}
       </ul>

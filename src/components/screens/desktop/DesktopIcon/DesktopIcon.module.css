@@ -25,7 +25,6 @@
 
 .icon:hover {
   background: var(--dsk-icon-hover-bg);
-  transition: opacity 0.2s;
 }
 
 .icon:hover::before,
@@ -36,6 +35,8 @@
 .icon::before,
 .icon::after {
   opacity: 0;
+  transition: none;
+  animation: none;
 }
 
 .icon:focus-visible {
