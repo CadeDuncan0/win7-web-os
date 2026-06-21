@@ -107,6 +107,7 @@
   align-items: center;
   border: 1px solid transparent;
   border-radius: var(--tb-popup-item-radius);
+  height: var(--tb-popup-item-height);
 }
 
 /* Frame + highlight on hover or keyboard focus (per design reference). */

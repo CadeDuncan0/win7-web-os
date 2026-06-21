@@ -310,12 +310,10 @@
   /* Labels are near-white on the slate glass (matches the reference). */
   --tb-popup-text: rgba(255, 255, 255, 0.95);
   --tb-popup-item-radius: 3px;
+  --tb-popup-item-height: 32px;
   /* Each entry's frame shows only on hover/focus — the Aero "hot" selection
      (same light-blue gradient + border as the desktop-icon selection). */
-  --tb-popup-item-hover-bg: linear-gradient(
-    var(--alpha-aero-select-top),
-    var(--alpha-aero-select-bottom)
-  );
+  --tb-popup-item-hover-bg: rgb(125, 164, 206);
   --tb-popup-item-hover-border: 1px solid white;
   /* Win7 red close button (revealed on entry hover). Mirrors the 7.css
      title-bar Close control: a muted red face shown whenever the button is
