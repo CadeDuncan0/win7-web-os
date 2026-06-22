@@ -235,7 +235,7 @@
   /* ─── SEMANTIC: Start Menu ──────────────────────────────────────── */
   /* Structural */
   --sm-width: 410px;
-  --sm-left-col-width: 190px;
+  --sm-left-col-width: 65%; /* 65/35 split: left 65%, right column = 1fr (35%) */
   --sm-padding: 6px;
   --sm-item-height: 30px;
   --sm-item-padding: 4px 8px;
@@ -243,18 +243,18 @@
   --sm-item-gap: 8px;
   --sm-search-height: 26px;
   --sm-avatar-size: 48px;
-  --sm-avatar-offset: -20px;
+  --sm-avatar-frame-padding: 7px; /* mat inset so the image sits inside the frame */
   --sm-z: var(--dsk-z-overlay);
 
-  /* Visual — sourced from 7.css glass pattern + Win7 Start Menu anatomy:
-     Left column = white program list, right column = Aero blue tint,
-     search bar = white bottom strip. Glass blur via ::after pseudo. */
-  --sm-bg: rgba(37, 97, 158, 0.85);
+  /* Visual — Win7 Start Menu anatomy over a dark Aero glass gradient: the
+     wrapper is a dark translucent gradient, the left column + search are white
+     inset panels, and the right column is transparent so the dark glass shows
+     through. Glass blur via the ::after pseudo. */
+  --sm-bg: linear-gradient(to bottom, rgba(36, 49, 68, 0.9) 0%, rgba(22, 31, 45, 0.93) 100%);
   --sm-glass-blur: 4px;
   --sm-border: 1px solid var(--w7-w-bd);
   --sm-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 4px 20px rgba(0, 0, 0, 0.45);
   --sm-left-bg: rgba(255, 255, 255, 0.95);
-  --sm-right-bg: rgba(52, 112, 172, 0.5);
   --sm-divider: rgba(0, 0, 0, 0.15);
   --sm-item-hover-bg: var(--w7-li-bg-hl);
   --sm-item-hover-border: var(--w7-li-bd-hl);
@@ -262,6 +262,25 @@
   --sm-search-bg: var(--color-neutral-0);
   --sm-right-text: var(--color-neutral-0);
   --sm-right-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  /* Win7 glossy "midshadow" button gradient (color pattern sampled from the
+     reference midshadow-gradient.png): a bright top gloss darkening to a shadow
+     band at the midpoint, then a lower half that lifts to a bright reflection
+     near the base. Consumed by the Start Menu Sign Out button. */
+  --midshadow-gradient: linear-gradient(
+    to bottom,
+    #c2e0f1 0%,
+    #9ebacf 5%,
+    #8eb3cc 20%,
+    #84accb 28%,
+    #709dbf 40%,
+    #5280a4 50%,
+    #5285a9 60%,
+    #548dae 72%,
+    #5a91b3 84%,
+    #6191b7 92%,
+    #84b3d9 96%,
+    #5282a7 100%
+  );
 
   /* ─── SEMANTIC: WindowWrapper ─────────────────────────────────── */
   --mw-min-width: 240px;

@@ -34,7 +34,17 @@ export function Taskbar() {
 
   return (
     <nav className={styles.taskbar + ' glass'} role="navigation" aria-label="Taskbar">
-      <div onMouseDown={(e) => e.stopPropagation()} className={styles.orbWrapper}>
+      {/* stopImmediatePropagation — NOT stopPropagation: in the App Router React
+          delegates events at the document, the same node StartMenu's mousedown
+          outside-click listener lives on. A synthetic stopPropagation can't stop
+          a same-node native listener, so the orb's mousedown still closed the
+          menu — which the orb's click then reopened. Stopping the native event
+          immediately keeps the orb's click the sole toggle, so a click while the
+          menu is open closes it. */}
+      <div
+        onMouseDown={(e) => e.nativeEvent.stopImmediatePropagation()}
+        className={styles.orbWrapper}
+      >
         <StartOrb
           isMenuOpen={isStartMenuOpen}
           onClick={() => setIsStartMenuOpen((prev) => !prev)}

@@ -10,9 +10,9 @@ import { StartMenuItem } from './StartMenuItem'
 import {
   LEFT_COLUMN_SHORTCUTS,
   RIGHT_COLUMN_SHORTCUTS,
-  SIGN_OUT_ITEM,
   type StartMenuShortcut,
 } from './startMenuItems'
+import { Button } from '@/components/windows7/Button/index'
 import { signOut } from '@/lib/auth'
 import { DEFAULT_USER_ICON } from '@/lib/userIcons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
@@ -120,11 +120,15 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
     handleClose()
     if (action.type === 'openWindow') {
       dispatch(openWindow({ kind: action.kind, title: action.title }))
+    } else if (action.type === 'openLink') {
+      // External destinations go straight to a new tab — no IE window.
+      window.open(action.url, '_blank', 'noopener')
     } else if (action.type === 'signOut') {
       await signOut()
       dispatch(clearSession())
       router.push('/login')
     }
+    // add more actions here as needed
   }
 
   return (
@@ -173,20 +177,20 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
               {RIGHT_COLUMN_SHORTCUTS.map((shortcut) => (
                 <StartMenuItem
                   key={shortcut.id}
-                  iconSrc={shortcut.iconSrc}
+                  {...(shortcut.iconSrc ? { iconSrc: shortcut.iconSrc } : {})}
                   label={shortcut.label}
                   onClick={() => handleAction(shortcut.action)}
                 />
               ))}
             </ul>
 
-            <div className={styles.divider} />
-
-            <StartMenuItem
-              iconSrc={SIGN_OUT_ITEM.iconSrc}
-              label={SIGN_OUT_ITEM.label}
-              onClick={() => handleAction(SIGN_OUT_ITEM.action)}
-            />
+            <Button
+              aria-label="Sign Out"
+              className={styles.signOut}
+              onClick={() => handleAction({ type: 'signOut' })}
+            >
+              Sign Out
+            </Button>
           </div>
 
           <div className={styles.searchBar}>

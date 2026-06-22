@@ -100,6 +100,20 @@ describe('StartMenu', () => {
     expect(state.byId[windowId].title).toBe('Resume')
   })
 
+  it('opens an external link in a new tab (not an IE window) for a link shortcut', async () => {
+    const openSpy = vi.spyOn(window, 'open').mockReturnValue(null)
+    const user = userEvent.setup()
+    const onClose = vi.fn()
+    const { store } = renderWithProviders(<StartMenu isOpen={true} onClose={onClose} />)
+
+    await user.click(screen.getByRole('menuitem', { name: 'GitHub' }))
+
+    expect(openSpy).toHaveBeenCalledWith('https://github.com/CadeDuncan', '_blank', 'noopener')
+    expect(store.getState().window.ids).toHaveLength(0) // no window opened
+    expect(onClose).toHaveBeenCalledTimes(1)
+    openSpy.mockRestore()
+  })
+
   it('calls onClose when a shortcut is clicked', async () => {
     const user = userEvent.setup()
     const onClose = vi.fn()

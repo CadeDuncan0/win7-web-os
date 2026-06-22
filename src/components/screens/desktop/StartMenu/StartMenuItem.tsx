@@ -7,12 +7,12 @@ import styles from './StartMenuItem.module.css'
  *  menu via roving tabindex, not by the browser tab order. */
 
 interface StartMenuItemProps {
-  iconSrc: string
+  iconSrc?: string // Omitted for text-only rows (e.g. the right column)
   label: string
   onClick: () => void
 }
 
-export function StartMenuItem({ iconSrc, label, onClick }: StartMenuItemProps) {
+export function StartMenuItem({ label, onClick, iconSrc = '' }: StartMenuItemProps) {
   return (
     <li
       role="menuitem"
@@ -26,15 +26,17 @@ export function StartMenuItem({ iconSrc, label, onClick }: StartMenuItemProps) {
         }
       }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className={styles.itemIcon}
-        src={iconSrc}
-        alt="" // Decorative — accessible name comes from the menuitem's label text
-        width={24}
-        height={24}
-        draggable={false}
-      />
+      {iconSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          className={styles.itemIcon}
+          src={iconSrc}
+          alt="" // Decorative — accessible name comes from the menuitem's label text
+          width={24}
+          height={24}
+          draggable={false}
+        />
+      ) : null}
       <span className={styles.itemLabel}>{label}</span>
     </li>
   )
