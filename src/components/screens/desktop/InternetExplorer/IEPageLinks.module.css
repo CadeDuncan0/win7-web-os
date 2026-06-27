@@ -1,0 +1,35 @@
+/* Blue underlined page links pinned to the top-left of the IE content area,
+   replacing the former favorites bar. Sits on the white content background. */
+.pageLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--ie-pagelinks-gap);
+  padding: var(--ie-pagelinks-padding);
+  background: var(--ie-content-bg);
+  flex-shrink: 0;
+}
+
+/* Buttons styled as classic hyperlinks — the targets are in-app routes, not
+   real URLs. Reset 7.css button chrome down to plain underlined text. */
+.link {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ie-pagelinks-link-color);
+  font-size: var(--ie-pagelinks-font-size);
+  text-decoration: underline;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.link::before,
+.link::after {
+  display: none;
+}
+
+.link:hover {
+  color: var(--ie-pagelinks-link-hover-color);
+}

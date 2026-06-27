@@ -1,31 +1,100 @@
-import { DEFAULT_ROUTE, IE_ROUTES, resolveRoute, titleToRoute } from './ieRoutes'
+import {
+  DEFAULT_ROUTE,
+  filterPages,
+  IE_EXTERNAL_LINKS,
+  IE_PAGES,
+  inputToRoute,
+  pageUrl,
+  resolvePage,
+  titleToRoute,
+} from './ieRoutes'
 import { InternetExplorerWindow } from './InternetExplorerWindow'
 import { useIENavigation } from './useIENavigation'
-import { act, renderHook, renderWithProviders, screen, within } from '@/test-utils'
+import type { RootState } from '@/store'
+import { act, fireEvent, renderHook, renderWithProviders, screen, within } from '@/test-utils'
+
+// A single IE window seeded in the store so InternetExplorerWindow's WindowWrapper
+// can read geometry/focus. `initialRoute` (not the title) drives the page shown.
+function ieWindowState(title = 'Internet Explorer'): Partial<RootState> {
+  return {
+    window: {
+      byId: {
+        'ie-1': {
+          id: 'ie-1',
+          kind: 'internet-explorer',
+          title,
+          position: { x: 0, y: 0 },
+          size: { width: 800, height: 500 },
+          zIndex: 1,
+          isMinimized: false,
+          isMaximized: false,
+          prevGeometry: null,
+        },
+      },
+      ids: ['ie-1'],
+      zCounter: 1,
+      nextIdSeed: 1,
+    },
+  }
+}
+
+function renderIE(initialRoute?: string, title?: string) {
+  return renderWithProviders(
+    <InternetExplorerWindow windowId="ie-1" initialRoute={initialRoute} />,
+    { preloadedState: ieWindowState(title) }
+  )
+}
+
+const HOME_URL = 'https://www.cadeduncan.com/home'
+const RESUME_URL = 'https://www.cadeduncan.com/portfolio/resume'
+const PROJECTS_URL = 'https://www.cadeduncan.com/portfolio/projects'
 
 // ---------------------------------------------------------------------------
 // Route registry
 // ---------------------------------------------------------------------------
 
 describe('ieRoutes', () => {
-  it('resolveRoute returns the route for a known URL', () => {
-    const route = resolveRoute('about:home')
-    expect(route).toBeDefined()
-    expect(route!.title).toBe('Internet Explorer')
+  it('resolvePage returns the page for a known nickname', () => {
+    expect(resolvePage('about:home')?.title).toBe('Home')
+    expect(resolvePage('portfolio://resume')?.url).toBe(RESUME_URL)
   })
 
-  it('resolveRoute returns undefined for unknown URLs', () => {
-    expect(resolveRoute('https://unknown.example.com')).toBeUndefined()
+  it('resolvePage returns undefined for unknown nicknames', () => {
+    expect(resolvePage('https://unknown.example.com')).toBeUndefined()
   })
 
-  it('titleToRoute maps known titles to URLs', () => {
+  it('pageUrl maps a nickname to its full display URL', () => {
+    expect(pageUrl('about:home')).toBe(HOME_URL)
+    expect(pageUrl('portfolio://projects')).toBe(PROJECTS_URL)
+  })
+
+  it('titleToRoute maps page titles (and the app label) to nicknames', () => {
     expect(titleToRoute('Resume')).toBe('portfolio://resume')
     expect(titleToRoute('Projects')).toBe('portfolio://projects')
-    expect(titleToRoute('GitHub')).toBe('https://github.com/CadeDuncan')
+    expect(titleToRoute('Internet Explorer')).toBe(DEFAULT_ROUTE)
+    expect(titleToRoute('Nonexistent')).toBe(DEFAULT_ROUTE)
   })
 
-  it('titleToRoute returns DEFAULT_ROUTE for unknown titles', () => {
-    expect(titleToRoute('Nonexistent')).toBe(DEFAULT_ROUTE)
+  it('filterPages lists all pages for an empty query and filters otherwise', () => {
+    expect(filterPages('')).toHaveLength(IE_PAGES.length)
+    expect(filterPages('proj').map((p) => p.title)).toEqual(['Projects'])
+    expect(filterPages(PROJECTS_URL).map((p) => p.title)).toEqual(['Projects'])
+    expect(filterPages('zzz')).toEqual([])
+  })
+
+  it('inputToRoute resolves nicknames, URLs, titles, and partial matches', () => {
+    expect(inputToRoute('about:home')).toBe('about:home')
+    expect(inputToRoute('Projects')).toBe('portfolio://projects')
+    expect(inputToRoute(RESUME_URL)).toBe('portfolio://resume')
+    expect(inputToRoute('proj')).toBe('portfolio://projects')
+    expect(inputToRoute('')).toBeUndefined()
+    expect(inputToRoute('zzz')).toBeUndefined()
+  })
+
+  it('external links are not navigable pages', () => {
+    for (const link of IE_EXTERNAL_LINKS) {
+      expect(resolvePage(link.url)).toBeUndefined()
+    }
   })
 })
 
@@ -49,93 +118,97 @@ describe('useIENavigation', () => {
     expect(result.current.canGoBack).toBe(true)
 
     act(() => result.current.goBack())
-    expect(result.current.currentUrl).toBe('about:home')
-
     act(() => result.current.navigate('portfolio://projects'))
     expect(result.current.currentUrl).toBe('portfolio://projects')
     expect(result.current.canGoForward).toBe(false)
   })
 
-  it('goBack decrements index without modifying stack', () => {
+  it('back/forward move through the stack without modifying it', () => {
     const { result } = renderHook(() => useIENavigation('about:home'))
 
     act(() => result.current.navigate('portfolio://resume'))
     act(() => result.current.goBack())
     expect(result.current.currentUrl).toBe('about:home')
     expect(result.current.canGoForward).toBe(true)
-  })
 
-  it('goForward increments index without modifying stack', () => {
-    const { result } = renderHook(() => useIENavigation('about:home'))
-
-    act(() => result.current.navigate('portfolio://resume'))
-    act(() => result.current.goBack())
     act(() => result.current.goForward())
     expect(result.current.currentUrl).toBe('portfolio://resume')
   })
 
-  it('goBack is no-op at index 0', () => {
+  it('refresh reloads the current page without touching history', () => {
     const { result } = renderHook(() => useIENavigation('about:home'))
-    act(() => result.current.goBack())
-    expect(result.current.currentUrl).toBe('about:home')
+
+    act(() => result.current.navigate('portfolio://resume'))
+    const keyBefore = result.current.reloadKey
+
+    act(() => result.current.refresh())
+    expect(result.current.currentUrl).toBe('portfolio://resume')
+    expect(result.current.canGoBack).toBe(true)
+    expect(result.current.canGoForward).toBe(false)
+    expect(result.current.reloadKey).toBe(keyBefore + 1)
   })
 
-  it('goForward is no-op at end of stack', () => {
+  it('navigating to the current page reloads without adding history', () => {
     const { result } = renderHook(() => useIENavigation('about:home'))
-    act(() => result.current.goForward())
-    expect(result.current.currentUrl).toBe('about:home')
+    const keyBefore = result.current.reloadKey
+
+    act(() => result.current.navigate('about:home'))
+    expect(result.current.canGoBack).toBe(false)
+    expect(result.current.reloadKey).toBe(keyBefore + 1)
   })
 })
 
 // ---------------------------------------------------------------------------
-// InternetExplorerWindow
+// InternetExplorerWindow — chrome
 // ---------------------------------------------------------------------------
 
-describe('InternetExplorerWindow', () => {
-  it('renders the toolbar with navigation buttons', () => {
-    renderWithProviders(<InternetExplorerWindow />)
-    expect(screen.getByRole('toolbar', { name: /navigation/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /back/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /forward/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /home/i })).toBeInTheDocument()
+describe('InternetExplorerWindow — chrome', () => {
+  it('renders the toolbar with nav, refresh, and clear controls', () => {
+    renderIE()
+    const toolbar = screen.getByRole('toolbar', { name: /navigation/i })
+    const scope = within(toolbar)
+    expect(scope.getByRole('button', { name: /back/i })).toBeInTheDocument()
+    expect(scope.getByRole('button', { name: /forward/i })).toBeInTheDocument()
+    expect(scope.getByRole('button', { name: /refresh/i })).toBeInTheDocument()
+    expect(scope.getByRole('button', { name: /clear/i })).toBeInTheDocument()
+    expect(scope.getByRole('combobox', { name: /address/i })).toBeInTheDocument()
   })
 
-  it('renders the favorites bar with bookmark links', () => {
-    renderWithProviders(<InternetExplorerWindow />)
-    const favBar = screen.getByRole('toolbar', { name: /favorites/i })
-    expect(favBar).toBeInTheDocument()
-
-    const nonHomeRoutes = Object.values(IE_ROUTES).filter((r) => r.url !== DEFAULT_ROUTE)
-    const favScope = within(favBar)
-    for (const route of nonHomeRoutes) {
-      expect(favScope.getByRole('button', { name: route.title })).toBeInTheDocument()
-    }
+  it('shows the app icon and title in the window title bar', () => {
+    const { container } = renderIE(undefined, 'Internet Explorer')
+    const titleBar = container.querySelector('.title-bar-text')!
+    expect(titleBar).toHaveTextContent('Internet Explorer')
+    expect(titleBar.querySelector('img[src*="internet-explorer-logo"]')).toBeInTheDocument()
   })
 
-  it('renders the IE favicon in the address bar', () => {
-    const { container } = renderWithProviders(<InternetExplorerWindow />)
-    const favicon = container.querySelector('img[src*="internet-explorer-logo"]')
-    expect(favicon).toBeInTheDocument()
-  })
-
-  it('starts on about:home by default', () => {
-    renderWithProviders(<InternetExplorerWindow />)
-    expect(screen.getByText('about:home')).toBeInTheDocument()
-  })
-
-  it('starts on the specified initialRoute', () => {
-    renderWithProviders(<InternetExplorerWindow initialRoute="portfolio://resume" />)
-    expect(screen.getByText('portfolio://resume')).toBeInTheDocument()
-  })
-
-  it('back button is disabled on initial page', () => {
-    renderWithProviders(<InternetExplorerWindow />)
+  it('back and forward are disabled on the initial page', () => {
+    renderIE()
     expect(screen.getByRole('button', { name: /back/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /forward/i })).toBeDisabled()
   })
 
-  it('forward button is disabled when no forward history', () => {
-    renderWithProviders(<InternetExplorerWindow />)
-    expect(screen.getByRole('button', { name: /forward/i })).toBeDisabled()
+  it('address bar shows the full URL of the current page', () => {
+    renderIE()
+    expect(screen.getByRole('combobox', { name: /address/i })).toHaveValue(HOME_URL)
+  })
+
+  it('opens on the specified initialRoute', () => {
+    renderIE('portfolio://resume')
+    expect(screen.getByRole('combobox', { name: /address/i })).toHaveValue(RESUME_URL)
+    expect(screen.getByRole('heading', { name: 'Resume' })).toBeInTheDocument()
+  })
+
+  it('renders a blue underlined page link for every page', () => {
+    renderIE()
+    const links = screen.getByRole('navigation', { name: /pages/i })
+    const scope = within(links)
+    for (const page of IE_PAGES) {
+      expect(scope.getByRole('button', { name: page.title })).toBeInTheDocument()
+    }
+    // External links are not in the chrome — they live in the page content.
+    for (const link of IE_EXTERNAL_LINKS) {
+      expect(scope.queryByRole('button', { name: link.title })).not.toBeInTheDocument()
+    }
   })
 })
 
@@ -144,62 +217,101 @@ describe('InternetExplorerWindow', () => {
 // ---------------------------------------------------------------------------
 
 describe('InternetExplorerWindow — navigation', () => {
-  it('clicking a favorites bar bookmark navigates to that route', () => {
-    renderWithProviders(<InternetExplorerWindow />)
-    const favBar = screen.getByRole('toolbar', { name: /favorites/i })
-    const resumeBtn = within(favBar).getByRole('button', { name: 'Resume' })
+  function address() {
+    return screen.getByRole('combobox', { name: /address/i })
+  }
 
-    act(() => {
-      resumeBtn.click()
-    })
+  function pageLinks() {
+    return within(screen.getByRole('navigation', { name: /pages/i }))
+  }
 
-    expect(screen.getByText('portfolio://resume')).toBeInTheDocument()
+  it('clicking a page link navigates to that page', () => {
+    renderIE()
+
+    act(() => pageLinks().getByRole('button', { name: 'Resume' }).click())
+
+    expect(address()).toHaveValue(RESUME_URL)
     expect(screen.getByRole('button', { name: /back/i })).not.toBeDisabled()
   })
 
-  it('back button returns to previous page', () => {
-    renderWithProviders(<InternetExplorerWindow />)
-    const favBar = screen.getByRole('toolbar', { name: /favorites/i })
+  it('back returns to the previous page, forward replays it', () => {
+    renderIE()
 
-    act(() => {
-      within(favBar).getByRole('button', { name: 'Resume' }).click()
-    })
-    expect(screen.getByText('portfolio://resume')).toBeInTheDocument()
+    act(() => pageLinks().getByRole('button', { name: 'Resume' }).click())
+    act(() => screen.getByRole('button', { name: /back/i }).click())
+    expect(address()).toHaveValue(HOME_URL)
 
-    act(() => {
-      screen.getByRole('button', { name: /back/i }).click()
-    })
-    expect(screen.getByText('about:home')).toBeInTheDocument()
+    act(() => screen.getByRole('button', { name: /forward/i }).click())
+    expect(address()).toHaveValue(RESUME_URL)
   })
 
-  it('forward button works after going back', () => {
-    renderWithProviders(<InternetExplorerWindow />)
-    const favBar = screen.getByRole('toolbar', { name: /favorites/i })
+  it('refresh reloads the current page and does not navigate home', () => {
+    renderIE()
 
-    act(() => {
-      within(favBar).getByRole('button', { name: 'Resume' }).click()
-    })
-    act(() => {
-      screen.getByRole('button', { name: /back/i }).click()
-    })
+    act(() => pageLinks().getByRole('button', { name: 'Resume' }).click())
+    act(() => screen.getByRole('button', { name: /refresh/i }).click())
 
-    const fwdBtn = screen.getByRole('button', { name: /forward/i })
-    expect(fwdBtn).not.toBeDisabled()
-
-    act(() => {
-      fwdBtn.click()
-    })
-    expect(screen.getByText('portfolio://resume')).toBeInTheDocument()
+    expect(address()).toHaveValue(RESUME_URL)
+    expect(screen.getByRole('button', { name: /back/i })).not.toBeDisabled()
   })
 
-  it('refresh/home button navigates to about:home', () => {
-    renderWithProviders(<InternetExplorerWindow initialRoute="portfolio://resume" />)
-    expect(screen.getByText('portfolio://resume')).toBeInTheDocument()
+  it('clicking an external link opens a new tab and does not navigate', () => {
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null)
+    renderIE()
 
-    act(() => {
-      screen.getByRole('button', { name: /home/i }).click()
-    })
-    expect(screen.getByText('about:home')).toBeInTheDocument()
+    // External links live in the home page content, not the chrome.
+    act(() => screen.getByRole('button', { name: 'GitHub' }).click())
+
+    expect(openSpy).toHaveBeenCalledWith(IE_EXTERNAL_LINKS[0].url, '_blank', 'noopener')
+    expect(address()).toHaveValue(HOME_URL)
+    openSpy.mockRestore()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Address bar dropdown
+// ---------------------------------------------------------------------------
+
+describe('InternetExplorerWindow — address dropdown', () => {
+  function address() {
+    return screen.getByRole('combobox', { name: /address/i })
+  }
+
+  it('opens a dropdown of all pages when the address bar is clicked', () => {
+    renderIE()
+    act(() => fireEvent.click(address()))
+
+    const listbox = screen.getByRole('listbox')
+    expect(within(listbox).getAllByRole('option')).toHaveLength(IE_PAGES.length)
+  })
+
+  it('typing filters the dropdown results', () => {
+    renderIE()
+    act(() => fireEvent.click(address()))
+    act(() => fireEvent.change(address(), { target: { value: 'proj' } }))
+
+    const options = within(screen.getByRole('listbox')).getAllByRole('option')
+    expect(options).toHaveLength(1)
+    expect(options[0]).toHaveTextContent('Projects')
+  })
+
+  it('selecting a result navigates to that page', () => {
+    renderIE()
+    act(() => fireEvent.click(address()))
+    const option = within(screen.getByRole('listbox')).getByRole('option', { name: /Projects/ })
+
+    act(() => fireEvent.mouseDown(option))
+
+    expect(address()).toHaveValue(PROJECTS_URL)
+    expect(screen.getByRole('heading', { name: 'Projects' })).toBeInTheDocument()
+  })
+
+  it('the clear button empties the input and reopens the dropdown', () => {
+    renderIE()
+    act(() => screen.getByRole('button', { name: /clear/i }).click())
+
+    expect(address()).toHaveValue('')
+    expect(screen.getByRole('listbox')).toBeInTheDocument()
   })
 })
 
@@ -208,37 +320,20 @@ describe('InternetExplorerWindow — navigation', () => {
 // ---------------------------------------------------------------------------
 
 describe('InternetExplorerWindow — page rendering', () => {
-  it('renders HomePage for about:home', () => {
-    renderWithProviders(<InternetExplorerWindow />)
+  it('renders HomePage for the home route', () => {
+    renderIE('about:home')
     expect(screen.getByText('Welcome to Internet Explorer')).toBeInTheDocument()
   })
 
-  it('renders ResumePage for portfolio://resume', () => {
-    renderWithProviders(<InternetExplorerWindow initialRoute="portfolio://resume" />)
+  it('renders ResumePage for the resume route', () => {
+    renderIE('portfolio://resume')
     expect(screen.getByRole('heading', { name: 'Resume' })).toBeInTheDocument()
     expect(screen.getByText('PDF viewer coming in Phase 3')).toBeInTheDocument()
   })
 
-  it('renders ProjectsPage for portfolio://projects', () => {
-    renderWithProviders(<InternetExplorerWindow initialRoute="portfolio://projects" />)
+  it('renders ProjectsPage for the projects route', () => {
+    renderIE('portfolio://projects')
     expect(screen.getByRole('heading', { name: 'Projects' })).toBeInTheDocument()
     expect(screen.getByText('Portfolio Website')).toBeInTheDocument()
-  })
-
-  it('renders ExternalLinkPage for external routes', () => {
-    renderWithProviders(<InternetExplorerWindow initialRoute="https://github.com/CadeDuncan" />)
-    expect(screen.getByRole('button', { name: /open in new tab/i })).toBeInTheDocument()
-  })
-
-  it('ExternalLinkPage calls window.open with noopener', () => {
-    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null)
-    renderWithProviders(<InternetExplorerWindow initialRoute="https://github.com/CadeDuncan" />)
-
-    act(() => {
-      screen.getByRole('button', { name: /open in new tab/i }).click()
-    })
-
-    expect(openSpy).toHaveBeenCalledWith('https://github.com/CadeDuncan', '_blank', 'noopener')
-    openSpy.mockRestore()
   })
 })

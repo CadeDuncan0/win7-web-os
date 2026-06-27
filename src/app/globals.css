@@ -381,65 +381,56 @@
   --tb-z: var(--dsk-z-taskbar);
 
   /* ─── SEMANTIC: Internet Explorer chrome ──────────────────────── */
-  --ie-toolbar-height: 36px;
-  --ie-toolbar-bg: linear-gradient(
-    to bottom,
-    rgba(240, 243, 248, 1) 0%,
-    rgba(218, 225, 234, 1) 100%
-  );
-  --ie-toolbar-border: 1px solid rgba(160, 170, 185, 0.5);
-  --ie-toolbar-padding: 4px 8px;
-  --ie-back-btn-size: 30px;
-  --ie-back-btn-bg: linear-gradient(
-    to bottom,
-    rgba(110, 175, 230, 1) 0%,
-    rgba(50, 120, 195, 1) 50%,
-    rgba(35, 95, 165, 1) 100%
-  );
-  --ie-back-btn-bg-hover: linear-gradient(
-    to bottom,
-    rgba(130, 195, 245, 1) 0%,
-    rgba(70, 145, 215, 1) 50%,
-    rgba(50, 115, 185, 1) 100%
-  );
-  --ie-back-btn-bg-disabled: linear-gradient(
-    to bottom,
-    rgba(200, 210, 220, 1) 0%,
-    rgba(170, 180, 195, 1) 100%
-  );
-  --ie-back-btn-border: 1px solid rgba(30, 80, 140, 0.6);
-  --ie-back-btn-arrow-color: #fff;
-  --ie-back-btn-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --ie-fwd-btn-size: 22px;
-  --ie-fwd-btn-bg: var(--ie-back-btn-bg);
-  --ie-fwd-btn-bg-hover: var(--ie-back-btn-bg-hover);
-  --ie-fwd-btn-bg-disabled: var(--ie-back-btn-bg-disabled);
-  --ie-fwd-btn-border: var(--ie-back-btn-border);
+  /* The toolbar sits inside the glass title bar (transparent background). No
+     horizontal padding so it spans the same width as the window body; 8px above
+     opens a larger gap below the title-bar text row, 5px below sits it off the
+     window body (the title bar's own bottom padding is zeroed for this row). */
+  --ie-toolbar-padding: 8px 0 5px;
+  --ie-toolbar-gap: 6px;
+  --ie-nav-gap: 2px;
+  /* Back/forward use the equal-sized Aero arrow primitive. */
+  --ie-nav-btn-size: 24px;
+  --ie-nav-btn-disabled-filter: grayscale(0.9) brightness(1.2) opacity(0.55);
+  --ie-titlebar-icon-size: var(--tb-popup-icon-size);
   --ie-address-height: 24px;
   --ie-address-bg: #fff;
-  --ie-address-border: 1px solid rgba(120, 140, 165, 0.5);
+  /* Inset (sunken) border in the same grey as the refresh-button dividers. */
+  --ie-address-border: 1px inset var(--ie-action-divider-color);
   --ie-address-radius: 2px;
   --ie-address-text: #333;
   --ie-address-icon-size: 16px;
-  --ie-refresh-size: 18px;
-  --ie-refresh-color: rgba(80, 100, 130, 0.7);
-  --ie-refresh-color-hover: rgba(50, 70, 100, 1);
-  --ie-favbar-height: 24px;
-  --ie-favbar-bg: linear-gradient(
-    to bottom,
-    rgba(235, 239, 245, 1) 0%,
-    rgba(220, 226, 234, 1) 100%
-  );
-  --ie-favbar-border: 1px solid rgba(160, 170, 185, 0.3);
+  /* Refresh + clear buttons: square, sized to the address-bar height and
+     transparent so they read as part of the white input. Only the refresh button
+     carries left/right divider rules (see internet-explorer-*.png refs). */
+  --ie-action-btn-size: var(--ie-address-height);
+  --ie-action-divider-color: rgb(101, 115, 115);
+  --ie-action-btn-bg: transparent;
+  --ie-action-btn-bg-hover: rgba(101, 115, 115, 0.15);
+  --ie-refresh-color: rgba(40, 110, 160, 0.85);
+  --ie-refresh-color-hover: rgba(25, 90, 140, 1);
+  --ie-clear-color: rgba(170, 50, 45, 0.85);
+  --ie-clear-color-hover: rgba(150, 30, 25, 1);
+  /* Address autocomplete dropdown. */
+  --ie-dropdown-z: 20;
+  --ie-dropdown-max-height: 220px;
+  --ie-dropdown-bg: #fff;
+  --ie-dropdown-border: 1px solid rgba(120, 140, 165, 0.6);
+  --ie-dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --ie-dropdown-item-hover-bg: rgba(205, 226, 248, 0.7);
+  --ie-dropdown-title-color: #1a3a5c;
+  --ie-dropdown-url-color: rgba(90, 110, 130, 0.95);
+  /* Page links — blue underlined text at the top-left of the content, replacing
+     the former favorites bar. */
+  --ie-pagelinks-gap: 12px;
+  --ie-pagelinks-padding: 6px 8px;
+  --ie-pagelinks-font-size: 12px;
+  --ie-pagelinks-link-color: #0066cc;
+  --ie-pagelinks-link-hover-color: #003d99;
+  /* Shared link colours still used by the in-page content (headings, cards). */
   --ie-favbar-link-color: #1a3a5c;
   --ie-favbar-link-hover-bg: rgba(180, 200, 225, 0.4);
   --ie-favbar-link-radius: 2px;
-  --ie-favbar-star-color: rgba(200, 170, 50, 0.9);
   --ie-content-bg: #fff;
-  --ie-external-card-bg: rgba(240, 243, 248, 0.8);
-  --ie-external-card-border: 1px solid var(--w7-el-bd);
-  --ie-external-card-radius: 4px;
-  --ie-external-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* =====================================================================

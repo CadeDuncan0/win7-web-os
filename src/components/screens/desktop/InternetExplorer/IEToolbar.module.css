@@ -1,83 +1,43 @@
 .toolbar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--ie-toolbar-gap);
   padding: var(--ie-toolbar-padding);
-  height: var(--ie-toolbar-height);
-  background: var(--ie-toolbar-bg);
-  border-bottom: var(--ie-toolbar-border);
 }
 
 .navButtons {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: var(--ie-nav-gap);
   flex-shrink: 0;
 }
 
-.backBtn {
-  width: var(--ie-back-btn-size);
-  height: var(--ie-back-btn-size);
-  border-radius: 50%;
-  border: var(--ie-back-btn-border);
-  background: var(--ie-back-btn-bg);
-  box-shadow: var(--ie-back-btn-shadow);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.1s ease;
+/* Equal-sized Aero arrow buttons (login submit primitive) reused for nav. */
+.navBtn {
+  width: var(--ie-nav-btn-size) !important;
+  height: var(--ie-nav-btn-size) !important;
 }
 
-.backBtn:hover:not(:disabled) {
-  background: var(--ie-back-btn-bg-hover);
+/* Grey out (authentic IE) when there is no history in that direction. The
+   doubled class beats ArrowButton's equal-specificity `:disabled` rule without
+   !important; grayscale composites over its `!important` blue gradient. */
+.navBtn.navBtn:disabled {
+  filter: var(--ie-nav-btn-disabled-filter);
 }
 
-.backBtn:disabled,
-.backBtn.disabled {
-  background: var(--ie-back-btn-bg-disabled);
-  border-color: rgba(150, 160, 175, 0.4);
-  box-shadow: none;
-  cursor: default;
+/* Shrink the arrow ~20% within the equal-sized button. */
+.navBtn svg {
+  transform: scale(0.8);
 }
 
-.fwdBtn {
-  width: var(--ie-fwd-btn-size);
-  height: var(--ie-fwd-btn-size);
-  border-radius: 50%;
-  border: var(--ie-fwd-btn-border);
-  background: var(--ie-fwd-btn-bg);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.1s ease;
+/* Back is the Forward arrow mirrored (and shrunk to match). */
+.navBtnBack svg {
+  transform: scale(-0.8, 0.8);
 }
 
-.fwdBtn:hover:not(:disabled) {
-  background: var(--ie-fwd-btn-bg-hover);
-}
-
-.fwdBtn:disabled,
-.fwdBtn.disabled {
-  background: var(--ie-fwd-btn-bg-disabled);
-  border-color: rgba(150, 160, 175, 0.4);
-  cursor: default;
-}
-
-.arrow {
-  color: var(--ie-back-btn-arrow-color);
-  font-size: 10px;
-  line-height: 1;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-}
-
-.backBtn.disabled .arrow,
-.fwdBtn.disabled .arrow {
-  color: rgba(255, 255, 255, 0.5);
-}
-
+/* ── Address bar (editable combobox + refresh/clear) ──────────────── */
 .addressBar {
+  position: relative;
   flex: 1;
   display: flex;
   align-items: center;
@@ -86,7 +46,6 @@
   border: var(--ie-address-border);
   border-radius: var(--ie-address-radius);
   padding: 0 2px;
-  overflow: hidden;
 }
 
 .favicon {
@@ -97,33 +56,126 @@
   object-fit: contain;
 }
 
-.addressText {
+.addressInput {
   flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
   font-size: 12px;
   color: var(--ie-address-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  user-select: all;
+  padding: 0;
 }
 
-.refreshBtn {
-  width: var(--ie-refresh-size);
-  height: var(--ie-refresh-size);
+/* ── Refresh / Clear — transparent square buttons inside the address bar ── */
+.refreshBtn,
+.clearBtn {
+  /* Stretch to the address bar's full inner height; width keeps them square. */
+  align-self: stretch;
+  width: var(--ie-action-btn-size);
   flex-shrink: 0;
-  border: none;
-  background: transparent;
-  color: var(--ie-refresh-color);
-  cursor: pointer;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  border-radius: 2px;
-  transition: color 0.1s ease;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  transition:
+    background 0.1s ease,
+    color 0.1s ease;
+}
+
+/* Refresh is the only action button with borders — 1px dividers on each side. */
+.refreshBtn {
+  color: var(--ie-refresh-color);
+  border-left: 1px solid var(--ie-action-divider-color);
+  border-right: 1px solid var(--ie-action-divider-color);
+}
+
+.clearBtn {
+  color: var(--ie-clear-color);
+}
+
+.refreshBtn:hover,
+.clearBtn:hover {
+  background: var(--ie-action-btn-bg-hover);
 }
 
 .refreshBtn:hover {
   color: var(--ie-refresh-color-hover);
-  background: rgba(0, 0, 0, 0.05);
+}
+
+.clearBtn:hover {
+  color: var(--ie-clear-color-hover);
+}
+
+.refreshBtn::before,
+.refreshBtn::after,
+.clearBtn::before,
+.clearBtn::after {
+  display: none;
+}
+
+/* ── Autocomplete dropdown ────────────────────────────────────────── */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  z-index: var(--ie-dropdown-z);
+  margin: 0;
+  padding: 2px;
+  list-style: none;
+  max-height: var(--ie-dropdown-max-height);
+  overflow-y: auto;
+  background: var(--ie-dropdown-bg);
+  border: var(--ie-dropdown-border);
+  border-radius: var(--ie-address-radius);
+  box-shadow: var(--ie-dropdown-shadow);
+}
+
+.dropdownItem {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  min-height: 0;
+  padding: 4px 8px;
+  border: none;
+  border-radius: var(--ie-address-radius);
+  background: transparent;
+  box-shadow: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdownItem::before,
+.dropdownItem::after {
+  display: none;
+}
+
+.dropdownItem:hover {
+  background: var(--ie-dropdown-item-hover-bg);
+}
+
+.dropdownTitle {
+  font-size: 12px;
+  color: var(--ie-dropdown-title-color);
+}
+
+.dropdownUrl {
+  font-size: 11px;
+  color: var(--ie-dropdown-url-color);
+}
+
+.dropdownEmpty {
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--ie-dropdown-url-color);
 }

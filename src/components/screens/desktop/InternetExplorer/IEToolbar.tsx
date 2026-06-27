@@ -1,7 +1,8 @@
 'use client'
 
+import { IEAddressBar } from './IEAddressBar'
 import styles from './IEToolbar.module.css'
-import { assetPaths } from '@/lib/assetPaths'
+import { ArrowButton } from '@/components/windows7/ArrowButton'
 
 interface IEToolbarProps {
   currentUrl: string
@@ -10,6 +11,7 @@ interface IEToolbarProps {
   onBack: () => void
   onForward: () => void
   onRefresh: () => void
+  onNavigate: (nickname: string) => void
 }
 
 export function IEToolbar({
@@ -19,47 +21,28 @@ export function IEToolbar({
   onBack,
   onForward,
   onRefresh,
+  onNavigate,
 }: IEToolbarProps) {
   return (
     <div className={styles.toolbar} role="toolbar" aria-label="Navigation">
       <div className={styles.navButtons}>
-        <button
-          className={[styles.backBtn, !canGoBack && styles.disabled].filter(Boolean).join(' ')}
+        {/* Equal-sized Aero arrow buttons; the Back arrow is the Forward arrow
+            mirrored. Disabled when there is no history in that direction. */}
+        <ArrowButton
+          className={`${styles.navBtn} ${styles.navBtnBack}`}
           onClick={onBack}
           disabled={!canGoBack}
           aria-label="Back"
-          type="button"
-        >
-          <span className={styles.arrow} aria-hidden="true">
-            ◀
-          </span>
-        </button>
-        <button
-          className={[styles.fwdBtn, !canGoForward && styles.disabled].filter(Boolean).join(' ')}
+        />
+        <ArrowButton
+          className={styles.navBtn}
           onClick={onForward}
           disabled={!canGoForward}
           aria-label="Forward"
-          type="button"
-        >
-          <span className={styles.arrow} aria-hidden="true">
-            ▶
-          </span>
-        </button>
+        />
       </div>
 
-      <div className={styles.addressBar}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className={styles.favicon}
-          src={assetPaths.desktopIcons.internetExplorer}
-          alt=""
-          aria-hidden="true"
-        />
-        <span className={styles.addressText}>{currentUrl}</span>
-        <button className={styles.refreshBtn} onClick={onRefresh} aria-label="Home" type="button">
-          <span aria-hidden="true">⟳</span>
-        </button>
-      </div>
+      <IEAddressBar currentUrl={currentUrl} onNavigate={onNavigate} onRefresh={onRefresh} />
     </div>
   )
 }

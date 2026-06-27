@@ -1,4 +1,6 @@
-.ieWindow {
+/* The IE window body is edge-to-edge (bodySpace=false): a fixed page-links row
+   above a scrolling content area. */
+.ieBody {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -9,4 +11,18 @@
   flex: 1;
   overflow-y: auto;
   background: var(--ie-content-bg);
+}
+
+.notFound {
+  padding: var(--space-4);
+  color: var(--ie-address-text);
+}
+
+/* App logo in the window title bar — sized to match the taskbar window-stack
+   popup icon, per the design reference. */
+.titleBarIcon {
+  width: var(--ie-titlebar-icon-size);
+  height: var(--ie-titlebar-icon-size);
+  object-fit: contain;
+  display: block;
 }

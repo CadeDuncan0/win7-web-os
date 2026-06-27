@@ -69,7 +69,9 @@ describe('DesktopPage', () => {
       await user.dblClick(resumeIcon)
     })
 
-    expect(screen.getByText('portfolio://resume')).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: /address/i })).toHaveValue(
+      'https://www.cadeduncan.com/portfolio/resume'
+    )
   })
 })
 
@@ -192,6 +194,8 @@ describe('WindowManager', () => {
     })
 
     expect(screen.getByTestId('managed-window-win-1')).toBeInTheDocument()
-    expect(screen.getByText('portfolio://resume')).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: /address/i })).toHaveValue(
+      'https://www.cadeduncan.com/portfolio/resume'
+    )
   })
 })

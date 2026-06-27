@@ -58,10 +58,10 @@ describe('Start Menu + IE Navigation', () => {
     cy.contains('Welcome to Internet Explorer').should('exist')
   })
 
-  it('navigates IE via favorites bar and back/forward', () => {
+  it('navigates IE via page links and back/forward', () => {
     cy.findByRole('button', { name: 'Internet Explorer' }).dblclick()
 
-    cy.findByRole('toolbar', { name: 'Favorites' }).findByRole('button', { name: 'Resume' }).click()
+    cy.findByRole('navigation', { name: 'Pages' }).findByRole('button', { name: 'Resume' }).click()
 
     cy.contains('portfolio://resume').should('exist')
 
