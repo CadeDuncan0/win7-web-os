@@ -36,6 +36,11 @@ export function useWindowDrag({ windowId, position, size, isMaximized }: UseWind
     if ((e.target as Element).closest('.title-bar-controls')) {
       return
     }
+    // The optional title-bar toolbar row (browser nav/address bar) is interactive
+    // chrome, not a drag handle, even though it lives inside the title bar.
+    if ((e.target as Element).closest('.title-bar-toolbar')) {
+      return
+    }
     e.currentTarget.setPointerCapture?.(e.pointerId)
     dragRef.current = {
       pointerId: e.pointerId,

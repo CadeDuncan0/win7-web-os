@@ -32,6 +32,44 @@
   cursor: default;
 }
 
+/* App icon to the left of the title text. */
+.WindowWrapper :global(.title-bar-text) {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.WindowWrapper :global(.title-bar-icon) {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+/* Two-row title bar: the standard row plus an app toolbar row, both inside the
+   glass top border. 7.css lays the default `.title-bar` out as a flex row; when
+   a toolbar is present we stack into a column and re-create that row on
+   `.title-bar-main`. */
+.WindowWrapper :global(.title-bar.has-titlebar-toolbar) {
+  flex-direction: column;
+  align-items: stretch;
+  height: auto;
+  /* Drop 7.css's bottom padding so the toolbar row's own bottom padding alone
+     sets the gap between the toolbar and the window body. */
+  padding-bottom: 0;
+}
+
+.WindowWrapper :global(.title-bar.has-titlebar-toolbar .title-bar-main) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Interactive chrome — opt back into normal cursor/selection that the
+   draggable title bar disables. */
+.WindowWrapper :global(.title-bar-toolbar) {
+  cursor: default;
+  touch-action: auto;
+}
+
 .dragging {
   user-select: none;
 }

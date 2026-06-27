@@ -15,7 +15,15 @@ interface WindowProps {
   glass?: boolean
   bright?: boolean
   bodySpace?: boolean
+  /** App icon rendered to the left of the title text (authentic Win7 chrome). */
+  icon?: ReactNode
   controls?: ReactNode
+  /**
+   * Optional second title-bar row (e.g. a browser nav/address toolbar). When
+   * present the title bar stacks into two rows so the toolbar reads as part of
+   * the window's glass top border rather than the body.
+   */
+  toolbar?: ReactNode
   statusBar?: ReactNode
   children?: ReactNode
   role?: string
@@ -32,7 +40,9 @@ export function Window({
   glass,
   bright,
   bodySpace = true,
+  icon,
   controls,
+  toolbar,
   statusBar,
   children,
   role,
@@ -48,6 +58,13 @@ export function Window({
 
   const bodyClass = ['window-body', bodySpace && 'has-space'].filter(Boolean).join(' ')
 
+  const titleText = (title || icon) && (
+    <div className="title-bar-text" id={ariaLabelledby}>
+      {icon && <span className="title-bar-icon">{icon}</span>}
+      {title}
+    </div>
+  )
+
   return (
     <div
       className={merged}
@@ -57,16 +74,24 @@ export function Window({
       aria-labelledby={ariaLabelledby}
       aria-label={ariaLabel}
     >
-      {(title || controls) && (
-        <div className="title-bar">
-          {title && (
-            <div className="title-bar-text" id={ariaLabelledby}>
-              {title}
+      {(title || icon || controls) &&
+        (toolbar ? (
+          // Two-row title bar: standard row + a toolbar row, both inside the
+          // glass top border. `title-bar-main` re-creates the default
+          // space-between row that 7.css applies to `.title-bar` directly.
+          <div className="title-bar has-titlebar-toolbar">
+            <div className="title-bar-main">
+              {titleText}
+              {controls && <div className="title-bar-controls">{controls}</div>}
             </div>
-          )}
-          {controls && <div className="title-bar-controls">{controls}</div>}
-        </div>
-      )}
+            <div className="title-bar-toolbar">{toolbar}</div>
+          </div>
+        ) : (
+          <div className="title-bar">
+            {titleText}
+            {controls && <div className="title-bar-controls">{controls}</div>}
+          </div>
+        ))}
       <div className={bodyClass}>{children}</div>
       {statusBar}
     </div>

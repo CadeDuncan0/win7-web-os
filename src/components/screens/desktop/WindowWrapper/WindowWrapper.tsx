@@ -23,10 +23,22 @@ import {
 
 export interface WindowWrapperProps {
   windowId: string
+  /** App icon shown to the left of the title text. */
+  icon?: ReactNode
+  /** Optional second title-bar row (e.g. a browser nav/address toolbar). */
+  toolbar?: ReactNode
+  /** Pass false to drop the default body padding (e.g. edge-to-edge browser chrome). */
+  bodySpace?: boolean
   children?: ReactNode
 }
 
-export function WindowWrapper({ windowId, children }: WindowWrapperProps) {
+export function WindowWrapper({
+  windowId,
+  icon,
+  toolbar,
+  bodySpace = true,
+  children,
+}: WindowWrapperProps) {
   const dispatch = useAppDispatch()
   const windowData = useAppSelector(selectWindowById(windowId))
   const topWindowId = useAppSelector(selectTopWindowId)
@@ -84,6 +96,10 @@ export function WindowWrapper({ windowId, children }: WindowWrapperProps) {
     if ((e.target as Element).closest('.title-bar-controls')) {
       return
     }
+    // Double-clicking the nav/address toolbar must not maximize the window.
+    if ((e.target as Element).closest('.title-bar-toolbar')) {
+      return
+    }
     dispatch(toggleMaximize({ id: windowId, viewport: getViewport() }))
   }
 
@@ -139,7 +155,15 @@ export function WindowWrapper({ windowId, children }: WindowWrapperProps) {
       exit="exit"
       transition={{ duration: 0.12, ease: 'easeOut' }}
     >
-      <Window title={windowData.title} active={isActive} glass controls={controls}>
+      <Window
+        title={windowData.title}
+        active={isActive}
+        glass
+        icon={icon}
+        controls={controls}
+        toolbar={toolbar}
+        bodySpace={bodySpace}
+      >
         {children}
       </Window>
     </motion.div>
