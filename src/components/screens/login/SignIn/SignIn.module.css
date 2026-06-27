@@ -64,7 +64,7 @@
     0 0 4px var(--color-aero-cyan);
 }
 
-/* ─── Submit button positioning (shape owned by SubmitButton.module) ──
+/* ─── Submit button positioning (shape owned by ArrowButton.module) ──
    Hangs the circular submit to the right of the password input and
    vertically centers it. top: 50% + translateY(-50%) holds regardless
    of the circle's diameter. */

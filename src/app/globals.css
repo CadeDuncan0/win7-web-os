@@ -151,7 +151,7 @@
   --logon-input-ring: 0 0 0 1px var(--alpha-white-50);
 
   /* ─── SEMANTIC: Logon form button (consumed by SignIn.module.css +
-     SubmitButton.module.css) ─────────────────────────────────────── */
+     ArrowButton.module.css) ─────────────────────────────────────── */
   --logon-button-min-width: 80px;
   --logon-button-padding: 4px 8px;
   --logon-button-radius: 3px;
@@ -184,7 +184,7 @@
   --logon-toggle-hover-bg: var(--alpha-black-13);
   --logon-toggle-width: 40px;
 
-  /* ─── SEMANTIC: Circular submit (consumed by SubmitButton.module.css)
+  /* ─── SEMANTIC: Circular submit (consumed by ArrowButton.module.css)
      Sized just slightly taller than --logon-input-height (23px) so the
      circle reads as a companion to the password field, not a button
      that dominates it. */

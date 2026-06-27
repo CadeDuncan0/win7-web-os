@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
-import { SubmitButton } from './SubmitButton'
+import { ArrowButton } from './ArrowButton'
 
 const meta = {
-  title: 'Windows7/SubmitButton',
-  component: SubmitButton,
+  title: 'Windows7/ArrowButton',
+  component: ArrowButton,
   parameters: { layout: 'centered' },
   decorators: [
     (Story) => (
@@ -22,7 +22,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof SubmitButton>
+} satisfies Meta<typeof ArrowButton>
 
 export default meta
 

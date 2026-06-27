@@ -5,8 +5,8 @@ import { type Ref, type SubmitEvent } from 'react'
 import login from '../Login.module.css'
 import styles from './SignIn.module.css'
 import { AccountIcon } from '@/components/windows7/AccountIcon'
+import { ArrowButton } from '@/components/windows7/ArrowButton'
 import { OsBranding } from '@/components/windows7/OsBranding'
-import { SubmitButton } from '@/components/windows7/SubmitButton'
 
 interface SignInProps {
   accountLabel: string
@@ -56,7 +56,7 @@ export function SignIn({
                 />
               </div>
 
-              <SubmitButton
+              <ArrowButton
                 type="submit"
                 aria-label="Sign in"
                 disabled={submitting}

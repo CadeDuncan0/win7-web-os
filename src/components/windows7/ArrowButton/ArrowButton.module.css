@@ -1,5 +1,5 @@
 /* =====================================================================
-   SubmitButton — circular Aero submit.
+   ArrowButton — circular Aero submit.
    Rules copied 1:1 from the pre-migration .signin__form-submit cascade,
    including every `!important` flag that was required to beat 7.css's
    generic `button` declarations. Positioning is the consumer's job —

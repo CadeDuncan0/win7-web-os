@@ -2,9 +2,9 @@
 
 import type { ComponentPropsWithRef } from 'react'
 
-import styles from './SubmitButton.module.css'
+import styles from './ArrowButton.module.css'
 
-export function SubmitButton({
+export function ArrowButton({
   className,
   type = 'button',
   ...rest
