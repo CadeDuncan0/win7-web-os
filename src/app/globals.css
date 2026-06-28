@@ -398,7 +398,9 @@
   --ie-address-height: 24px;
   --ie-address-bg: #fff;
   /* Inset (sunken) border in the same grey as the refresh-button dividers. */
-  --ie-address-border: 1px inset var(--ie-action-divider-color);
+  --ie-address-border: 2px inset var(--ie-action-divider-color);
+  /* Light-blue accent ring just outside the inset border — a second, outer
+     border drawn with box-shadow spread so it hugs the border radius. */
   --ie-address-radius: 2px;
   --ie-address-text: #333;
   --ie-address-icon-size: 16px;
