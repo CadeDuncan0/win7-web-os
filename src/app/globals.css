@@ -286,6 +286,8 @@
   /* ─── SEMANTIC: WindowWrapper ─────────────────────────────────── */
   --mw-min-width: 240px;
   --mw-min-height: 160px;
+  /* Bottom-right corner resize hit target (invisible — no grip icon). */
+  --mw-resize-handle-size: 16px;
 
   /* ─── SEMANTIC: Taskbar ────────────────────────────────────────── */
   --tb-height: 40px;

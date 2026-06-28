@@ -10,6 +10,7 @@ import { type CSSProperties, type ReactNode, useRef } from 'react'
 import styles from './WindowWrapper.module.css'
 import { Window } from '@/components/windows7/Window'
 import { useWindowDrag } from '@/hooks/useWindowDrag'
+import { useWindowResize } from '@/hooks/useWindowResize'
 import { TASKBAR_RESERVE } from '@/lib/gridMath'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
@@ -46,6 +47,13 @@ export function WindowWrapper({
   const exitModeRef = useRef<'close' | 'minimize'>('close')
 
   const drag = useWindowDrag({
+    windowId,
+    position: windowData?.position ?? { x: 0, y: 0 },
+    size: windowData?.size ?? { width: 0, height: 0 },
+    isMaximized: windowData?.isMaximized ?? false,
+  })
+
+  const resize = useWindowResize({
     windowId,
     position: windowData?.position ?? { x: 0, y: 0 },
     size: windowData?.size ?? { width: 0, height: 0 },
@@ -116,7 +124,7 @@ export function WindowWrapper({
 
   const wrapperClass = [
     styles.WindowWrapper,
-    drag.isDragging && styles.dragging,
+    (drag.isDragging || resize.isResizing) && styles.dragging,
     windowData.isMaximized && styles.maximized,
   ]
     .filter(Boolean)
@@ -126,8 +134,8 @@ export function WindowWrapper({
     position: 'absolute',
     left: windowData.position.x + drag.dragOffset.x,
     top: windowData.position.y + drag.dragOffset.y,
-    width: windowData.size.width,
-    height: windowData.size.height,
+    width: windowData.size.width + resize.sizeOffset.width,
+    height: windowData.size.height + resize.sizeOffset.height,
     zIndex: windowData.zIndex,
   }
 
@@ -166,6 +174,18 @@ export function WindowWrapper({
       >
         {children}
       </Window>
+      {/* Invisible bottom-right resize affordance. A custom handle (not CSS
+          `resize: both`) is used deliberately: native resize forces
+          `overflow` on the window, which clips the Aero box-shadow. */}
+      {!windowData.isMaximized && (
+        <div
+          className={styles.resizeHandle}
+          onPointerDown={resize.handlePointerDown}
+          onPointerMove={resize.handlePointerMove}
+          onPointerUp={resize.handlePointerUp}
+          data-testid={`resize-handle-${windowId}`}
+        />
+      )}
     </motion.div>
   )
 }

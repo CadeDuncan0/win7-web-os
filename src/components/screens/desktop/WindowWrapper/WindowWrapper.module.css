@@ -78,3 +78,17 @@
   border-radius: 0;
   box-shadow: none;
 }
+
+/* Invisible bottom-right resize affordance. No grip icon is drawn — it is a
+   transparent hit target sized to the corner, sitting above the window body so
+   it stays grabbable over scrolling content. */
+.resizeHandle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--mw-resize-handle-size);
+  height: var(--mw-resize-handle-size);
+  cursor: nwse-resize;
+  touch-action: none;
+  z-index: 1;
+}

@@ -360,6 +360,96 @@ describe('WindowWrapper — dragging', () => {
   })
 })
 
+// ─── Resizing ────────────────────────────────────────────────────────────
+
+function pointerResize(
+  handle: Element,
+  from: { clientX: number; clientY: number },
+  to: { clientX: number; clientY: number }
+) {
+  fireEvent.pointerDown(handle, { ...from, pointerId: 1 })
+  fireEvent.pointerMove(handle, { ...to, pointerId: 1 })
+  fireEvent.pointerUp(handle, { ...to, pointerId: 1 })
+}
+
+describe('WindowWrapper — resizing', () => {
+  // jsdom viewport: 1024×768, TASKBAR_RESERVE = 40 → clamp viewport 1024×728
+  // SINGLE_WINDOW: position { x: 100, y: 50 }, size { width: 400, height: 300 }
+
+  it('grows the window by the pointer delta and commits it on pointerup', () => {
+    const { store } = renderWithProviders(<WindowWrapper windowId="win-1" />, {
+      preloadedState: SINGLE_WINDOW,
+    })
+
+    const handle = screen.getByTestId('resize-handle-win-1')
+    pointerResize(handle, { clientX: 500, clientY: 350 }, { clientX: 600, clientY: 450 })
+
+    expect(store.getState().window.byId['win-1'].size).toEqual({ width: 500, height: 400 })
+  })
+
+  it('does not write to Redux during pointermove (transient phase)', () => {
+    const { store } = renderWithProviders(<WindowWrapper windowId="win-1" />, {
+      preloadedState: SINGLE_WINDOW,
+    })
+
+    const handle = screen.getByTestId('resize-handle-win-1')
+    fireEvent.pointerDown(handle, { clientX: 500, clientY: 350, pointerId: 1 })
+    fireEvent.pointerMove(handle, { clientX: 600, clientY: 450, pointerId: 1 })
+
+    expect(store.getState().window.byId['win-1'].size).toEqual({ width: 400, height: 300 })
+  })
+
+  it('clamps the committed size to the minimum window size', () => {
+    const { store } = renderWithProviders(<WindowWrapper windowId="win-1" />, {
+      preloadedState: SINGLE_WINDOW,
+    })
+
+    const handle = screen.getByTestId('resize-handle-win-1')
+    pointerResize(handle, { clientX: 500, clientY: 350 }, { clientX: -5000, clientY: -5000 })
+
+    // MIN_WINDOW_SIZE = 240 × 160
+    expect(store.getState().window.byId['win-1'].size).toEqual({ width: 240, height: 160 })
+  })
+
+  it('clamps the committed size to the viewport right/bottom edges', () => {
+    const { store } = renderWithProviders(<WindowWrapper windowId="win-1" />, {
+      preloadedState: SINGLE_WINDOW,
+    })
+
+    const handle = screen.getByTestId('resize-handle-win-1')
+    pointerResize(handle, { clientX: 500, clientY: 350 }, { clientX: 5000, clientY: 5000 })
+
+    // maxWidth = 1024 - 100 = 924, maxHeight = 728 - 50 = 678
+    expect(store.getState().window.byId['win-1'].size).toEqual({ width: 924, height: 678 })
+  })
+
+  it('does not render a resize handle on a maximized window', () => {
+    renderWithProviders(<WindowWrapper windowId="win-1" />, { preloadedState: MAXIMIZED_WINDOW })
+
+    expect(screen.queryByTestId('resize-handle-win-1')).not.toBeInTheDocument()
+  })
+
+  it('promotes z-index when the resize handle is pressed', () => {
+    const { store } = renderWithProviders(
+      <>
+        <WindowWrapper windowId="win-1" />
+        <WindowWrapper windowId="win-2" />
+      </>,
+      { preloadedState: TWO_WINDOWS }
+    )
+
+    fireEvent.pointerDown(screen.getByTestId('resize-handle-win-1'), {
+      clientX: 480,
+      clientY: 340,
+      pointerId: 1,
+    })
+
+    const z1 = store.getState().window.byId['win-1'].zIndex
+    const z2 = store.getState().window.byId['win-2'].zIndex
+    expect(z1).toBeGreaterThan(z2)
+  })
+})
+
 // ─── Maximize / Restore / Minimize Geometry ───────────────────────────────
 
 describe('WindowWrapper — maximize / restore / minimize geometry', () => {
