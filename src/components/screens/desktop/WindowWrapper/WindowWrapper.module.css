@@ -92,3 +92,21 @@
   touch-action: none;
   z-index: 1;
 }
+
+/* Glass blur performance.
+   7.css paints `backdrop-filter: blur()` over the FULL window via
+   `.window.glass:after` (width/height: 100%). The window body is opaque, so
+   that blur is only ever visible behind the translucent title bar — yet the
+   browser still recomputes it across the entire window footprint on every
+   repaint, so its cost scales with window area and janks badly when maximized
+   or resized large. Drop the full-window blur layer and frost only the title
+   bar, where the glass is actually see-through. Scoped to managed windows so
+   the standalone 7.css <Window> (Storybook) keeps its default rendering. */
+.WindowWrapper :global(.window.glass)::after {
+  content: none;
+}
+
+.WindowWrapper :global(.window.glass > .title-bar) {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
