@@ -120,7 +120,7 @@
 
 .switchUser:active {
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), var(--logon-button-gradient) !important;
+    linear-gradient(var(--alpha-black-10), var(--alpha-black-10)), var(--logon-button-gradient) !important;
 }
 
 .switchUser:disabled {

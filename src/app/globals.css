@@ -63,6 +63,7 @@
   --alpha-white-67: rgba(255, 255, 255, 0.6666666667);
 
   /* ─── PRIMITIVE: Alpha-black scale (text shadows + button halo) ── */
+  --alpha-black-10: rgba(0, 0, 0, 0.1);
   --alpha-black-13: rgba(0, 0, 0, 0.1333333333);
   --alpha-black-20: rgba(0, 0, 0, 0.2);
   --alpha-black-53: rgba(0, 0, 0, 0.5333333333);
@@ -431,6 +432,8 @@
   --ie-favbar-link-hover-bg: rgba(180, 200, 225, 0.4);
   --ie-favbar-link-radius: 2px;
   --ie-content-bg: #fff;
+  /* Placeholder project-thumbnail fill (replaced with real assets in Task 12). */
+  --ie-project-thumb-bg: rgba(200, 210, 220, 0.5);
 }
 
 /* =====================================================================
