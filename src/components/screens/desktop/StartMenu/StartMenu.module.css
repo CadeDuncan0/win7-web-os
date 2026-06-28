@@ -136,12 +136,13 @@
    7.css `seven-css` layer (unlike the legacy .switchUser rules). */
 .signOut {
   width: 55%;
-  /* Pushed to the bottom of the right column so it lines up vertically with the
-     search bar (both sit on the panel's bottom row). Left-aligned with the
-     other right-column objects. */
   margin-top: auto;
   min-width: 0;
   min-height: unset;
+  height: 7%;
+  display: flex; /* be explicit, don't rely on UA default */
+  align-items: center; /* fixes vertical centering */
+  justify-content: center; /* explicit horizontal centering, replaces reliance on text-align */
   padding: var(--logon-button-padding);
   margin-bottom: 8px;
   color: inherit;

@@ -187,6 +187,11 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
             <Button
               aria-label="Sign Out"
               className={styles.signOut}
+              // Sign Out is an action inside role="menu" — expose it as a
+              // menuitem (with roving tabindex) so it matches the shortcuts and
+              // is reachable by the arrow-key handler, not orphaned as a button.
+              role="menuitem"
+              tabIndex={-1}
               onClick={() => handleAction({ type: 'signOut' })}
             >
               Sign Out

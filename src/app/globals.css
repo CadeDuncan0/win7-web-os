@@ -154,7 +154,7 @@
   /* ─── SEMANTIC: Logon form button (consumed by SignIn.module.css +
      ArrowButton.module.css) ─────────────────────────────────────── */
   --logon-button-min-width: 80px;
-  --logon-button-padding: 4px 8px;
+  --logon-button-padding: 0 8px;
   --logon-button-radius: 3px;
   --logon-button-gradient: linear-gradient(
     to bottom,
