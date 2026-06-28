@@ -84,7 +84,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 - The packaged css at https://unpkg.com/7.css
 - The documentation for the css at https://khang-nd.github.io/7.css/
-- Win7Simu - a Windows 7 Simulator at https://win7simu.visnalize.com/ (code extracted to @.claude\docs\desktop\desktop_win7simu.htm)
+- Win7Simu - a Windows 7 Simulator at https://win7simu.visnalize.com/ (code extracted to @..\documentation\projects\portfolio-website-windows7\references\win7simu)
 - A UI mod for Windows 10 (specifically for the logon screen) at https://github.com/world-windows-federation/AuthUX
 
 ## 6. References
