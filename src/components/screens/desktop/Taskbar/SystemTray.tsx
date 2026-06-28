@@ -21,7 +21,7 @@ export interface SystemTrayProps {
 }
 
 export function SystemTray({ initialDate }: SystemTrayProps) {
-  const [now, setNow] = useState(() => initialDate ?? new Date())
+  const [now, setNow] = useState(initialDate)
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000)
@@ -30,10 +30,10 @@ export function SystemTray({ initialDate }: SystemTrayProps) {
 
   return (
     <div className={styles.systemTray} role="status" aria-label="System tray">
-      <time className={styles.time} dateTime={now.toISOString()}>
+      <time className={styles.time} dateTime={now?.toISOString()}>
         {timeFormatter.format(now)}
       </time>
-      <time className={styles.date} dateTime={now.toISOString()}>
+      <time className={styles.date} dateTime={now?.toISOString()}>
         {dateFormatter.format(now)}
       </time>
     </div>
