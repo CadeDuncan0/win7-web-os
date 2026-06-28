@@ -92,4 +92,4 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 **Scan all provided documents before implementing.**
 
 - @.claude/PROJECT_INFORMATION.md
-- @../documentation/portfolio-website-windows7/CLAUDE.md
+- @../documentation/projects/portfolio-website-windows7/CLAUDE.md
