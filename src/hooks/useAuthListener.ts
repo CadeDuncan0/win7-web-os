@@ -1,16 +1,18 @@
 import { Session } from '@supabase/supabase-js'
 import { useEffect } from 'react'
 
-import { AppSession, getCurrentSession, signOut } from '@/lib/auth'
+import { AppSession, getCurrentSession, sessionStartedAtMs, signOut } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/client'
-import { useAppDispatch } from '@/store/hooks'
-import { setSession, clearSession } from '@/store/slices/sessionSlice'
+import { DEFAULT_USER_ICON } from '@/lib/userIcons'
+import { useAppDispatch, useAppStore } from '@/store/hooks'
+import { setSession, clearSession, selectAvatar } from '@/store/slices/sessionSlice'
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL
 const supabase = createClient()
 
 export function useAuthListener(): void {
   const dispatch = useAppDispatch()
+  const store = useAppStore()
 
   useEffect(() => {
     // Helper closes over dispatch — no parameter plumbing
@@ -22,7 +24,10 @@ export function useAuthListener(): void {
       const payload = {
         role: 'admin',
         jwt: session.access_token,
-        startedAt: ((session.expires_at ?? Date.now() / 1000 - 3600) - session.expires_in) * 1000,
+        startedAt: sessionStartedAtMs(session),
+        // Preserve the logon-screen pick if the sign-in flow already
+        // dispatched it; default only when rehydrating cold (reload).
+        avatar: selectAvatar(store.getState()) ?? DEFAULT_USER_ICON,
       } satisfies AppSession
       dispatch(setSession(payload))
     }
@@ -66,5 +71,5 @@ export function useAuthListener(): void {
     })
 
     return () => subscription.unsubscribe()
-  }, [dispatch])
+  }, [dispatch, store])
 }

@@ -25,8 +25,8 @@
   display: block;
   position: relative;
   inset: 0;
-  width: 144px;
-  height: 144px;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
   margin: 0rem 5rem;
   padding: 0;
   background: var(--w7-el-grad) !important;
@@ -48,7 +48,7 @@
   display: none;
 }
 
-/* The ::after overlay layers the accountIconBorder.png on top of the
+/* The ::after overlay layers the account-icon-border.png on top of the
    button's own background-image. The original kept both paint paths —
    we preserve that here. globals.css 7.css applies its own ::after
    chrome to bare buttons; this overrides it for AccountIcon only. */
@@ -132,10 +132,10 @@
    Positioned to overlay the 144×144 avatar button. The SVG is rendered
    at 170×171 (scale ~0.96 from its 177×178 viewBox) so the visible
    ~150-unit rounded-rect path lands at ~144 rendered pixels — flush
-   with the avatar's outer frame edge, reading as an inset border
-   rather than an outset glow. The layered 5px/3px strokes inside the
-   SVG render as a ~1px #6DB5F3 line on either side of the 3px #4285C5
-   selection ring. */
+   with the avatar's outer frame edge. Inside the SVG a single dark ring
+   sits over a blurred light glow clipped to the path interior, so the
+   glow falls inward and reads as a soft inset outline. All colors/widths/
+   blur come from the --avatar-outline-* tokens in globals.css. */
 .outline {
   position: absolute;
   top: calc((144px - 169px) / 2); /* center 171px-tall svg over 144px button */
@@ -151,4 +151,20 @@
 .wrapper:has(.button.canClick:focus-visible) .outline,
 .wrapper:has(.button.canClick:active) .outline {
   opacity: 1;
+}
+
+/* ─── Outline SVG layers ───────────────────────────────────────────────
+   The dark ring is the only crisp stroke; the light glow (below) blooms
+   inward behind it. */
+.bandDark {
+  stroke: var(--avatar-outline-band-dark);
+  stroke-width: var(--avatar-outline-band-dark-w);
+}
+
+/* Inner glow — translucent blurred band clipped to the path interior in
+   the SVG so the blur falls inward only (the soft inset effect). */
+.glow {
+  stroke: var(--avatar-outline-glow-color);
+  stroke-width: var(--avatar-outline-glow-w);
+  filter: blur(var(--avatar-outline-glow-blur));
 }

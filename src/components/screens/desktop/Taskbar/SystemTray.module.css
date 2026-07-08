@@ -1,0 +1,25 @@
+.systemTray {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-3);
+  height: 100%;
+}
+
+.time {
+  font-size: var(--font-size-xs);
+  color: var(--tb-clock-text);
+  text-shadow: var(--tb-clock-text-shadow);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.date {
+  font-size: var(--font-size-xs);
+  color: var(--tb-clock-text);
+  text-shadow: var(--tb-clock-text-shadow);
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0.85;
+}

@@ -1,0 +1,32 @@
+.startOrb {
+  /* min-width/padding reset neutralizes the 7.css `button` defaults
+     (min-width: 75px; padding: 0 12px) that otherwise stretch the orb. */
+  width: var(--tb-orb-size);
+  height: var(--tb-orb-size);
+  min-width: var(--tb-orb-size);
+  min-height: var(--tb-orb-size);
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  position: relative;
+  background: var(--tb-orb-img) center / contain no-repeat;
+  filter: drop-shadow(var(--tb-orb-shadow));
+  transition: filter 0.1s ease;
+  animation: none;
+}
+
+.startOrb:hover {
+  filter: var(--tb-orb-glow);
+}
+
+.startOrb:active,
+.active {
+  filter: var(--tb-orb-glow) brightness(1.1);
+  border: none;
+}
+
+.startOrb::after,
+.startOrb::before {
+  opacity: 0;
+}

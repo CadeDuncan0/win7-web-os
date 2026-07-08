@@ -1,102 +1,79 @@
-# Portfolio Website — Windows 7 Theme
+# win7-web-os
 
-[![CI](https://github.com/CadeDuncan/PortfolioWebsite-Windows7/actions/workflows/ci.yml/badge.svg)](https://github.com/CadeDuncan/PortfolioWebsite-Windows7/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Next.js](https://img.shields.io/badge/Next.js-App%20Router-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-App%20Router-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-A personal portfolio website implemented as a fully functional, browser-rendered recreation of
-the **Windows 7 Aero Glass** desktop environment. Visitors land on an authentic Win7 login
-screen, sign in as **Guest** or **Admin**, and explore portfolio content as openable desktop
-windows — complete with draggable icons, a window manager, and a live taskbar clock.
+A **Windows 7 desktop environment built with React and Next.js — fork it and make it your own.**
 
-## Why this project
+Visitors land on an authentic Win7 Aero Glass login screen at `/win7`, sign in as **Guest** or
+**Admin**, and get a working desktop: draggable icons, a full window manager, a Start menu, an
+in-desktop Internet Explorer, and a live taskbar clock. The repo is a generic, open-source
+template — everything identity-specific lives in one config file so a fork can rebrand it in
+minutes.
 
-This portfolio is engineered to serve two audiences simultaneously:
+## Table of Contents
 
-- **Hiring teams** evaluating full-stack engineering capability — every architectural choice is
-  intentional, documented, and defensible in a technical interview.
-- **Portfolio visitors** experiencing the work as a nostalgic, interactive desktop.
+- [Key features](#key-features)
+- [Getting started](#getting-started)
+- [Make it yours](#make-it-yours)
+- [Architecture overview](#architecture-overview)
+- [Tech stack](#tech-stack)
+- [Available scripts](#available-scripts)
+- [Project layout](#project-layout)
+- [License](#license)
 
-### Key features
+## Key features
 
-- **Authentic Windows 7 Aero Glass UI** — frosted glass surfaces, Segoe UI typography, and a
-  fully tokenized design system (no hardcoded colors, shadows, or radii).
-- **Dual-role authentication** — Guest (public, session-scoped) and Admin (JWT-persisted,
-  unlocks private project windows).
-- **Window manager** — open, close, minimize, maximize, focus, z-index stacking, and boundary
-  clamping; animated via Framer Motion.
-- **Drag-and-drop desktop icons** — snap-to-grid repositioning via `@dnd-kit`.
-- **Database-driven content** — projects fetched via GraphQL (`pg_graphql`) from Supabase
-  Postgres, with role-based RLS enforcing visibility at the database layer.
-- **Zero-cost infrastructure** — runs entirely on free tiers (Vercel, Supabase, GitHub).
-
-## Architecture at a glance
-
-```
-[ Browser ]
-    ↕
-[ Next.js + React ]        — rendering, routing, server/client component split
-    ↕
-[ Apollo Client ]          — GraphQL client, normalized cache, auth header injection
-    ↕
-[ GraphQL / pg_graphql ]   — query layer auto-generated from Postgres schema
-    ↕
-[ Supabase ]               — Postgres DB, Auth, Storage, RLS enforcement
-
-[ Redux Toolkit ]          — horizontal across React layer; in-memory UI state only
-[ CSS Modules ]            — scoped per-component; Aero Glass design tokens
-```
-
-See [CLAUDE.md](CLAUDE.md) for the full architectural thesis, design rationale, and
-anti-patterns.
-
-### Tech stack
-
-| Layer         | Technology                                                         |
-| ------------- | ------------------------------------------------------------------ |
-| Framework     | Next.js (App Router) + React + TypeScript (`strict`)               |
-| State         | Redux Toolkit (typed `useAppDispatch` / `useAppSelector`)          |
-| Styling       | CSS Modules + Aero Glass design tokens in `globals.css`            |
-| Animation     | Framer Motion (`AnimatePresence`, layout animations)               |
-| Drag & drop   | `@dnd-kit` (icons only — window dragging uses raw `pointermove`)   |
-| Data          | Apollo Client + GraphQL via Supabase `pg_graphql`                  |
-| Auth + DB     | Supabase (Postgres + Auth + Storage + RLS)                         |
-| Testing       | Jest + React Testing Library, Vitest, Playwright, Storybook + a11y |
-| Tooling       | ESLint flat config, Prettier, Husky, commitlint, lint-staged       |
-| CI / Hosting  | GitHub Actions → Vercel (Hobby tier)                               |
-| Local runtime | Docker (parity environment; host Node.js is the primary dev shell) |
+- **Authentic Windows 7 Aero Glass UI** — frosted-glass surfaces, Segoe UI typography, and a
+  fully tokenized design system (no hardcoded colors, shadows, or radii) layered on `7.css`.
+- **Dual-role authentication** — Guest (public, session-scoped) and Admin (Supabase Auth,
+  JWT-persisted), with server-side route protection via the Next.js proxy.
+- **Full window manager** — open, close, minimize, maximize, focus, z-index stacking, and
+  viewport boundary clamping, animated via Framer Motion. All state lives in Redux.
+- **In-desktop Internet Explorer** — a working browser window with a toolbar, page links,
+  address-bar autocomplete, and back/forward history.
+- **App-registration pattern** — adding a new "app" window is a union member, a switch case, and
+  a registry entry (see [Architecture overview](#architecture-overview)). Two placeholder apps
+  (Welcome, Getting Started) demonstrate it.
+- **Drag-and-drop desktop** — snap-to-grid icon repositioning via `@dnd-kit`; window dragging
+  uses raw `pointermove` for pixel-perfect control.
+- **Reusable Windows 7 UI kit** — 25+ Win7 primitives (buttons, tabs, tree view, menus, sliders,
+  scrollbars, and more), ready to compose into new apps.
+- **Zero-cost infrastructure** — a Supabase free-tier project is the only external dependency;
+  deploy the Next.js app anywhere you like.
 
 ## Getting started
 
 ### Prerequisites
 
-- **Node.js 20** (matches the Dockerfile base image and CI runner)
-- **npm** (lockfile is npm-format)
-- A **Supabase** project with the `projects` table and RLS policies described in
-  [CLAUDE.md](CLAUDE.md#supabase)
+- **Node.js 20+**
+- **npm** (the lockfile is npm-format)
+- A **Supabase** project for Auth (Admin sign-in). Guest mode needs no data — the client is just
+  constructed at boot.
 
 ### Install
 
 ```bash
-git clone https://github.com/CadeDuncan/PortfolioWebsite-Windows7.git
-cd PortfolioWebsite-Windows7
+git clone https://github.com/CadeDuncan0/win7-web-os.git
+cd win7-web-os
 npm ci
 ```
 
 ### Configure environment
 
-Create `.env.local` in the project root:
+Copy [`.env.example`](.env.example) to `.env.local` and fill in your Supabase values:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<supabase-anon-key>
-NEXT_PUBLIC_GRAPHQL_URL=https://<project-ref>.supabase.co/graphql/v1
 NEXT_PUBLIC_ADMIN_EMAIL=<admin-account-email>
 ```
 
 > Only variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. Never prefix
-> server-only secrets (e.g. service-role keys) with `NEXT_PUBLIC_`.
+> server-only secrets (e.g. service-role keys) with `NEXT_PUBLIC_`. `.env.local` is gitignored;
+> mirror these values in your hosting provider's dashboard when you deploy.
 
 ### Run the dev server
 
@@ -104,91 +81,112 @@ NEXT_PUBLIC_ADMIN_EMAIL=<admin-account-email>
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — you should land on the Windows 7 login
-screen.
+Open [http://localhost:3000](http://localhost:3000) — the root redirects to `/win7`, the Windows 7
+login screen. Sign in as **Guest** to explore.
 
-### Optional: run via Docker
+## Make it yours
 
-```bash
-docker compose up --build
+This is the one section a forker needs. Everything you would change is plain-data registries
+next to the components that render them:
+
+| To change…                            | Edit…                                                          |
+| ------------------------------------- | -------------------------------------------------------------- |
+| Desktop icons                         | `src/components/screens/desktop/desktopIcons.ts`               |
+| Start Menu shortcuts + external links | `src/components/screens/desktop/StartMenu/startMenuItems.ts`   |
+| Pages inside Internet Explorer        | `src/components/screens/desktop/InternetExplorer/ieRoutes.ts`  |
+| Logon-screen branding subtitle        | the `subtitle` default in `src/components/windows7/OsBranding` |
+| Legacy-path redirects to `/win7`      | the `legacyRedirects` list in `next.config.ts`                 |
+| Wallpapers / icons / avatars          | `public/assets/` (paths registered in `src/lib/assetPaths.ts`) |
+
+An `ieRoutes.ts` entry with `redirect: true` is an external link: selecting it opens the URL in
+a new browser tab while IE shows a redirect page (the Source Code entry is a worked example).
+
+To add a whole new app window, see the [Architecture overview](#architecture-overview) below.
+
+The intended model: keep your fork private with this repo as an `upstream` remote, put your
+personal content in the registries above, and `git fetch upstream && git merge upstream/main` to
+pick up template improvements.
+
+## Architecture overview
+
+```text
+[ Browser ]
+    |
+[ Next.js + React ]   — /win7 (logon) and /win7/desktop routes; legacy paths redirect
+    |                   src/proxy.ts gates /win7/desktop server-side (Supabase session or guest cookie)
+[ Supabase ]          — Auth for the Admin account only; Guest is a client-side role assertion
+[ Redux Toolkit ]     — windowSlice (window manager), sessionSlice (auth), desktopSlice (icons)
+[ CSS Modules ]       — scoped per component; Aero Glass design tokens in globals.css over 7.css
 ```
 
-Docker is provided for production-parity validation. Day-to-day development should use host
-Node.js so Cursor/VS Code extensions (ESLint, Prettier, TS server) work correctly.
+**The window manager** is `windowSlice` (open/close/focus/minimize/maximize/move/resize with
+z-index promotion) plus `WindowManager`, which renders each visible window, and `WindowWrapper`,
+which supplies the OS chrome (title bar, controls, drag/resize) around any app content.
+
+**Adding an app** is three small steps — the Welcome window is a minimal worked example:
+
+1. Add your kind to the `WindowKind` union in `src/store/slices/windowSlice.ts`.
+2. Render it: add a case in `src/components/screens/desktop/WindowManager/WindowManager.tsx`
+   returning your component (wrap content in `WindowWrapper` for the OS chrome), and give it a
+   taskbar icon/label in `src/components/screens/desktop/Taskbar/taskbarApps.ts`.
+3. Launch it: add entries to `desktopIcons.ts` and/or `startMenuItems.ts` with your kind.
+
+A few intentional constraints worth calling out:
+
+- **`src/app/layout.tsx` stays a pure server component.** All client context lives in a single
+  `ReduxProviderWrapper`, which mints one store per request via a `setupStore()` factory (no
+  module singleton — SSR passes never share state across requests).
+- **Two dragging problems, two solutions.** Icons use `@dnd-kit` with snap-to-grid; windows use
+  raw `pointermove` with boundary clamping and z-index promotion.
+- **Design tokens only.** Every color, shadow, blur, gradient, and radius is a CSS custom
+  property in `src/app/globals.css` — component stylesheets reference tokens, never literals.
+
+## Tech stack
+
+| Layer       | Technology                                                            |
+| ----------- | --------------------------------------------------------------------- |
+| Framework   | Next.js (App Router) + React 19 + TypeScript (`strict`)               |
+| State       | Redux Toolkit (typed `useAppDispatch` / `useAppSelector`)             |
+| Styling     | CSS Modules + Aero Glass design tokens in `globals.css`, over `7.css` |
+| Animation   | Framer Motion (`AnimatePresence`, layout animations)                  |
+| Drag & drop | `@dnd-kit` (icons only — window dragging uses raw `pointermove`)      |
+| Validation  | Zod                                                                   |
+| Auth        | Supabase Auth (Admin); cookie-marked Guest sessions                   |
 
 ## Available scripts
 
-| Script                    | Purpose                                            |
-| ------------------------- | -------------------------------------------------- |
-| `npm run dev`             | Start the Next.js dev server                       |
-| `npm run dev:docker`      | Dev server with Webpack (for container hot reload) |
-| `npm run build`           | Production build                                   |
-| `npm run start`           | Run the production server                          |
-| `npm run lint`            | ESLint (flat config, `--max-warnings=0` in CI)     |
-| `npm run test`            | Jest unit + integration tests                      |
-| `npm run storybook`       | Launch Storybook on port 6006                      |
-| `npm run build-storybook` | Build a static Storybook bundle                    |
+| Script          | Purpose                                    |
+| --------------- | ------------------------------------------ |
+| `npm run dev`   | Start the Next.js dev server               |
+| `npm run build` | Production build (also runs type-checking) |
+| `npm run start` | Run the production server                  |
 
 ## Project layout
 
-```
+```text
 src/
-  app/                    Next.js App Router pages and layouts
+  app/                    App Router: /win7 (logon), /win7/desktop, layout, globals.css
   components/
-    foundations/          Shared design-system primitives (e.g. GlassSurface)
-    login/                Login-screen components
-    providers/            Client-side context provider wrappers
-  hooks/                  Custom React hooks
-  lib/                    Third-party client initializations and shared utilities
-    apollo-client.ts        Apollo Client with link chain
-    debug.ts                NODE_ENV-aware debug logger
-    supabase/               Supabase clients (auth only)
+    providers/            Client context providers (ReduxProviderWrapper, AuthListener)
+    screens/
+      login/              Logon screen (AccountSelection, SignIn)
+      desktop/            Desktop, IconGrid, Taskbar, StartMenu, WindowManager,
+                          InternetExplorer, WelcomeWindow
+      transition/         Boot / welcome transition
+    windows7/             Reusable Windows 7 primitives built on 7.css
+  hooks/                  Shared React hooks (auth listener, dnd-kit sensors)
+  lib/
+    supabase/             Supabase clients (browser, server, proxy)
   store/
-    index.ts              Redux store + RootState / AppDispatch exports
+    index.ts              setupStore factory + RootState / AppDispatch exports
     hooks.ts              Typed useAppDispatch / useAppSelector
-    slices/               One file per Redux domain slice
-  proxy.ts                Next.js middleware (route protection)
+    slices/               One file per Redux domain slice (window, session, desktop)
+  proxy.ts                Next.js route protection for /win7/desktop
 ```
 
-## Quality gates
-
-- **Pre-commit** — `lint-staged` runs `eslint --fix --max-warnings=0` and `prettier --write`
-  on staged `.ts` / `.tsx` / `.css` files.
-- **commit-msg** — commitlint enforces
-  [Conventional Commits](https://www.conventionalcommits.org/) (`feat`, `fix`, `docs`,
-  `style`, `refactor`, `test`, `chore`, `perf`, `ci`, `revert`).
-- **CI** — every PR runs lint → format check → production build on Node 20.
-
-Bypassing these gates (`--no-verify`, ignoring warnings) is not permitted — investigate the
-root cause instead.
-
-## Roadmap
-
-| Phase | Scope                                                                                                 |
-| ----- | ----------------------------------------------------------------------------------------------------- |
-| 0     | Environment & infrastructure: Next.js, Redux, Apollo, Supabase, Docker, CI/CD, Vercel — **complete**  |
-| 1     | Design tokens + pixel-perfect login screen, Guest/Admin auth, route protection — **in progress**      |
-| 2     | Desktop environment, icon grid, full window manager, taskbar with live clock                          |
-| 3     | Portfolio content: production RLS, GraphQL queries, ResumeWindow, ProjectsWindow, ProjectDetailWindow |
-| 4     | Polish, performance (Lighthouse 90+), a11y audit, cross-browser validation, `v1.0.0` launch           |
-
-Phase task documents live under [`.claude/phases/`](.claude/phases/).
-
-## Getting help
-
-- **Architecture & conventions:** [CLAUDE.md](CLAUDE.md) — full project thesis, stack rationale,
-  and anti-patterns.
-- **Pair-programming protocol:** [AGENTS.md](AGENTS.md) — how AI assistants are scoped on this
-  repo.
-- **Issues:** open a [GitHub issue](https://github.com/CadeDuncan/PortfolioWebsite-Windows7/issues)
-  with reproduction steps and environment details.
-
-## Maintainer
-
-- **Cade Duncan** — [cadeduncan72@gmail.com](mailto:cadeduncan72@gmail.com)
-
-Contributions are not actively solicited (this is a personal portfolio), but bug reports and
-suggestions are welcome via GitHub Issues.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to fork, where content goes, and coding
+conventions. Bug reports and suggestions are welcome via
+[GitHub Issues](https://github.com/CadeDuncan0/win7-web-os/issues).
 
 ## License
 

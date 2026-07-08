@@ -7,9 +7,11 @@ import type { ComponentPropsWithRef } from 'react'
    button (activated on Enter). */
 interface ButtonProps extends ComponentPropsWithRef<'button'> {
   variant?: 'default'
+  'aria-label': string
+  className?: string
 }
 
-export function Button({ variant, className, ...rest }: ButtonProps) {
+export function Button({ variant, 'aria-label': ariaLabel, className, ...rest }: ButtonProps) {
   const merged = [variant === 'default' ? 'default' : '', className].filter(Boolean).join(' ')
-  return <button className={merged || undefined} {...rest} />
+  return <button className={merged || undefined} aria-label={ariaLabel} {...rest} />
 }

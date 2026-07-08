@@ -1,0 +1,34 @@
+.redirectPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 20px;
+  background: var(--ie-content-bg);
+  min-height: 100%;
+  text-align: center;
+}
+
+.redirectMessage {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.message {
+  color: var(--ie-address-text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.fallback {
+  color: var(--ie-address-text);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.link {
+  color: var(--ie-favbar-link-color);
+  text-decoration: underline;
+}

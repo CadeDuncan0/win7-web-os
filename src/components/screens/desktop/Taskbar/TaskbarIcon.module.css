@@ -1,0 +1,207 @@
+.group {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-1);
+}
+
+/* Raise a hovered/focused group so its popup floats above adjacent items. */
+.group:hover,
+.group:focus-within {
+  z-index: 2;
+}
+
+/* ── Square app-icon button (replaces the old text bar) ───────────── */
+.TaskbarIcon {
+  /* width/padding reset neutralizes the 7.css `button` defaults
+     (min-width: 75px; padding: 0 12px). No background or border at rest —
+     a soft frame appears only on hover/active. */
+  width: var(--tb-item-width);
+  height: var(--tb-height-fill);
+  min-width: var(--tb-item-width);
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid black;
+  box-shadow: none;
+  border-radius: var(--tb-item-radius);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background 0.1s ease,
+    box-shadow 0.1s ease;
+}
+
+.TaskbarIcon::after,
+.TaskbarIcon::before {
+  opacity: 0.25;
+}
+
+.TaskbarIcon:hover {
+  background: var(--tb-item-bg-hover);
+  box-shadow: var(--tb-item-selector-hover);
+  cursor: default;
+}
+
+.TaskbarIcon:hover::after,
+.TaskbarIcon:hover::before {
+  opacity: 0.7;
+}
+
+/* Square selector for the active app (replaces the bar indicator). */
+.active {
+  background: var(--tb-item-bg-active);
+  box-shadow: var(--tb-item-selector-active);
+}
+
+.icon {
+  width: var(--tb-item-icon-size);
+  height: var(--tb-item-icon-size);
+  pointer-events: none;
+}
+
+/* ── Hover/click popup listing the app's open windows ─────────────── */
+.popup {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + var(--tb-popup-offset));
+  left: 0;
+  min-width: var(--tb-popup-min-width);
+  margin: 0;
+  padding: var(--space-1);
+  list-style: none;
+  background: var(--tb-popup-bg);
+  border: var(--tb-popup-border);
+  border-radius: var(--tb-popup-radius);
+  box-shadow: var(--tb-popup-shadow);
+  backdrop-filter: blur(var(--tb-popup-blur));
+  -webkit-backdrop-filter: blur(var(--tb-popup-blur));
+}
+
+.popup *:hover {
+  cursor: default;
+}
+
+/* Invisible bridge spanning the gap down to the button, so the popup stays
+   open while the pointer travels from the icon up into the list. */
+.popup::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: var(--tb-popup-offset);
+}
+
+.group:hover .popup,
+.group:focus-within .popup {
+  display: block;
+}
+
+.popupItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--tb-popup-item-radius);
+  height: var(--tb-popup-item-height);
+}
+
+/* Frame + highlight on hover or keyboard focus (per design reference). */
+.popupItem:hover,
+.popupItem:focus-within {
+  background: var(--tb-popup-item-hover-bg);
+  border: var(--tb-popup-item-hover-border);
+}
+
+.popupActivate {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--sm-item-gap);
+  min-width: 0;
+  min-height: 0;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--tb-popup-item-radius);
+  background: transparent;
+  box-shadow: none;
+  color: var(--tb-popup-text);
+  text-shadow: var(--tb-text-shadow);
+  text-align: left;
+  font: var(--w7-font);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+}
+
+.popupActivate:hover::before,
+.popupActivate:hover::after {
+  opacity: 0;
+}
+
+.popupIcon {
+  width: var(--tb-popup-icon-size);
+  height: var(--tb-popup-icon-size);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.popupLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Win7 red close button, top-right of the entry — revealed on entry hover. */
+.popupClose {
+  /* Resting face: the muted-red close button with the 'x' glyph on top. Shown
+     whenever the button is revealed (entry hover). The brighter face + glow is
+     a ::before overlay that fades in on the button's own :hover (below). */
+  position: relative;
+  flex-shrink: 0;
+  width: var(--tb-popup-close-size);
+  height: var(--tb-popup-close-size);
+  min-width: var(--tb-popup-close-size);
+  min-height: 0;
+  margin: 0 var(--space-1);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--tb-popup-close-border);
+  border-radius: var(--tb-popup-item-radius);
+  background: var(--tb-popup-close-glyph), var(--tb-popup-close-rest);
+  /* The accessible ✕ text is replaced by the glyph; hide it without removing it. */
+  color: transparent;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+/* Hover face: the brighter red + warm glow + a subtle outer halo, layered over
+   the resting face and faded in on hover. The glyph is repeated here at the same
+   position and size so it stays put as the face brightens. */
+.popupClose::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--tb-popup-close-glyph), var(--tb-popup-close-hover);
+  box-shadow: var(--tb-popup-close-halo);
+  opacity: 0;
+  transition: opacity 0.1s linear;
+}
+
+.popupItem:hover .popupClose,
+.popupClose:focus-visible {
+  opacity: 1;
+}
+
+.popupClose:hover::before {
+  opacity: 1;
+}

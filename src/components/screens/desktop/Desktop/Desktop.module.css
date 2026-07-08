@@ -1,0 +1,30 @@
+.shell {
+  position: fixed;
+  inset: 0;
+  background: var(--desktop-backdrop) center / cover no-repeat;
+  overflow: hidden;
+}
+
+.iconLayer {
+  position: absolute;
+  inset: 0;
+  padding: var(--dsk-grid-padding);
+  padding-bottom: calc(var(--dsk-grid-padding) + var(--dsk-taskbar-reserve));
+  z-index: var(--dsk-z-icons);
+}
+
+/* pointer-events: none so clicks pass through to the icon layer;
+   individual windows re-enable pointer-events on themselves */
+.windowLayer {
+  position: absolute;
+  inset: 0;
+  z-index: var(--dsk-z-windows);
+  pointer-events: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: var(--dsk-z-overlay);
+  pointer-events: none;
+}

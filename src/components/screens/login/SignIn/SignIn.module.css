@@ -1,0 +1,129 @@
+/* =====================================================================
+   SignIn — 1:1 lockscreen form (avatar + password input + Switch User).
+   Rules copied 1:1 from the pre-migration .signin__* cascade, including
+   every `!important` flag that was required to beat 7.css's generic
+   `button` / `input` declarations. We preserve every flag verbatim —
+   this file relocates the rules, it does not change them.
+   ===================================================================== */
+
+/* ─── Pane wrapping AccountIcon + form (vertical stack) ──────────────── */
+/* Shrinks the AccountIcon subtitle on this screen via the component's
+   exposed token slot — see AccountIcon.module.css .subtitle. The custom
+   property cascades from this wrapper down to the nested .subtitle. */
+.pane {
+  --account-icon-subtitle-size: var(--font-size-l);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* ─── Form wrapper ───────────────────────────────────────────────────── */
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+/* Inner relative column that anchors the absolute .submit button.
+   Mirrors the copycat's `<div class="relative flex flex-col gap-3">`. */
+.fieldColumn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Wrapper around the password input + eye toggle, so the toggle can
+   absolute-position to the input's right edge. */
+.passwordWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ─── Password input ─────────────────────────────────────────────────── */
+.formInput {
+  width: var(--logon-input-width);
+  height: var(--logon-input-height);
+  padding: 0 0 0 var(--logon-input-padding-x);
+  color: var(--color-logon-input-text);
+  background: var(--color-neutral-0);
+  border: var(--logon-input-border);
+  border-radius: var(--logon-input-radius);
+  box-shadow: var(--logon-input-ring) !important;
+  transition: background-color 9999s ease-in-out 0s !important;
+  font: inherit;
+}
+
+.formInput:focus {
+  outline: none;
+  box-shadow:
+    var(--logon-input-ring),
+    0 0 4px var(--color-aero-cyan);
+}
+
+/* ─── Submit button positioning (shape owned by ArrowButton.module) ──
+   Hangs the circular submit to the right of the password input and
+   vertically centers it. top: 50% + translateY(-50%) holds regardless
+   of the circle's diameter. */
+.submit {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: var(--space-3);
+}
+
+/* ─── Inline error message ───────────────────────────────────────────── */
+.error {
+  font: inherit;
+  color: var(--color-neutral-0);
+  text-shadow: var(--logon-text-shadow);
+}
+
+/* ─── Switch User button ─────────────────────────────────────────────── */
+/* min-height / min-width unset to override 7.css's generic `button`
+   defaults (23px / 75px) which would otherwise compete with the
+   lockscreen-specific sizing tokens below. Pushes well below the
+   password row so the form reads as input ▸ (breathing room) ▸
+   secondary action, mirroring the Win7 sign-in screen reference. */
+.switchUser {
+  color: inherit;
+  min-width: var(--logon-button-min-width);
+  min-height: unset;
+  margin-top: var(--space-8);
+  width: 50%;
+  font-size: var(--font-size-s) !important;
+  padding: var(--logon-button-padding);
+  background: var(--logon-button-gradient) !important;
+  border: 0;
+  border-radius: var(--logon-button-radius);
+  box-shadow: var(--logon-button-shadow) !important;
+  text-shadow: var(--logon-text-shadow);
+  cursor: pointer;
+  font: inherit;
+}
+
+.switchUser::before,
+.switchUser::after {
+  display: none;
+}
+
+.switchUser:hover,
+.switchUser:focus,
+.switchUser:focus-visible {
+  outline: none;
+  filter: var(--windows7-focus);
+}
+
+.switchUser:active {
+  background-image:
+    linear-gradient(var(--alpha-black-10), var(--alpha-black-10)), var(--logon-button-gradient) !important;
+}
+
+.switchUser:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

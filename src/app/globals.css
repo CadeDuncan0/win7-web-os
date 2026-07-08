@@ -14,12 +14,28 @@
    component. If you find yourself adding a class selector for a single
    component here, it belongs in that component's module instead.
 
-   Every value below is sourced directly from
-   public/copycats/signin/* and public/copycats/accountselection/*.
-   That source IS the textbook — primitives mirror the exact rgba()
-   stops, drop-shadow geometry, and dimension constants used by the
-   win7simu .logon__* classes.
+   Every value below is sourced directly from the win7simu reference
+   captured in docs/copycats/ (gitignored). That source IS the textbook —
+   primitives mirror the exact rgba() stops, drop-shadow geometry, and
+   dimension constants used by the win7simu .logon__* classes.
    ===================================================================== */
+
+/* =====================================================================
+   Cascade layers — make in-house CSS always beat 7.css.
+
+   Layer priority runs lowest → highest: reset, seven-css, then UNLAYERED.
+   Unlayered rules (every *.module.css and the design tokens / component
+   rules in this file) outrank both layers regardless of selector
+   specificity or import order, so in-house styling always wins.
+
+   7.css lives in `seven-css` so its chrome loses to our components but
+   still beats the generic element reset — otherwise broad reset selectors
+   like `ul` would clobber 7.css menus and tree views. The reset therefore
+   sits in the lowest layer. 7.css ships zero !important declarations, so
+   the layer-priority reversal that applies to !important is moot here.
+   ===================================================================== */
+@layer reset, seven-css;
+@import '7.css' layer(seven-css);
 
 :root {
   /* ─── PRIMITIVE: Color ─────────────────────────────────────────── */
@@ -30,6 +46,11 @@
   --color-logon-input-border: #666666;
   --color-logon-input-text: #000000;
   --color-logon-avatar-border: #3f3f3f;
+  /* Aero selection blues — desktop icon hover/active (matches win7simu) */
+  --color-aero-select-border: #b8d6fc;
+  --alpha-aero-select-hover: rgba(242, 247, 254, 0.4666666667);
+  --alpha-aero-select-top: rgba(220, 235, 252, 0.6666666667);
+  --alpha-aero-select-bottom: rgba(193, 220, 252, 0.6666666667);
 
   /* ─── PRIMITIVE: Alpha-white scale (button gradient + gloss) ───── */
   --alpha-white-13: rgba(255, 255, 255, 0.1333333333);
@@ -39,8 +60,10 @@
   --alpha-white-50: rgba(255, 255, 255, 0.5019607843);
   --alpha-white-53: rgba(255, 255, 255, 0.5333333333);
   --alpha-white-60: rgba(255, 255, 255, 0.6);
+  --alpha-white-67: rgba(255, 255, 255, 0.6666666667);
 
   /* ─── PRIMITIVE: Alpha-black scale (text shadows + button halo) ── */
+  --alpha-black-10: rgba(0, 0, 0, 0.1);
   --alpha-black-13: rgba(0, 0, 0, 0.1333333333);
   --alpha-black-20: rgba(0, 0, 0, 0.2);
   --alpha-black-53: rgba(0, 0, 0, 0.5333333333);
@@ -74,22 +97,26 @@
   --weight-thin: 100;
   --weight-bold: 700;
 
+  /* ─── PRIMITIVE: Radii ────────────────────────────────────────── */
+  --radius-full: 9999px;
+
   /* ===================================================================
      SEMANTIC LAYER
      =================================================================== */
 
   /* ─── SEMANTIC: Backdrop image ─────────────────────────────────── */
-  --logon-backdrop: url('/imgs/login/background.jpg');
+  --logon-backdrop: url('/assets/backgrounds/login.jpg');
+  --desktop-backdrop: url('/assets/backgrounds/desktop.jpg');
 
   /* ─── SEMANTIC: Text shadows on the lock-screen image ──────────── */
   --logon-text-shadow: 0 1px 2px var(--color-neutral-900);
-  --logon-name-shadow: 0 1px 4px var(--color-neutral-900);
+  --logon-name-shadow: 0 1px 3px var(--color-neutral-900);
   --logon-brand-shadow: 1px 3px 3px var(--alpha-black-53);
 
   /* ─── SEMANTIC: Avatar (consumed by AccountIcon.module.css) ────── */
   --avatar-size: 144px;
   --avatar-image-size: 98px;
-  --avatar-frame: url(/imgs/windows7/assets/accountIconBorder.png);
+  --avatar-frame: url(/assets/account-icon-border.png);
   --avatar-frame-padding: 23px;
   --avatar-frame-bg: var(--color-neutral-0);
   --avatar-frame-radius: 4px;
@@ -97,6 +124,11 @@
   --avatar-image-border: 1px solid var(--color-logon-avatar-border);
   --avatar-drop-shadow: drop-shadow(2px 2px 8px var(--alpha-black-53));
   --avatar-glow: drop-shadow(0 0 12px var(--color-aero-cyandark));
+  --avatar-outline-band-dark: rgb(3, 24, 37);
+  --avatar-outline-glow-color: rgb(99 195 255 / 0.65);
+  --avatar-outline-band-dark-w: 1px;
+  --avatar-outline-glow-w: 8px;
+  --avatar-outline-glow-blur: 4px;
   /* Explicit ellipse extents (180% × 90%) instead of `farthest-corner`
      so Chrome and Firefox compute the gloss radius identically — the
      legacy keyword sized the gradient against the engine-specific
@@ -120,9 +152,9 @@
   --logon-input-ring: 0 0 0 1px var(--alpha-white-50);
 
   /* ─── SEMANTIC: Logon form button (consumed by SignIn.module.css +
-     SubmitButton.module.css) ─────────────────────────────────────── */
+     ArrowButton.module.css) ─────────────────────────────────────── */
   --logon-button-min-width: 80px;
-  --logon-button-padding: 4px 8px;
+  --logon-button-padding: 0 8px;
   --logon-button-radius: 3px;
   --logon-button-gradient: linear-gradient(
     to bottom,
@@ -153,7 +185,7 @@
   --logon-toggle-hover-bg: var(--alpha-black-13);
   --logon-toggle-width: 40px;
 
-  /* ─── SEMANTIC: Circular submit (consumed by SubmitButton.module.css)
+  /* ─── SEMANTIC: Circular submit (consumed by ArrowButton.module.css)
      Sized just slightly taller than --logon-input-height (23px) so the
      circle reads as a companion to the password field, not a button
      that dominates it. */
@@ -172,6 +204,241 @@
   /* ─── SEMANTIC: windows 7 hovering & clicking ──── */
   --windows7-focus: contrast(1.1);
   --windows7-active: opacity(0.8);
+
+  /* ─── SEMANTIC: Desktop shell ──────────────────────────────────── */
+  --dsk-grid-cell-w: 75px;
+  --dsk-grid-cell-h: 80px;
+  --dsk-grid-padding: 12px;
+  --dsk-taskbar-reserve: 40px;
+  --dsk-z-icons: 1;
+  --dsk-z-windows: 10;
+  --dsk-z-overlay: 9000;
+  --dsk-z-taskbar: 9500;
+
+  /* ─── SEMANTIC: Desktop icons ────────────────────────────────────── */
+  --dsk-icon-image-size: 48px;
+  --dsk-icon-label-size: 12px;
+  --dsk-icon-pad-x: 2px;
+  /* Triple-stacked shadow keeps the white label legible over any wallpaper */
+  --dsk-icon-label-shadow:
+    0 1px 2px var(--color-neutral-900), 0 1px 2px var(--color-neutral-900),
+    0 1px 3px var(--color-neutral-900);
+  --dsk-icon-hover-bg: var(--alpha-aero-select-hover);
+  --dsk-icon-hover-ring: inset 0 0 0 1px var(--alpha-white-67);
+  --dsk-icon-select-bg: linear-gradient(
+    var(--alpha-aero-select-top),
+    var(--alpha-aero-select-bottom)
+  );
+  --dsk-icon-select-border: var(--color-aero-select-border);
+  --dsk-icon-select-ring: inset 0 0 0 1px var(--alpha-white-67);
+  --dsk-icon-select-radius: 3px;
+
+  /* ─── SEMANTIC: Start Menu ──────────────────────────────────────── */
+  /* Structural */
+  --sm-width: 410px;
+  --sm-left-col-width: 65%; /* 65/35 split: left 65%, right column = 1fr (35%) */
+  --sm-padding: 6px;
+  --sm-item-height: 30px;
+  --sm-item-padding: 4px 8px;
+  --sm-item-icon-size: 24px;
+  --sm-item-gap: 8px;
+  --sm-search-height: 26px;
+  --sm-avatar-size: 48px;
+  --sm-avatar-frame-padding: 7px; /* mat inset so the image sits inside the frame */
+  --sm-z: var(--dsk-z-overlay);
+
+  /* Visual — Win7 Start Menu anatomy over a dark Aero glass gradient: the
+     wrapper is a dark translucent gradient, the left column + search are white
+     inset panels, and the right column is transparent so the dark glass shows
+     through. Glass blur via the ::after pseudo. */
+  --sm-bg: linear-gradient(to bottom, rgba(36, 49, 68, 0.9) 0%, rgba(22, 31, 45, 0.93) 100%);
+  --sm-glass-blur: 4px;
+  --sm-border: 1px solid var(--w7-w-bd);
+  --sm-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 4px 20px rgba(0, 0, 0, 0.45);
+  --sm-left-bg: rgba(255, 255, 255, 0.95);
+  --sm-divider: rgba(0, 0, 0, 0.15);
+  --sm-item-hover-bg: var(--w7-li-bg-hl);
+  --sm-item-hover-border: var(--w7-li-bd-hl);
+  --sm-search-border: 1px solid var(--w7-el-bd);
+  --sm-search-bg: var(--color-neutral-0);
+  --sm-right-text: var(--color-neutral-0);
+  --sm-right-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  /* Win7 glossy "midshadow" button gradient (color pattern sampled from the
+     reference midshadow-gradient.png): a bright top gloss darkening to a shadow
+     band at the midpoint, then a lower half that lifts to a bright reflection
+     near the base. Consumed by the Start Menu Sign Out button. */
+  --midshadow-gradient: linear-gradient(
+    to bottom,
+    #c2e0f1 0%,
+    #9ebacf 5%,
+    #8eb3cc 20%,
+    #84accb 28%,
+    #709dbf 40%,
+    #5280a4 50%,
+    #5285a9 60%,
+    #548dae 72%,
+    #5a91b3 84%,
+    #6191b7 92%,
+    #84b3d9 96%,
+    #5282a7 100%
+  );
+
+  /* ─── SEMANTIC: WindowWrapper ─────────────────────────────────── */
+  --mw-min-width: 240px;
+  --mw-min-height: 160px;
+  /* Bottom-right corner resize hit target (invisible — no grip icon). */
+  --mw-resize-handle-size: 16px;
+
+  /* ─── SEMANTIC: Taskbar ────────────────────────────────────────── */
+  --tb-height: 40px;
+  --tb-height-fill: 41px;
+  /* Aero glass: a light, translucent blue body the backdrop blur (below)
+     shows through — bright at the top edge, faintly deeper at the base.
+     Low alphas let the wallpaper tint it so it reads as glass, not paint. */
+  --tb-bg: linear-gradient(
+    to bottom,
+    rgba(188, 214, 238, 0.5) 0%,
+    rgba(138, 178, 214, 0.42) 9%,
+    rgba(104, 150, 195, 0.4) 52%,
+    rgba(86, 132, 180, 0.48) 100%
+  );
+  --tb-glass-blur: 12px;
+  --tb-border-top: 1px solid rgba(255, 255, 255, 0.6);
+  --tb-shadow: 0 -1px 0px rgba(0, 0, 0, 1);
+
+  /* Square, grouped app-icon buttons. No chrome at rest — a soft frame
+     appears only on hover/active (never a persistent solid white border). */
+  --tb-item-width: 58px;
+  --tb-item-height: 40px;
+  --tb-item-icon-size: 36px;
+  --tb-item-radius: 3px;
+  --tb-item-bg-hover: rgba(255, 255, 255, 0.22);
+  --tb-item-bg-active: rgba(255, 255, 255, 0.3);
+  --tb-item-selector-hover: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+  --tb-item-selector-active: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+
+  /* Hover/click popup listing an app's open windows — Win7 jump-list glass:
+     a slate-blue translucent body (darkening toward the base) framed by a dark
+     outer edge and a bright inner highlight. Values sampled from the reference. */
+  --tb-popup-bg: linear-gradient(to bottom, rgba(136, 154, 175, 0.85), rgba(118, 135, 154, 0.85));
+  --tb-popup-blur: 12px;
+  --tb-popup-border: 1px solid rgba(70, 80, 92, 0.85);
+  --tb-popup-radius: 6px;
+  /* Bright inner highlight (1px inset) over a soft drop shadow. */
+  --tb-popup-shadow: inset 0 0 0 1px rgba(199, 215, 233, 0.6), 0 6px 18px rgba(0, 0, 0, 0.45);
+  --tb-popup-min-width: 200px;
+  --tb-popup-offset: 8px;
+  --tb-popup-icon-size: 16px;
+  /* Labels are near-white on the slate glass (matches the reference). */
+  --tb-popup-text: rgba(255, 255, 255, 0.95);
+  --tb-popup-item-radius: 3px;
+  --tb-popup-item-height: 32px;
+  /* Each entry's frame shows only on hover/focus — the Aero "hot" selection
+     (same light-blue gradient + border as the desktop-icon selection). */
+  --tb-popup-item-hover-bg: rgb(125, 164, 206);
+  --tb-popup-item-hover-border: 1px solid white;
+  /* Win7 red close button (revealed on entry hover). Mirrors the 7.css
+     title-bar Close control: a muted red face shown whenever the button is
+     revealed, plus a brighter face with a warm glow that fades in only on
+     hover (the ::before overlay). The 'x' glyph sits on top of both faces so
+     it is always visible while the button is revealed. */
+  --tb-popup-close-size: 18px;
+  --tb-popup-close-border: 1px solid rgba(130, 18, 0, 0.65);
+  /* Rendered size of the 'x' glyph (native PNG is ~11px) — kept a touch
+     smaller than native so it reads as a crisp mark, not a heavy block. */
+  --tb-popup-close-glyph-size: 9px;
+  --tb-popup-close-glyph: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAKCAYAAABi8KSDAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACUSURBVHgBlZFNCoQwDIVbmRvOMHOAAd0K/uDGlYKiCG4VPICi9yu0oCSQoFUXFtKEl6+voZXvr7sKay1TL690FOexY+Hz87i2decOuDKQsNGVe8AGYTRJIh0Y+orBvxszCPllOymlxN06jNE26Qnwg4zdHQLrMhFaawwAqAadDPE1ijwUxhiMKCmxCZk06OMYTz5lAx3xWDeXkLNAAAAAAElFTkSuQmCC')
+    no-repeat 50% / var(--tb-popup-close-glyph-size);
+  /* Soft white gloss shared by both faces. */
+  --tb-popup-close-gloss: linear-gradient(
+    #ffffff80,
+    #ffffff4d 45%,
+    #0000001a 50%,
+    #0000001a 75%,
+    #ffffff80
+  );
+  /* Resting (muted) red — side shadows + a desaturated red base. */
+  --tb-popup-close-rest:
+    var(--tb-popup-close-gloss), radial-gradient(circle at -60% 50%, #0007 5% 10%, #0000 50%),
+    radial-gradient(circle at 160% 50%, #0007 5% 10%, #0000 50%),
+    linear-gradient(#e0a197e5, #cf796a 25% 50%, #d54f36 50%);
+  /* Hover face — warm yellow glow, deeper side shadows, brighter red. */
+  --tb-popup-close-hover:
+    var(--tb-popup-close-gloss), radial-gradient(circle at 50% 170%, #f4e676 10% 20%, #0000 60%),
+    radial-gradient(circle at -60% 50%, #000a 5% 10%, #0000 50%),
+    radial-gradient(circle at 160% 50%, #000a 5% 10%, #0000 50%),
+    linear-gradient(#fb9d8b, #ee6d56 25% 50%, #d42809 50%);
+  /* Subtle outer halo, hover only (toned down from the 7.css 7px/3px). */
+  --tb-popup-close-halo: 0 0 4px 1px #e68e75;
+
+  --tb-text: rgba(255, 255, 255, 0.92);
+  --tb-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  --tb-clock-text: rgba(255, 255, 255, 0.95);
+  --tb-clock-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+
+  --tb-orb-size: 40px;
+  --tb-orb-img: url('/assets/desktop-icons/taskbar-startmenu.png');
+  /* Hover glow: brighten + saturate so the whole orb (flag colors included)
+     lights up, plus an aero halo. */
+  --tb-orb-glow: brightness(1.15) saturate(1.4) drop-shadow(0 0 6px rgba(140, 215, 255, 0.95));
+  --tb-z: var(--dsk-z-taskbar);
+
+  /* ─── SEMANTIC: Internet Explorer chrome ──────────────────────── */
+  /* The toolbar sits inside the glass title bar (transparent background). No
+     horizontal padding so it spans the same width as the window body; 8px above
+     opens a larger gap below the title-bar text row, 5px below sits it off the
+     window body (the title bar's own bottom padding is zeroed for this row). */
+  --ie-toolbar-padding: 8px 0 5px;
+  --ie-toolbar-gap: 6px;
+  --ie-nav-gap: 2px;
+  /* Back/forward use the equal-sized Aero arrow primitive. */
+  --ie-nav-btn-size: 24px;
+  --ie-nav-btn-disabled-filter: grayscale(0.9) brightness(1.2) opacity(0.55);
+  --ie-titlebar-icon-size: var(--tb-popup-icon-size);
+  --ie-address-height: 24px;
+  --ie-address-bg: #fff;
+  /* Inset (sunken) border in the same grey as the refresh-button dividers. */
+  --ie-address-border: 2px inset var(--ie-action-divider-color);
+  /* Light-blue accent ring just outside the inset border — a second, outer
+     border drawn with box-shadow spread so it hugs the border radius. */
+  --ie-address-radius: 2px;
+  --ie-address-text: #333;
+  --ie-address-icon-size: 16px;
+  /* Refresh + clear buttons: square, sized to the address-bar height and
+     transparent so they read as part of the white input. Only the refresh button
+     carries left/right divider rules (see internet-explorer-*.png refs). */
+  --ie-action-btn-size: var(--ie-address-height);
+  --ie-action-divider-color: rgb(101, 115, 115);
+  --ie-action-btn-bg: transparent;
+  --ie-action-btn-bg-hover: rgba(101, 115, 115, 0.15);
+  --ie-refresh-color: rgba(40, 110, 160, 0.85);
+  --ie-refresh-color-hover: rgba(25, 90, 140, 1);
+  --ie-clear-color: rgba(170, 50, 45, 0.85);
+  --ie-clear-color-hover: rgba(150, 30, 25, 1);
+  /* Address autocomplete dropdown. */
+  --ie-dropdown-z: 20;
+  --ie-dropdown-max-height: 220px;
+  --ie-dropdown-bg: #fff;
+  --ie-dropdown-width: 92%;
+  --ie-dropdown-border: 1px solid rgba(120, 140, 165, 0.6);
+  --ie-dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --ie-dropdown-item-hover-bg: rgba(205, 226, 248, 0.7);
+  --ie-dropdown-title-color: #1a3a5c;
+  --ie-dropdown-url-color: rgba(90, 110, 130, 0.95);
+  /* Page links — blue underlined text at the top-left of the content, replacing
+     the former favorites bar. */
+  --ie-pagelinks-gap: 12px;
+  --ie-pagelinks-padding: 6px 8px;
+  --ie-pagelinks-font-size: 12px;
+  --ie-pagelinks-link-color: #0066cc;
+  --ie-pagelinks-link-hover-color: #003d99;
+  /* Shared link colours still used by the in-page content (headings, cards). */
+  --ie-favbar-link-color: #1a3a5c;
+  --ie-favbar-link-hover-bg: rgba(180, 200, 225, 0.4);
+  --ie-favbar-link-radius: 2px;
+  --ie-content-bg: #fff;
+  /* Placeholder project-thumbnail fill (replaced with real assets in Task 12). */
+  --ie-project-thumb-bg: rgba(200, 210, 220, 0.5);
 }
 
 /* =====================================================================
@@ -191,19 +458,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* Generic element baseline. Lives in the lowest cascade layer so 7.css
+   component chrome (e.g. ul[role=menu], ul.tree-view padding) is not
+   overridden by these broad selectors, while in-house component CSS — and
+   even 7.css — still layer above it. */
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-ul,
-ol {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
+  ul,
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
-button {
-  font-family: inherit;
+  button {
+    font-family: inherit;
+  }
 }

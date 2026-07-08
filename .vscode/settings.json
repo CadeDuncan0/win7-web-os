@@ -1,6 +1,0 @@
-{
-  "chatgpt.composerEnterBehavior": "cmdIfMultiline",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always"
-  }
-}

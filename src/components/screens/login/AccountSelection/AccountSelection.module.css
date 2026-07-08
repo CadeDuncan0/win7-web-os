@@ -1,0 +1,12 @@
+/* =====================================================================
+   AccountSelection — picker screen showing every available account
+   side-by-side. The .pane class hosts the horizontal avatar row that
+   mirrors the .login__pane layout in the win7simu reference
+   (docs/copycats/desktop/desktop_win7simu.htm).
+   ===================================================================== */
+
+.pane {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

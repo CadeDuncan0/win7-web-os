@@ -1,0 +1,13 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.heading {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 16pt;
+  font-weight: normal;
+}
