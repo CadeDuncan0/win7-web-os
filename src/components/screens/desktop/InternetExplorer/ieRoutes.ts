@@ -13,8 +13,6 @@
  *   navigates to an in-app redirect page (spinner + manual fallback link).
  */
 
-import { siteConfig } from '@/config/site'
-
 export interface IEPage {
   /** Stored in the history stack and accepted as a typed alias, e.g. `about:home`. */
   nickname: string
@@ -27,7 +25,7 @@ export interface IEPage {
   redirect?: boolean
 }
 
-const SITE = siteConfig.siteUrl
+const SITE = 'www.win7webos.com'
 
 export const IE_PAGES: IEPage[] = [
   { nickname: 'about:home', url: `${SITE}/home`, title: 'Home', redirect: false },

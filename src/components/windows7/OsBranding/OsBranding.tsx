@@ -1,7 +1,5 @@
 import Image from 'next/image'
-
 import styles from './OsBranding.module.css'
-import { siteConfig } from '@/config/site'
 import { assetPaths } from '@/lib/assetPaths'
 
 interface OsBrandingProps {
@@ -9,10 +7,7 @@ interface OsBrandingProps {
   className?: string
 }
 
-export function OsBranding({
-  subtitle = siteConfig.osBrandingSubtitle,
-  className,
-}: OsBrandingProps) {
+export function OsBranding({ subtitle = 'Web OS', className }: OsBrandingProps) {
   const merged = [styles.brand, className].filter(Boolean).join(' ')
   return (
     <div className={merged}>

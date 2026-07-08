@@ -1,4 +1,3 @@
-import { siteConfig } from '@/config/site'
 import { assetPaths } from '@/lib/assetPaths'
 import type { WindowKind } from '@/store/slices/windowSlice'
 
@@ -17,9 +16,16 @@ export interface StartMenuShortcut {
     | { type: 'signOut' }
 }
 
-// TODO: [Action Required: replace the windows-logo placeholder below with real
-// per-shortcut icon assets in Task 17]
+export interface StartMenuTab {
+  title: string
+  url: string /* Destination opened directly in a new browser tab. */
+}
+
 const FOLDER_ICON = assetPaths.desktopIcons.windowsExplorer
+
+const RIGHT_COLUMN_TABS = [
+  { title: 'Source Code', url: 'https://github.com/CadeDuncan0/win7-web-os' },
+] as StartMenuTab[]
 
 export const LEFT_COLUMN_SHORTCUTS: StartMenuShortcut[] = [
   {
@@ -36,9 +42,9 @@ export const LEFT_COLUMN_SHORTCUTS: StartMenuShortcut[] = [
   },
 ]
 
-// External links — these open directly in a new browser tab. The destinations
-// are fork-config values (src/config/site.ts).
-export const RIGHT_COLUMN_SHORTCUTS: StartMenuShortcut[] = siteConfig.externalLinks.map((link) => ({
+// External links — these open directly in a new browser tab. Edit
+// RIGHT_COLUMN_TABS above to change the destinations.
+export const RIGHT_COLUMN_SHORTCUTS: StartMenuShortcut[] = RIGHT_COLUMN_TABS.map((link) => ({
   id: `sm-${link.title.toLowerCase().replace(/\s+/g, '-')}`,
   label: link.title,
   action: { type: 'openLink', url: link.url },
