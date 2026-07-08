@@ -1,3 +1,4 @@
+import { siteConfig } from '@/config/site'
 import { assetPaths } from '@/lib/assetPaths'
 import type { WindowKind } from '@/store/slices/windowSlice'
 
@@ -22,34 +23,23 @@ const FOLDER_ICON = assetPaths.desktopIcons.windowsExplorer
 
 export const LEFT_COLUMN_SHORTCUTS: StartMenuShortcut[] = [
   {
-    id: 'sm-resume',
-    label: 'Resume',
-    iconSrc: FOLDER_ICON,
-    action: { type: 'openWindow', kind: 'internet-explorer', title: 'Resume' },
+    id: 'sm-ie',
+    label: 'Internet Explorer',
+    iconSrc: assetPaths.desktopIcons.internetExplorer,
+    action: { type: 'openWindow', kind: 'internet-explorer', title: 'Internet Explorer' },
   },
   {
-    id: 'sm-projects',
-    label: 'Projects',
+    id: 'sm-getting-started',
+    label: 'Getting Started',
     iconSrc: FOLDER_ICON,
-    action: { type: 'openWindow', kind: 'internet-explorer', title: 'Projects' },
+    action: { type: 'openWindow', kind: 'internet-explorer', title: 'Getting Started' },
   },
 ]
 
-// External links — these open directly in a new browser tab.
-export const RIGHT_COLUMN_SHORTCUTS: StartMenuShortcut[] = [
-  {
-    id: 'sm-github',
-    label: 'GitHub',
-    action: { type: 'openLink', url: 'https://github.com/CadeDuncan0' },
-  },
-  {
-    id: 'sm-linkedin',
-    label: 'LinkedIn',
-    action: { type: 'openLink', url: 'https://linkedin.com/in/cade-duncan' },
-  },
-  {
-    id: 'sm-source',
-    label: 'Source Code',
-    action: { type: 'openLink', url: 'https://github.com/CadeDuncan0/PortfolioWebsite-Windows7' },
-  },
-]
+// External links — these open directly in a new browser tab. The destinations
+// are fork-config values (src/config/site.ts).
+export const RIGHT_COLUMN_SHORTCUTS: StartMenuShortcut[] = siteConfig.externalLinks.map((link) => ({
+  id: `sm-${link.title.toLowerCase().replace(/\s+/g, '-')}`,
+  label: link.title,
+  action: { type: 'openLink', url: link.url },
+}))

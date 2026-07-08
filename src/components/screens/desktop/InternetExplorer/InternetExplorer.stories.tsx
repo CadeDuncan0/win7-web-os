@@ -53,12 +53,8 @@ export const Home: Story = {
   args: { initialRoute: 'about:home' },
 }
 
-export const Resume: Story = {
-  args: { initialRoute: 'portfolio://resume' },
-}
-
-export const Projects: Story = {
-  args: { initialRoute: 'portfolio://projects' },
+export const GettingStarted: Story = {
+  args: { initialRoute: 'about:getting-started' },
 }
 
 export const BackDisabled: Story = {
@@ -75,13 +71,13 @@ export const ForwardEnabled: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const links = within(canvas.getByRole('navigation', { name: /pages/i }))
-    await userEvent.click(links.getByRole('button', { name: 'Resume' }))
+    await userEvent.click(links.getByRole('button', { name: 'Getting Started' }))
     await userEvent.click(canvas.getByRole('button', { name: /back/i }))
   },
   parameters: {
     docs: {
       description: {
-        story: 'Navigate to Resume then go Back — the Forward button becomes enabled.',
+        story: 'Navigate to Getting Started then go Back — the Forward button becomes enabled.',
       },
     },
   },
@@ -96,7 +92,7 @@ export const AddressDropdown: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Clicking the address bar opens the autocomplete list of project pages.',
+        story: 'Clicking the address bar opens the autocomplete list of in-app pages.',
       },
     },
   },

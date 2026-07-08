@@ -1,3 +1,14 @@
+## Project Facts (win7-web-os)
+
+- This repo is **win7-web-os**: a public, generic, forkable Windows 7 desktop scaffold
+  (React + Next.js). Personal content belongs in private forks, never here.
+- Fork configuration (site URL, external links, branding subtitle): `src/config/site.ts`.
+  Content registries: `desktopIcons.ts`, `startMenuItems.ts`, `ieRoutes.ts`.
+- Canonical route: `/win7` (logon) and `/win7/desktop` (desktop, gated by `src/proxy.ts`).
+  Legacy paths (`/`, `/hub`, `/login`, `/desktop`) redirect via the `legacyRedirects` list in
+  `next.config.ts` — append there, don't add one-off redirects.
+- Required env vars are documented in `.env.example`; never commit real values.
+
 ## NEXT.JS VERSION WARNING
 
 This project uses a Next.js version with breaking changes from your training data.

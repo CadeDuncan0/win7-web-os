@@ -13,8 +13,8 @@ import { DEFAULT_USER_ICON } from '@/lib/userIcons'
 
 // Namespaced to prevent collisions with other sessionStorage consumers
 // (browser extensions, embedded widgets).
-const GUEST_SESSION_KEY = 'portfolio.guestSession'
-const COOKIE_NAME = 'portfolio.guest'
+const GUEST_SESSION_KEY = 'win7.guestSession'
+const COOKIE_NAME = 'win7.guest'
 
 export const GUEST_COOKIE_NAME = COOKIE_NAME
 

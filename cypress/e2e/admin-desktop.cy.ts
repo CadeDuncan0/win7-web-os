@@ -1,7 +1,7 @@
 describe('Admin Desktop Journey', () => {
   beforeEach(() => {
     cy.loginAsAdmin()
-    cy.visit('/desktop')
+    cy.visit('/win7/desktop')
   })
 
   it('renders the desktop for Admin', () => {
@@ -11,7 +11,7 @@ describe('Admin Desktop Journey', () => {
 
   it('opens multiple windows and promotes z-index on focus', () => {
     cy.findByRole('button', { name: 'Welcome' }).dblclick()
-    cy.findByRole('button', { name: 'About This PC' }).dblclick()
+    cy.findByRole('button', { name: 'Getting Started' }).dblclick()
 
     cy.findByTestId('managed-window-win-1').should('exist')
     cy.findByTestId('managed-window-win-2').should('exist')
@@ -26,7 +26,11 @@ describe('Admin Desktop Journey', () => {
           })
       })
 
-    cy.findByTestId('managed-window-win-1').click()
+    // win-2 opens at the same default position and fully covers win-1, so a
+    // direct click is not actionable — focus win-1 through its taskbar button.
+    cy.findByRole('navigation', { name: /taskbar/i })
+      .findByRole('button', { name: 'Welcome' })
+      .click()
 
     cy.findByTestId('managed-window-win-1')
       .invoke('css', 'z-index')

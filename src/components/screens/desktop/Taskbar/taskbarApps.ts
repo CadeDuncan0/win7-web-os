@@ -22,6 +22,10 @@ const KIND_META: Record<WindowKind, TaskbarAppMeta> = {
     icon: assetPaths.desktopIcons.internetExplorer,
     label: 'Internet Explorer',
   },
+  welcome: {
+    icon: assetPaths.desktopIcons.folderWithDocuments,
+    label: 'Welcome',
+  },
 }
 
 export function taskbarAppMeta(kind: WindowKind): TaskbarAppMeta {

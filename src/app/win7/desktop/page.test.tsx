@@ -25,7 +25,7 @@ describe('DesktopPage', () => {
     renderWithProviders(<DesktopPage />)
     expect(screen.getByTestId('icon-grid')).toBeInTheDocument()
 
-    const expectedLabels = ['Internet Explorer', 'Resume', 'Projects']
+    const expectedLabels = ['Internet Explorer', 'Welcome', 'Getting Started']
     for (const label of expectedLabels) {
       expect(screen.getByRole('button', { name: label })).toBeInTheDocument()
     }
@@ -60,17 +60,17 @@ describe('DesktopPage', () => {
     ).toBeGreaterThan(0)
   })
 
-  it('opening an IE window with title "Resume" starts on the resume route', async () => {
+  it('opening an IE window with title "Getting Started" starts on that route', async () => {
     const user = userEvent.setup()
     renderWithProviders(<DesktopPage />)
 
-    const resumeIcon = screen.getByRole('button', { name: 'Resume' })
+    const gettingStartedIcon = screen.getByRole('button', { name: 'Getting Started' })
     await act(async () => {
-      await user.dblClick(resumeIcon)
+      await user.dblClick(gettingStartedIcon)
     })
 
     expect(screen.getByRole('combobox', { name: /address/i })).toHaveValue(
-      'https://www.cadeduncan.com/portfolio/resume'
+      'https://www.example.com/getting-started'
     )
   })
 })
@@ -104,7 +104,7 @@ describe('WindowManager', () => {
           'win-1': {
             id: 'win-1',
             kind: 'internet-explorer',
-            title: 'Resume',
+            title: 'Home',
             position: { x: 100, y: 50 },
             size: { width: 400, height: 300 },
             zIndex: 1,
@@ -115,7 +115,7 @@ describe('WindowManager', () => {
           'win-2': {
             id: 'win-2',
             kind: 'internet-explorer',
-            title: 'Projects',
+            title: 'Getting Started',
             position: { x: 200, y: 100 },
             size: { width: 400, height: 300 },
             zIndex: 2,
@@ -141,7 +141,7 @@ describe('WindowManager', () => {
           'win-1': {
             id: 'win-1',
             kind: 'internet-explorer',
-            title: 'Resume',
+            title: 'Home',
             position: { x: 100, y: 50 },
             size: { width: 400, height: 300 },
             zIndex: 1,
@@ -152,7 +152,7 @@ describe('WindowManager', () => {
           'win-2': {
             id: 'win-2',
             kind: 'internet-explorer',
-            title: 'Projects',
+            title: 'Getting Started',
             position: { x: 200, y: 100 },
             size: { width: 400, height: 300 },
             zIndex: 2,
@@ -178,7 +178,7 @@ describe('WindowManager', () => {
           'win-1': {
             id: 'win-1',
             kind: 'internet-explorer',
-            title: 'Resume',
+            title: 'Getting Started',
             position: { x: 100, y: 50 },
             size: { width: 800, height: 600 },
             zIndex: 1,
@@ -195,7 +195,7 @@ describe('WindowManager', () => {
 
     expect(screen.getByTestId('managed-window-win-1')).toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: /address/i })).toHaveValue(
-      'https://www.cadeduncan.com/portfolio/resume'
+      'https://www.example.com/getting-started'
     )
   })
 })

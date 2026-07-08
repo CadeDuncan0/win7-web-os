@@ -12,8 +12,8 @@ You're a senior software engineer with extensive experience in open source proje
 1. Review the entire project workspace and codebase
 2. Create a comprehensive README.md file with these essential sections:
    - **What the project does**: Clear project title and description
-   - **What the project contains**: Key features and portfolio content
-   - **Useful information about the author**: Author contact information
+   - **What the project contains**: Key features and how to make a fork your own
+   - **How to get started**: Quickstart and required configuration
 
 ## Guidelines
 

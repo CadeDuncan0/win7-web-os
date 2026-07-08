@@ -46,7 +46,7 @@ const preview: Preview = {
       // 'off' - skip a11y checks entirely
       //
       // Phase 3 enforces STRUCTURAL a11y (roles, accessible names, keyboard) via
-      // the unit-project RTL sweep (src/app/desktop/crossCutting.test.tsx).
+      // the unit-project RTL sweep (src/app/win7/desktop/crossCutting.test.tsx).
       // Flipping this to 'error' makes axe a per-story CI gate — that is the
       // Phase 4 formal accessibility audit (it surfaces outstanding non-contrast
       // violations across the component stories that the product owner must

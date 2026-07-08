@@ -119,17 +119,17 @@ export const ManyIcons: Story = {
       },
       {
         id: 'icon-4',
-        label: 'Projects',
+        label: 'Getting Started',
         iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'internet-explorer',
-        windowTitle: 'Projects',
+        windowTitle: 'Getting Started',
       },
       {
         id: 'icon-5',
-        label: 'Resume',
+        label: 'Welcome',
         iconSrc: assetPaths.branding.windowsLogoPng,
         windowKind: 'internet-explorer',
-        windowTitle: 'Resume',
+        windowTitle: 'Welcome',
       },
       {
         id: 'icon-6',

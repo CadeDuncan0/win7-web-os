@@ -1,7 +1,7 @@
 describe('Guest Desktop Journey', () => {
   beforeEach(() => {
     cy.loginAsGuest()
-    cy.visit('/desktop')
+    cy.visit('/win7/desktop')
   })
 
   it('renders the desktop shell with icons and taskbar', () => {
@@ -10,10 +10,8 @@ describe('Guest Desktop Journey', () => {
     cy.findByRole('navigation', { name: /taskbar/i }).should('exist')
 
     cy.findByRole('button', { name: 'Internet Explorer' }).should('exist')
-    cy.findByRole('button', { name: 'Resume' }).should('exist')
-    cy.findByRole('button', { name: 'Projects' }).should('exist')
     cy.findByRole('button', { name: 'Welcome' }).should('exist')
-    cy.findByRole('button', { name: 'About This PC' }).should('exist')
+    cy.findByRole('button', { name: 'Getting Started' }).should('exist')
   })
 
   it('opens a window by double-clicking a desktop icon', () => {

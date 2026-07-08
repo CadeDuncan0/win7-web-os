@@ -126,7 +126,7 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
     } else if (action.type === 'signOut') {
       await signOut()
       dispatch(clearSession())
-      router.push('/login')
+      router.push('/win7')
     }
     // add more actions here as needed
   }

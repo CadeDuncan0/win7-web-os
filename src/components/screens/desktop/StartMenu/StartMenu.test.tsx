@@ -40,8 +40,8 @@ describe('StartMenu', () => {
   it('renders all left-column shortcuts', () => {
     renderWithProviders(<StartMenu isOpen={true} onClose={vi.fn()} />)
 
-    expect(screen.getByRole('menuitem', { name: 'Resume' })).toBeInTheDocument()
-    expect(screen.getByRole('menuitem', { name: 'Projects' })).toBeInTheDocument()
+    expect(screen.getByRole('menuitem', { name: 'Internet Explorer' })).toBeInTheDocument()
+    expect(screen.getByRole('menuitem', { name: 'Getting Started' })).toBeInTheDocument()
   })
 
   it('renders all right-column shortcuts', () => {
@@ -63,10 +63,10 @@ describe('StartMenu', () => {
     renderWithProviders(<StartMenu isOpen={true} onClose={vi.fn()} />)
 
     const search = screen.getByRole('textbox', { name: /search/i })
-    await user.type(search, 'res')
+    await user.type(search, 'gett')
 
-    expect(screen.getByRole('menuitem', { name: 'Resume' })).toBeInTheDocument()
-    expect(screen.queryByRole('menuitem', { name: 'Projects' })).not.toBeInTheDocument()
+    expect(screen.getByRole('menuitem', { name: 'Getting Started' })).toBeInTheDocument()
+    expect(screen.queryByRole('menuitem', { name: 'Internet Explorer' })).not.toBeInTheDocument()
 
     expect(screen.getByRole('menuitem', { name: 'GitHub' })).toBeInTheDocument()
     expect(screen.getByRole('menuitem', { name: 'LinkedIn' })).toBeInTheDocument()
@@ -80,8 +80,8 @@ describe('StartMenu', () => {
     const search = screen.getByRole('textbox', { name: /search/i })
     await user.type(search, 'zzzznonexistent')
 
-    expect(screen.queryByRole('menuitem', { name: 'Resume' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('menuitem', { name: 'Projects' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('menuitem', { name: 'Internet Explorer' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('menuitem', { name: 'Getting Started' })).not.toBeInTheDocument()
     expect(screen.getByText('No matches')).toBeInTheDocument()
   })
 
@@ -90,14 +90,14 @@ describe('StartMenu', () => {
     const onClose = vi.fn()
     const { store } = renderWithProviders(<StartMenu isOpen={true} onClose={onClose} />)
 
-    const resume = screen.getByRole('menuitem', { name: 'Resume' })
-    await user.click(resume)
+    const gettingStarted = screen.getByRole('menuitem', { name: 'Getting Started' })
+    await user.click(gettingStarted)
 
     const state = store.getState().window
     expect(state.ids).toHaveLength(1)
     const windowId = state.ids[0]
     expect(state.byId[windowId].kind).toBe('internet-explorer')
-    expect(state.byId[windowId].title).toBe('Resume')
+    expect(state.byId[windowId].title).toBe('Getting Started')
   })
 
   it('opens an external link in a new tab (not an IE window) for a link shortcut', async () => {
@@ -108,7 +108,7 @@ describe('StartMenu', () => {
 
     await user.click(screen.getByRole('menuitem', { name: 'GitHub' }))
 
-    expect(openSpy).toHaveBeenCalledWith('https://github.com/CadeDuncan', '_blank', 'noopener')
+    expect(openSpy).toHaveBeenCalledWith('https://github.com/your-username', '_blank', 'noopener')
     expect(store.getState().window.ids).toHaveLength(0) // no window opened
     expect(onClose).toHaveBeenCalledTimes(1)
     openSpy.mockRestore()
@@ -119,8 +119,8 @@ describe('StartMenu', () => {
     const onClose = vi.fn()
     renderWithProviders(<StartMenu isOpen={true} onClose={onClose} />)
 
-    const resume = screen.getByRole('menuitem', { name: 'Resume' })
-    await user.click(resume)
+    const gettingStarted = screen.getByRole('menuitem', { name: 'Getting Started' })
+    await user.click(gettingStarted)
 
     expect(onClose).toHaveBeenCalledTimes(1)
   })
@@ -163,7 +163,7 @@ describe('StartMenu', () => {
 
     await user.keyboard('{ArrowDown}')
 
-    const firstItem = screen.getByRole('menuitem', { name: 'Resume' })
+    const firstItem = screen.getByRole('menuitem', { name: 'Internet Explorer' })
     expect(firstItem).toHaveFocus()
   })
 
@@ -182,7 +182,7 @@ describe('StartMenu', () => {
     })
 
     expect(store.getState().session.authStatus).toBe('unauthenticated')
-    expect(mockPush).toHaveBeenCalledWith('/login')
+    expect(mockPush).toHaveBeenCalledWith('/win7')
   })
 
   it('resets search query when menu closes via shortcut click', async () => {
@@ -191,12 +191,12 @@ describe('StartMenu', () => {
     const { rerender } = renderWithProviders(<StartMenu isOpen={true} onClose={onClose} />)
 
     const search = screen.getByRole('textbox', { name: /search/i })
-    await user.type(search, 'res')
+    await user.type(search, 'gett')
 
-    expect(search).toHaveValue('res')
+    expect(search).toHaveValue('gett')
 
-    const resume = screen.getByRole('menuitem', { name: 'Resume' })
-    await user.click(resume)
+    const gettingStarted = screen.getByRole('menuitem', { name: 'Getting Started' })
+    await user.click(gettingStarted)
 
     rerender(<StartMenu isOpen={true} onClose={onClose} />)
 

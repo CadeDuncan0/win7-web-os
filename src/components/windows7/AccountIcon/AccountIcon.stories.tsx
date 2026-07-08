@@ -39,7 +39,7 @@ export const Guest: Story = {
 export const Admin: Story = {
   args: {
     iconSrc: randomIcon2,
-    subtitle: 'Cade Duncan',
+    subtitle: 'Admin User',
   },
 }
 

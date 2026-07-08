@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 
 import { InternetExplorerWindow } from '../InternetExplorer'
 import { titleToRoute } from '../InternetExplorer/ieRoutes'
+import { WelcomeWindow } from '../WelcomeWindow'
 import { useAppSelector } from '@/store/hooks'
 import { selectVisibleWindows, type WindowInstance } from '@/store/slices/windowSlice'
 
@@ -21,6 +22,8 @@ function renderWindow(win: WindowInstance): ReactNode {
           initialRoute={titleToRoute(win.title)}
         />
       )
+    case 'welcome':
+      return <WelcomeWindow key={win.id} windowId={win.id} />
   }
 }
 

@@ -45,9 +45,8 @@ function renderIE(initialRoute?: string, title?: string) {
   )
 }
 
-const HOME_URL = 'https://www.cadeduncan.com/home'
-const RESUME_URL = 'https://www.cadeduncan.com/portfolio/resume'
-const PROJECTS_URL = 'https://www.cadeduncan.com/portfolio/projects'
+const HOME_URL = 'https://www.example.com/home'
+const GETTING_STARTED_URL = 'https://www.example.com/getting-started'
 
 // ---------------------------------------------------------------------------
 // Route registry
@@ -56,7 +55,7 @@ const PROJECTS_URL = 'https://www.cadeduncan.com/portfolio/projects'
 describe('ieRoutes', () => {
   it('resolvePage returns the page for a known nickname', () => {
     expect(resolvePage('about:home')?.title).toBe('Home')
-    expect(resolvePage('portfolio://resume')?.url).toBe(RESUME_URL)
+    expect(resolvePage('about:getting-started')?.url).toBe(GETTING_STARTED_URL)
   })
 
   it('resolvePage returns undefined for unknown nicknames', () => {
@@ -65,28 +64,28 @@ describe('ieRoutes', () => {
 
   it('pageUrl maps a nickname to its full display URL', () => {
     expect(pageUrl('about:home')).toBe(HOME_URL)
-    expect(pageUrl('portfolio://projects')).toBe(PROJECTS_URL)
+    expect(pageUrl('about:getting-started')).toBe(GETTING_STARTED_URL)
   })
 
   it('titleToRoute maps page titles (and the app label) to nicknames', () => {
-    expect(titleToRoute('Resume')).toBe('portfolio://resume')
-    expect(titleToRoute('Projects')).toBe('portfolio://projects')
+    expect(titleToRoute('Getting Started')).toBe('about:getting-started')
+    expect(titleToRoute('Home')).toBe('about:home')
     expect(titleToRoute('Internet Explorer')).toBe(DEFAULT_ROUTE)
     expect(titleToRoute('Nonexistent')).toBe(DEFAULT_ROUTE)
   })
 
   it('filterPages lists all pages for an empty query and filters otherwise', () => {
     expect(filterPages('')).toHaveLength(IE_PAGES.length)
-    expect(filterPages('proj').map((p) => p.title)).toEqual(['Projects'])
-    expect(filterPages(PROJECTS_URL).map((p) => p.title)).toEqual(['Projects'])
+    expect(filterPages('start').map((p) => p.title)).toEqual(['Getting Started'])
+    expect(filterPages(GETTING_STARTED_URL).map((p) => p.title)).toEqual(['Getting Started'])
     expect(filterPages('zzz')).toEqual([])
   })
 
   it('inputToRoute resolves nicknames, URLs, titles, and partial matches', () => {
     expect(inputToRoute('about:home')).toBe('about:home')
-    expect(inputToRoute('Projects')).toBe('portfolio://projects')
-    expect(inputToRoute(RESUME_URL)).toBe('portfolio://resume')
-    expect(inputToRoute('proj')).toBe('portfolio://projects')
+    expect(inputToRoute('Getting Started')).toBe('about:getting-started')
+    expect(inputToRoute(GETTING_STARTED_URL)).toBe('about:getting-started')
+    expect(inputToRoute('start')).toBe('about:getting-started')
     expect(inputToRoute('')).toBeUndefined()
     expect(inputToRoute('zzz')).toBeUndefined()
   })
@@ -113,36 +112,36 @@ describe('useIENavigation', () => {
   it('navigate pushes a new entry and truncates forward history', () => {
     const { result } = renderHook(() => useIENavigation('about:home'))
 
-    act(() => result.current.navigate('portfolio://resume'))
-    expect(result.current.currentUrl).toBe('portfolio://resume')
+    act(() => result.current.navigate('about:getting-started'))
+    expect(result.current.currentUrl).toBe('about:getting-started')
     expect(result.current.canGoBack).toBe(true)
 
     act(() => result.current.goBack())
-    act(() => result.current.navigate('portfolio://projects'))
-    expect(result.current.currentUrl).toBe('portfolio://projects')
+    act(() => result.current.navigate('about:getting-started'))
+    expect(result.current.currentUrl).toBe('about:getting-started')
     expect(result.current.canGoForward).toBe(false)
   })
 
   it('back/forward move through the stack without modifying it', () => {
     const { result } = renderHook(() => useIENavigation('about:home'))
 
-    act(() => result.current.navigate('portfolio://resume'))
+    act(() => result.current.navigate('about:getting-started'))
     act(() => result.current.goBack())
     expect(result.current.currentUrl).toBe('about:home')
     expect(result.current.canGoForward).toBe(true)
 
     act(() => result.current.goForward())
-    expect(result.current.currentUrl).toBe('portfolio://resume')
+    expect(result.current.currentUrl).toBe('about:getting-started')
   })
 
   it('refresh reloads the current page without touching history', () => {
     const { result } = renderHook(() => useIENavigation('about:home'))
 
-    act(() => result.current.navigate('portfolio://resume'))
+    act(() => result.current.navigate('about:getting-started'))
     const keyBefore = result.current.reloadKey
 
     act(() => result.current.refresh())
-    expect(result.current.currentUrl).toBe('portfolio://resume')
+    expect(result.current.currentUrl).toBe('about:getting-started')
     expect(result.current.canGoBack).toBe(true)
     expect(result.current.canGoForward).toBe(false)
     expect(result.current.reloadKey).toBe(keyBefore + 1)
@@ -193,9 +192,9 @@ describe('InternetExplorerWindow — chrome', () => {
   })
 
   it('opens on the specified initialRoute', () => {
-    renderIE('portfolio://resume')
-    expect(screen.getByRole('combobox', { name: /address/i })).toHaveValue(RESUME_URL)
-    expect(screen.getByRole('heading', { name: 'Resume' })).toBeInTheDocument()
+    renderIE('about:getting-started')
+    expect(screen.getByRole('combobox', { name: /address/i })).toHaveValue(GETTING_STARTED_URL)
+    expect(screen.getByRole('heading', { name: 'Getting Started' })).toBeInTheDocument()
   })
 
   it('renders a blue underlined page link for every page', () => {
@@ -228,30 +227,30 @@ describe('InternetExplorerWindow — navigation', () => {
   it('clicking a page link navigates to that page', () => {
     renderIE()
 
-    act(() => pageLinks().getByRole('button', { name: 'Resume' }).click())
+    act(() => pageLinks().getByRole('button', { name: 'Getting Started' }).click())
 
-    expect(address()).toHaveValue(RESUME_URL)
+    expect(address()).toHaveValue(GETTING_STARTED_URL)
     expect(screen.getByRole('button', { name: /back/i })).not.toBeDisabled()
   })
 
   it('back returns to the previous page, forward replays it', () => {
     renderIE()
 
-    act(() => pageLinks().getByRole('button', { name: 'Resume' }).click())
+    act(() => pageLinks().getByRole('button', { name: 'Getting Started' }).click())
     act(() => screen.getByRole('button', { name: /back/i }).click())
     expect(address()).toHaveValue(HOME_URL)
 
     act(() => screen.getByRole('button', { name: /forward/i }).click())
-    expect(address()).toHaveValue(RESUME_URL)
+    expect(address()).toHaveValue(GETTING_STARTED_URL)
   })
 
   it('refresh reloads the current page and does not navigate home', () => {
     renderIE()
 
-    act(() => pageLinks().getByRole('button', { name: 'Resume' }).click())
+    act(() => pageLinks().getByRole('button', { name: 'Getting Started' }).click())
     act(() => screen.getByRole('button', { name: /refresh/i }).click())
 
-    expect(address()).toHaveValue(RESUME_URL)
+    expect(address()).toHaveValue(GETTING_STARTED_URL)
     expect(screen.getByRole('button', { name: /back/i })).not.toBeDisabled()
   })
 
@@ -288,22 +287,24 @@ describe('InternetExplorerWindow — address dropdown', () => {
   it('typing filters the dropdown results', () => {
     renderIE()
     act(() => fireEvent.click(address()))
-    act(() => fireEvent.change(address(), { target: { value: 'proj' } }))
+    act(() => fireEvent.change(address(), { target: { value: 'start' } }))
 
     const options = within(screen.getByRole('listbox')).getAllByRole('option')
     expect(options).toHaveLength(1)
-    expect(options[0]).toHaveTextContent('Projects')
+    expect(options[0]).toHaveTextContent('Getting Started')
   })
 
   it('selecting a result navigates to that page', () => {
     renderIE()
     act(() => fireEvent.click(address()))
-    const option = within(screen.getByRole('listbox')).getByRole('option', { name: /Projects/ })
+    const option = within(screen.getByRole('listbox')).getByRole('option', {
+      name: /Getting Started/,
+    })
 
     act(() => fireEvent.mouseDown(option))
 
-    expect(address()).toHaveValue(PROJECTS_URL)
-    expect(screen.getByRole('heading', { name: 'Projects' })).toBeInTheDocument()
+    expect(address()).toHaveValue(GETTING_STARTED_URL)
+    expect(screen.getByRole('heading', { name: 'Getting Started' })).toBeInTheDocument()
   })
 
   it('the clear button empties the input and reopens the dropdown', () => {
@@ -325,15 +326,9 @@ describe('InternetExplorerWindow — page rendering', () => {
     expect(screen.getByText('Welcome to Internet Explorer')).toBeInTheDocument()
   })
 
-  it('renders ResumePage for the resume route', () => {
-    renderIE('portfolio://resume')
-    expect(screen.getByRole('heading', { name: 'Resume' })).toBeInTheDocument()
-    expect(screen.getByText('PDF viewer coming in Phase 3')).toBeInTheDocument()
-  })
-
-  it('renders ProjectsPage for the projects route', () => {
-    renderIE('portfolio://projects')
-    expect(screen.getByRole('heading', { name: 'Projects' })).toBeInTheDocument()
-    expect(screen.getByText('Portfolio Website')).toBeInTheDocument()
+  it('renders GettingStartedPage for the getting-started route', () => {
+    renderIE('about:getting-started')
+    expect(screen.getByRole('heading', { name: 'Getting Started' })).toBeInTheDocument()
+    expect(screen.getByText('src/config/site.ts')).toBeInTheDocument()
   })
 })

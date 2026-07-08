@@ -17,7 +17,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 function MockIconGrid() {
-  const icons = ['My Computer', 'Recycle Bin', 'Internet Explorer', 'Projects']
+  const icons = ['My Computer', 'Recycle Bin', 'Internet Explorer', 'Getting Started']
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {icons.map((label) => (

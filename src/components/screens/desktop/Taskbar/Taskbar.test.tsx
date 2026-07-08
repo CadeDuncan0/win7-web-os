@@ -32,7 +32,7 @@ const TWO_IE_WINDOWS: Partial<RootState> = {
       'win-1': {
         id: 'win-1',
         kind: 'internet-explorer',
-        title: 'Resume',
+        title: 'Home',
         position: { x: 80, y: 80 },
         size: { width: 640, height: 440 },
         zIndex: 1,
@@ -43,7 +43,7 @@ const TWO_IE_WINDOWS: Partial<RootState> = {
       'win-2': {
         id: 'win-2',
         kind: 'internet-explorer',
-        title: 'Projects',
+        title: 'Getting Started',
         position: { x: 200, y: 100 },
         size: { width: 640, height: 440 },
         zIndex: 2,
@@ -64,7 +64,7 @@ const SINGLE_WINDOW: Partial<RootState> = {
       'win-1': {
         id: 'win-1',
         kind: 'internet-explorer',
-        title: 'Resume',
+        title: 'Home',
         position: { x: 80, y: 80 },
         size: { width: 640, height: 440 },
         zIndex: 1,
@@ -85,7 +85,7 @@ const MINIMIZED_WINDOW: Partial<RootState> = {
       'win-1': {
         id: 'win-1',
         kind: 'internet-explorer',
-        title: 'Resume',
+        title: 'Home',
         position: { x: 80, y: 80 },
         size: { width: 640, height: 440 },
         zIndex: 1,
@@ -129,8 +129,8 @@ describe('Taskbar', () => {
     // One app button for the Internet Explorer group...
     expect(screen.getByRole('button', { name: 'Internet Explorer' })).toBeInTheDocument()
     // ...whose popup lists every open window.
-    expect(screen.getByRole('button', { name: 'Resume' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Projects' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Home' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Getting Started' })).toBeInTheDocument()
   })
 
   it('still shows a button for an app whose only window is minimized', () => {
@@ -162,7 +162,7 @@ describe('TaskbarIcon — window popup', () => {
   it('clicking an inactive window focuses it', () => {
     const { store } = renderWithProviders(<Taskbar />, { preloadedState: TWO_IE_WINDOWS })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Resume' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Home' }))
 
     const state = store.getState().window
     expect(state.byId['win-1'].zIndex).toBeGreaterThan(state.byId['win-2'].zIndex)
@@ -171,7 +171,7 @@ describe('TaskbarIcon — window popup', () => {
   it('clicking the active window minimizes it', () => {
     const { store } = renderWithProviders(<Taskbar />, { preloadedState: TWO_IE_WINDOWS })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Projects' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Getting Started' }))
 
     expect(store.getState().window.byId['win-2'].isMinimized).toBe(true)
   })
@@ -179,7 +179,7 @@ describe('TaskbarIcon — window popup', () => {
   it('clicking a window close button closes that window', () => {
     const { store } = renderWithProviders(<Taskbar />, { preloadedState: TWO_IE_WINDOWS })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Close Resume' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Close Home' }))
 
     expect(store.getState().window.byId['win-1']).toBeUndefined()
   })

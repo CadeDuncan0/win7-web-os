@@ -85,8 +85,8 @@ export const Idle: Story = {
 export const WithWindows: Story = {
   args: {
     __windowState: makeWindowState([
-      { id: 'win-1', title: 'Resume', zIndex: 1 },
-      { id: 'win-2', title: 'Projects', zIndex: 2 },
+      { id: 'win-1', title: 'Home', zIndex: 1 },
+      { id: 'win-2', title: 'Getting Started', zIndex: 2 },
     ]),
   },
   parameters: {
@@ -102,9 +102,9 @@ export const WithWindows: Story = {
 export const ManyWindows: Story = {
   args: {
     __windowState: makeWindowState([
-      { id: 'win-1', title: 'Portfolio', zIndex: 1 },
-      { id: 'win-2', title: 'Resume', zIndex: 2 },
-      { id: 'win-3', title: 'Projects', zIndex: 3 },
+      { id: 'win-1', title: 'Welcome', zIndex: 1 },
+      { id: 'win-2', title: 'Home', zIndex: 2 },
+      { id: 'win-3', title: 'Getting Started', zIndex: 3 },
       { id: 'win-4', title: 'GitHub', zIndex: 4 },
       { id: 'win-5', title: 'LinkedIn', zIndex: 5 },
     ]),
@@ -122,8 +122,8 @@ export const ManyWindows: Story = {
 export const MinimizedWindow: Story = {
   args: {
     __windowState: makeWindowState([
-      { id: 'win-1', title: 'Resume', zIndex: 1, isMinimized: true },
-      { id: 'win-2', title: 'Projects', zIndex: 2 },
+      { id: 'win-1', title: 'Home', zIndex: 1, isMinimized: true },
+      { id: 'win-2', title: 'Getting Started', zIndex: 2 },
     ]),
   },
   parameters: {

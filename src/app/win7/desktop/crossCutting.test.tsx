@@ -20,7 +20,7 @@ vi.mock('@/lib/auth', () => ({
   signOut: vi.fn().mockResolvedValue(undefined),
 }))
 
-const ICON_LABELS = ['Internet Explorer', 'Resume', 'Projects']
+const ICON_LABELS = ['Internet Explorer', 'Welcome', 'Getting Started']
 
 // An authenticated session for a given role — the only difference the parity
 // pass varies.
@@ -42,7 +42,8 @@ describe('Cross-cutting · accessible names (ARIA roles + labels)', () => {
 
     expect(screen.getByRole('main', { name: /desktop/i })).toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: /taskbar/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /start/i })).toBeInTheDocument()
+    // Exact name — /start/i would also match the 'Getting Started' desktop icon.
+    expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument()
     for (const label of ICON_LABELS) {
       expect(screen.getByRole('button', { name: label })).toBeInTheDocument()
     }

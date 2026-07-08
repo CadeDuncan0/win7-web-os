@@ -6,41 +6,34 @@
  * - **Pages** — in-app browser pages rendered inside the IE window. Each page
  *   has a short `nickname` (the value stored in the navigation history stack and
  *   the alias a user can type, e.g. `about:home`), a full `url` shown in the
- *   address bar (`https://www.cadeduncan.com/home`), and a condensed `title`
+ *   address bar (built from the fork-config `siteUrl`), and a condensed `title`
  *   used in the address dropdown and the page-links row (`Home`).
- * - **External links** — GitHub / LinkedIn / Source Code. These are *not*
- *   navigable IE pages; clicking one opens a new browser tab straight to its
- *   `url`. They have no in-app route and never appear in the address bar.
+ * - **External links** — sourced from fork-config (src/config/site.ts). These
+ *   are *not* navigable IE pages; clicking one opens a new browser tab straight
+ *   to its `url`. They have no in-app route and never appear in the address bar.
  */
+
+import { siteConfig, type ExternalLink } from '@/config/site'
 
 export interface IEPage {
   /** Stored in the history stack and accepted as a typed alias, e.g. `about:home`. */
   nickname: string
-  /** Full URL displayed in the address bar, e.g. `https://www.cadeduncan.com/home`. */
+  /** Full URL displayed in the address bar, e.g. `https://www.example.com/home`. */
   url: string
   /** Condensed label for the address dropdown + page-links row, e.g. `Home`. */
   title: string
 }
 
-export interface IEExternalLink {
-  title: string
-  /** Destination opened directly in a new browser tab. */
-  url: string
-}
+export type { ExternalLink as IEExternalLink }
 
-const SITE = 'https://www.cadeduncan.com'
+const SITE = siteConfig.siteUrl
 
 export const IE_PAGES: IEPage[] = [
   { nickname: 'about:home', url: `${SITE}/home`, title: 'Home' },
-  { nickname: 'portfolio://projects', url: `${SITE}/portfolio/projects`, title: 'Projects' },
-  { nickname: 'portfolio://resume', url: `${SITE}/portfolio/resume`, title: 'Resume' },
+  { nickname: 'about:getting-started', url: `${SITE}/getting-started`, title: 'Getting Started' },
 ]
 
-export const IE_EXTERNAL_LINKS: IEExternalLink[] = [
-  { title: 'GitHub', url: 'https://github.com/CadeDuncan' },
-  { title: 'LinkedIn', url: 'https://linkedin.com/in/cade-duncan' },
-  { title: 'Source Code', url: 'https://github.com/CadeDuncan/PortfolioWebsite-Windows7' },
-]
+export const IE_EXTERNAL_LINKS: ExternalLink[] = [...siteConfig.externalLinks]
 
 /** The page IE opens on by default (its nickname). */
 export const DEFAULT_ROUTE = IE_PAGES[0].nickname
@@ -60,7 +53,7 @@ export function pageUrl(nickname: string): string {
 }
 
 /**
- * Map a window title (`Home` / `Projects` / `Resume`, or the app label
+ * Map a window title (`Home` / `Getting Started`, or the app label
  * `Internet Explorer`) to the nickname IE should open on. Unknown titles open
  * the default page.
  */

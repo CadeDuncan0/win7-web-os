@@ -20,17 +20,18 @@ export const DESKTOP_ICONS: DesktopIconDefinition[] = [
     windowTitle: 'Internet Explorer',
   },
   {
-    id: 'icon-resume',
-    label: 'Resume',
-    iconSrc: FOLDER_ICON, // replace with pdf icon
-    windowKind: 'internet-explorer',
-    windowTitle: 'Resume',
+    id: 'icon-welcome',
+    label: 'Welcome',
+    iconSrc: FOLDER_ICON,
+    windowKind: 'welcome',
+    windowTitle: 'Welcome',
   },
   {
-    id: 'icon-projects',
-    label: 'Projects',
-    iconSrc: FOLDER_ICON, // replace with IE shortcut icon or create a new Windows Explorer window and put projects there
+    id: 'icon-getting-started',
+    label: 'Getting Started',
+    iconSrc: FOLDER_ICON,
     windowKind: 'internet-explorer',
-    windowTitle: 'Projects',
+    // Matches an IE page title, so the window opens directly on that page.
+    windowTitle: 'Getting Started',
   },
 ]

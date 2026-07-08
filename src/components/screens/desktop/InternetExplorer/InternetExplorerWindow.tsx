@@ -5,7 +5,7 @@ import { IEPageLinks } from './IEPageLinks'
 import { DEFAULT_ROUTE, resolvePage } from './ieRoutes'
 import { IEToolbar } from './IEToolbar'
 import styles from './InternetExplorerWindow.module.css'
-import { HomePage, ProjectsPage, ResumePage } from './pages'
+import { GettingStartedPage, HomePage } from './pages'
 import { useIENavigation } from './useIENavigation'
 import { assetPaths } from '@/lib/assetPaths'
 
@@ -23,10 +23,8 @@ export function InternetExplorerWindow({ windowId, initialRoute }: InternetExplo
     switch (nav.currentUrl) {
       case 'about:home':
         return <HomePage onNavigate={nav.navigate} />
-      case 'portfolio://resume':
-        return <ResumePage />
-      case 'portfolio://projects':
-        return <ProjectsPage />
+      case 'about:getting-started':
+        return <GettingStartedPage />
       default: {
         const page = resolvePage(nav.currentUrl)
         return <div className={styles.notFound}>Page not found: {page?.url ?? nav.currentUrl}</div>
