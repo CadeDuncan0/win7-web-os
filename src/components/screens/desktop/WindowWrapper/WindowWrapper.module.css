@@ -101,7 +101,7 @@
    repaint, so its cost scales with window area and janks badly when maximized
    or resized large. Drop the full-window blur layer and frost only the title
    bar, where the glass is actually see-through. Scoped to managed windows so
-   the standalone 7.css <Window> (Storybook) keeps its default rendering. */
+   a standalone 7.css <Window> used elsewhere keeps its default rendering. */
 .WindowWrapper :global(.window.glass)::after {
   content: none;
 }
