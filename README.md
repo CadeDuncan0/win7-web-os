@@ -86,21 +86,20 @@ login screen. Sign in as **Guest** to explore.
 
 ## Make it yours
 
-This is the one section a forker needs. Identity lives in **one config module**:
+This is the one section a forker needs. Everything you would change is plain-data registries
+next to the components that render them:
 
-**[`src/config/site.ts`](src/config/site.ts)** — your site URL (shown in IE's address bar), the
-external links (GitHub / LinkedIn / Source Code in the Start menu and IE home page), and the
-"Windows® 7 _____" branding subtitle on the logon screen.
+| To change…                            | Edit…                                                          |
+| ------------------------------------- | -------------------------------------------------------------- |
+| Desktop icons                         | `src/components/screens/desktop/desktopIcons.ts`               |
+| Start Menu shortcuts + external links | `src/components/screens/desktop/StartMenu/startMenuItems.ts`   |
+| Pages inside Internet Explorer        | `src/components/screens/desktop/InternetExplorer/ieRoutes.ts`  |
+| Logon-screen branding subtitle        | the `subtitle` default in `src/components/windows7/OsBranding` |
+| Legacy-path redirects to `/win7`      | the `legacyRedirects` list in `next.config.ts`                 |
+| Wallpapers / icons / avatars          | `public/assets/` (paths registered in `src/lib/assetPaths.ts`) |
 
-Content beyond identity is plain-data registries next to the components that render them:
-
-| To change…                       | Edit…                                                          |
-| -------------------------------- | -------------------------------------------------------------- |
-| Desktop icons                    | `src/components/screens/desktop/desktopIcons.ts`               |
-| Start Menu shortcuts             | `src/components/screens/desktop/StartMenu/startMenuItems.ts`   |
-| Pages inside Internet Explorer   | `src/components/screens/desktop/InternetExplorer/ieRoutes.ts`  |
-| Legacy-path redirects to `/win7` | the `legacyRedirects` list in `next.config.ts`                 |
-| Wallpapers / icons / avatars     | `public/assets/` (paths registered in `src/lib/assetPaths.ts`) |
+An `ieRoutes.ts` entry with `redirect: true` is an external link: selecting it opens the URL in
+a new browser tab while IE shows a redirect page (the Source Code entry is a worked example).
 
 To add a whole new app window, see the [Architecture overview](#architecture-overview) below.
 
@@ -175,8 +174,6 @@ src/
                           InternetExplorer, WelcomeWindow
       transition/         Boot / welcome transition
     windows7/             Reusable Windows 7 primitives built on 7.css
-  config/
-    site.ts               ★ Fork configuration — start here to make it yours
   hooks/                  Shared React hooks (auth listener, dnd-kit sensors)
   lib/
     supabase/             Supabase clients (browser, server, proxy)

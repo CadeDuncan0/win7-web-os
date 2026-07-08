@@ -21,8 +21,9 @@ export function WelcomeWindow({ windowId }: WelcomeWindowProps) {
           browser. Drag the icons, open windows, and explore.
         </p>
         <p>
-          Forking this scaffold? Open Internet Explorer and visit the Getting Started page, or head
-          straight to <code>src/config/site.ts</code>.
+          Forking this template? Open Internet Explorer and visit the Getting Started page — it
+          maps the data registries (<code>desktopIcons.ts</code>, <code>startMenuItems.ts</code>,{' '}
+          <code>ieRoutes.ts</code>) where all the content lives.
         </p>
       </div>
     </WindowWrapper>

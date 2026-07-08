@@ -9,9 +9,9 @@ apart.
 If you're building **your own** desktop site:
 
 1. Fork the repo (it's a GitHub template — "Use this template" also works).
-2. Edit `src/config/site.ts` — site URL, external links, branding subtitle. This is the single
-   documented config location; the README's **Make it yours** section maps everything else
-   (desktop icons, Start Menu shortcuts, IE pages, redirects, assets).
+2. Edit the plain-data registries — `desktopIcons.ts`, `startMenuItems.ts`, and `ieRoutes.ts`.
+   The README's **Make it yours** section maps every content location (icons, Start Menu
+   shortcuts, IE pages and external links, branding, redirects, assets).
 3. Copy `.env.example` to `.env.local` and point it at your own Supabase project.
 4. Keep this repo as an `upstream` remote and merge periodically to pick up template fixes:
 
