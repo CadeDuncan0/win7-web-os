@@ -1,19 +1,19 @@
 /**
  * Internet Explorer route registry.
  *
- * Two kinds of destinations live here:
+ * Two kinds of entries live here, distinguished by the `redirect` flag:
  *
- * - **Pages** — in-app browser pages rendered inside the IE window. Each page
- *   has a short `nickname` (the value stored in the navigation history stack and
- *   the alias a user can type, e.g. `about:home`), a full `url` shown in the
- *   address bar (built from the fork-config `siteUrl`), and a condensed `title`
- *   used in the address dropdown and the page-links row (`Home`).
- * - **External links** — sourced from fork-config (src/config/site.ts). These
- *   are *not* navigable IE pages; clicking one opens a new browser tab straight
- *   to its `url`. They have no in-app route and never appear in the address bar.
+ * - **Pages** (`redirect: false`) — in-app browser pages rendered inside the IE
+ *   window. Each page has a short `nickname` (the value stored in the navigation
+ *   history stack and the alias a user can type, e.g. `about:home`), a full
+ *   `url` shown in the address bar, and a condensed `title` used in the address
+ *   dropdown and the page-links row (`Home`).
+ * - **Redirects** (`redirect: true`) — external destinations. Selecting one
+ *   opens its real `url` in a new browser tab (via `onOpentab`) while IE itself
+ *   navigates to an in-app redirect page (spinner + manual fallback link).
  */
 
-import { siteConfig, type ExternalLink } from '@/config/site'
+import { siteConfig } from '@/config/site'
 
 export interface IEPage {
   /** Stored in the history stack and accepted as a typed alias, e.g. `about:home`. */
@@ -22,18 +22,28 @@ export interface IEPage {
   url: string
   /** Condensed label for the address dropdown + page-links row, e.g. `Home`. */
   title: string
+  /** When true, selecting this entry opens `url` in a new browser tab and IE
+   *  shows the redirect page instead of rendering in-app content. */
+  redirect?: boolean
 }
-
-export type { ExternalLink as IEExternalLink }
 
 const SITE = siteConfig.siteUrl
 
 export const IE_PAGES: IEPage[] = [
-  { nickname: 'about:home', url: `${SITE}/home`, title: 'Home' },
-  { nickname: 'about:getting-started', url: `${SITE}/getting-started`, title: 'Getting Started' },
+  { nickname: 'about:home', url: `${SITE}/home`, title: 'Home', redirect: false },
+  {
+    nickname: 'about:source-code',
+    url: `https://github.com/CadeDuncan0/win7-web-os`,
+    title: 'Source Code',
+    redirect: true,
+  },
+  {
+    nickname: 'about:getting-started',
+    url: `${SITE}/getting-started`,
+    title: 'Getting Started',
+    redirect: false,
+  },
 ]
-
-export const IE_EXTERNAL_LINKS: ExternalLink[] = [...siteConfig.externalLinks]
 
 /** The page IE opens on by default (its nickname). */
 export const DEFAULT_ROUTE = IE_PAGES[0].nickname

@@ -12,6 +12,7 @@ interface IEToolbarProps {
   onForward: () => void
   onRefresh: () => void
   onNavigate: (nickname: string) => void
+  onOpentab: (nickname: string) => void
 }
 
 export function IEToolbar({
@@ -22,6 +23,7 @@ export function IEToolbar({
   onForward,
   onRefresh,
   onNavigate,
+  onOpentab,
 }: IEToolbarProps) {
   return (
     <div className={styles.toolbar} role="toolbar" aria-label="Navigation">
@@ -42,7 +44,12 @@ export function IEToolbar({
         />
       </div>
 
-      <IEAddressBar currentUrl={currentUrl} onNavigate={onNavigate} onRefresh={onRefresh} />
+      <IEAddressBar
+        currentUrl={currentUrl}
+        onOpentab={onOpentab}
+        onNavigate={onNavigate}
+        onRefresh={onRefresh}
+      />
     </div>
   )
 }

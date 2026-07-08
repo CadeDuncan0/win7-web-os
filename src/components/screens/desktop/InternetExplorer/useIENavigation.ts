@@ -1,7 +1,11 @@
 import { useCallback, useReducer } from 'react'
 
 type NavAction =
-  { type: 'navigate'; url: string } | { type: 'back' } | { type: 'forward' } | { type: 'refresh' }
+  | { type: 'opentab'; url: string }
+  | { type: 'navigate'; url: string }
+  | { type: 'back' }
+  | { type: 'forward' }
+  | { type: 'refresh' }
 
 interface NavState {
   stack: string[]
@@ -12,6 +16,10 @@ interface NavState {
 
 function navReducer(state: NavState, action: NavAction): NavState {
   switch (action.type) {
+    // `opentab` records the redirect page in history exactly like a navigation;
+    // the browser-tab side effect (window.open) happens at the call site, never
+    // in the reducer.
+    case 'opentab':
     case 'navigate':
       // Navigating to the current page is a no-op for history (matches a browser
       // re-entering the same URL via the address bar — it just reloads).
@@ -39,6 +47,9 @@ export interface UseIENavigationReturn {
   canGoForward: boolean
   /** Changes whenever the page should remount (navigation or refresh). */
   reloadKey: number
+  /** Like `navigate`, for redirect entries: records the in-app redirect page in
+   *  history. The caller is responsible for the matching `window.open`. */
+  opentab: (url: string) => void
   navigate: (url: string) => void
   goBack: () => void
   goForward: () => void
@@ -52,6 +63,7 @@ export function useIENavigation(initialRoute: string): UseIENavigationReturn {
     reloadKey: 0,
   })
 
+  const opentab = useCallback((url: string) => dispatch({ type: 'opentab', url }), [])
   const navigate = useCallback((url: string) => dispatch({ type: 'navigate', url }), [])
   const goBack = useCallback(() => dispatch({ type: 'back' }), [])
   const goForward = useCallback(() => dispatch({ type: 'forward' }), [])
@@ -62,6 +74,7 @@ export function useIENavigation(initialRoute: string): UseIENavigationReturn {
     canGoBack: state.index > 0,
     canGoForward: state.index < state.stack.length - 1,
     reloadKey: state.reloadKey,
+    opentab,
     navigate,
     goBack,
     goForward,

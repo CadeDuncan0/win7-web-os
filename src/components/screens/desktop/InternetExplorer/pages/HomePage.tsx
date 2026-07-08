@@ -1,16 +1,19 @@
 'use client'
 
-import { DEFAULT_ROUTE, IE_EXTERNAL_LINKS, IE_PAGES } from '../ieRoutes'
+import { DEFAULT_ROUTE, IE_PAGES } from '../ieRoutes'
 
 import styles from './HomePage.module.css'
 
 interface HomePageProps {
   onNavigate: (nickname: string) => void
+  /** Redirect entries: opens the real URL in a new browser tab and shows the
+   *  in-app redirect page. */
+  onOpentab: (nickname: string) => void
 }
 
 const pageLinks = IE_PAGES.filter((page) => page.nickname !== DEFAULT_ROUTE)
 
-export function HomePage({ onNavigate }: HomePageProps) {
+export function HomePage({ onNavigate, onOpentab }: HomePageProps) {
   return (
     <div className={styles.homePage}>
       <h1 className={styles.heading}>Welcome to Internet Explorer</h1>
@@ -20,20 +23,10 @@ export function HomePage({ onNavigate }: HomePageProps) {
           <button
             key={page.nickname}
             className={styles.tile}
-            onClick={() => onNavigate(page.nickname)}
+            onClick={() => (page.redirect ? onOpentab : onNavigate)(page.nickname)}
             type="button"
           >
             {page.title}
-          </button>
-        ))}
-        {IE_EXTERNAL_LINKS.map((link) => (
-          <button
-            key={link.url}
-            className={styles.tile}
-            onClick={() => window.open(link.url, '_blank', 'noopener')}
-            type="button"
-          >
-            {link.title}
           </button>
         ))}
       </div>

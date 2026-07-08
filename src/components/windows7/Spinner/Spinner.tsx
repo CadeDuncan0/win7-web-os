@@ -14,7 +14,7 @@ interface SpinnerProps extends ComponentPropsWithRef<'span'> {
   variant?: SpinnerVariant
 }
 
-export function Spinner({ variant = 'spinner', className, ...rest }: SpinnerProps) {
+export function Spinner({ variant = 'loading', className, ...rest }: SpinnerProps) {
   const base =
     variant === 'spinner' ? 'spinner' : variant === 'loader' ? 'loader' : 'loader animate'
   /* The `loading` variant's motion is a GIF; swap 7.css's clamped-speed

@@ -2,13 +2,14 @@
 
 import { useId, useRef, useState } from 'react'
 
-import { filterPages, IE_PAGES, inputToRoute, pageUrl } from './ieRoutes'
+import { filterPages, IE_PAGES, inputToRoute, pageUrl, resolvePage } from './ieRoutes'
 import styles from './IEToolbar.module.css'
 import { assetPaths } from '@/lib/assetPaths'
 
 interface IEAddressBarProps {
   /** Nickname of the current page (history-stack value). */
   currentUrl: string
+  onOpentab: (nickname: string) => void
   onNavigate: (nickname: string) => void
   onRefresh: () => void
 }
@@ -20,7 +21,7 @@ interface IEAddressBarProps {
  * result (or pressing Enter on a match) navigates. The Clear button empties the
  * field and re-opens the list — same as clicking into an empty address bar.
  */
-export function IEAddressBar({ currentUrl, onNavigate, onRefresh }: IEAddressBarProps) {
+export function IEAddressBar({ currentUrl, onOpentab, onNavigate, onRefresh }: IEAddressBarProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const listboxId = useId()
   // Set when Clear programmatically focuses the input, so the resulting focus
@@ -50,8 +51,14 @@ export function IEAddressBar({ currentUrl, onNavigate, onRefresh }: IEAddressBar
     requestAnimationFrame(() => inputRef.current?.select())
   }
 
+  // Redirect entries hand off to onOpentab (new browser tab + in-app redirect
+  // page); everything else is a normal in-app navigation.
   function commit(nickname: string) {
-    onNavigate(nickname)
+    if (resolvePage(nickname)?.redirect) {
+      onOpentab(nickname)
+    } else {
+      onNavigate(nickname)
+    }
     setEditing(false)
     setDirty(false)
     inputRef.current?.blur()
