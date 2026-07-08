@@ -109,4 +109,11 @@
 .WindowWrapper :global(.window.glass > .title-bar) {
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
+  /* backdrop-filter creates a stacking context on this non-positioned
+     sibling of .window-body. Without an explicit stack level, that context
+     is painted in DOM order — beneath .window-body — which traps any
+     z-indexed popover in the title-bar toolbar (e.g. the IE address-bar
+     dropdown) behind the window body's content. */
+  position: relative;
+  z-index: 1;
 }

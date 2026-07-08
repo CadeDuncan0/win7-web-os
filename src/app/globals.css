@@ -419,6 +419,7 @@
   --ie-dropdown-z: 20;
   --ie-dropdown-max-height: 220px;
   --ie-dropdown-bg: #fff;
+  --ie-dropdown-width: 92%;
   --ie-dropdown-border: 1px solid rgba(120, 140, 165, 0.6);
   --ie-dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   --ie-dropdown-item-hover-bg: rgba(205, 226, 248, 0.7);

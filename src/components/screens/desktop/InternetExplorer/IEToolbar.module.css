@@ -137,6 +137,7 @@
   border: var(--ie-dropdown-border);
   border-radius: var(--ie-address-radius);
   box-shadow: var(--ie-dropdown-shadow);
+  width: var(--ie-dropdown-width);
 }
 
 .dropdownItem {
