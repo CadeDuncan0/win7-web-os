@@ -1,6 +1,5 @@
 # win7-web-os
 
-[![CI](https://github.com/CadeDuncan0/win7-web-os/actions/workflows/ci.yml/badge.svg)](https://github.com/CadeDuncan0/win7-web-os/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-App%20Router-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)](https://react.dev/)
@@ -11,10 +10,8 @@ A **Windows 7 desktop environment built with React and Next.js — fork it and m
 Visitors land on an authentic Win7 Aero Glass login screen at `/win7`, sign in as **Guest** or
 **Admin**, and get a working desktop: draggable icons, a full window manager, a Start menu, an
 in-desktop Internet Explorer, and a live taskbar clock. The repo is a generic, open-source
-scaffold — everything identity-specific lives in one config file so a fork can rebrand it in
+template — everything identity-specific lives in one config file so a fork can rebrand it in
 minutes.
-
-**Live demo:** [cadeduncan.com/win7](https://cadeduncan.com/win7)
 
 ## Table of Contents
 
@@ -25,7 +22,6 @@ minutes.
 - [Tech stack](#tech-stack)
 - [Available scripts](#available-scripts)
 - [Project layout](#project-layout)
-- [Quality gates](#quality-gates)
 - [License](#license)
 
 ## Key features
@@ -44,14 +40,15 @@ minutes.
 - **Drag-and-drop desktop** — snap-to-grid icon repositioning via `@dnd-kit`; window dragging
   uses raw `pointermove` for pixel-perfect control.
 - **Reusable Windows 7 UI kit** — 25+ Win7 primitives (buttons, tabs, tree view, menus, sliders,
-  scrollbars, and more), each developed in isolation with a Storybook story.
-- **Zero-cost infrastructure** — runs entirely on free tiers (Vercel, Supabase, GitHub).
+  scrollbars, and more), ready to compose into new apps.
+- **Zero-cost infrastructure** — a Supabase free-tier project is the only external dependency;
+  deploy the Next.js app anywhere you like.
 
 ## Getting started
 
 ### Prerequisites
 
-- **Node.js 20** (matches the CI runner)
+- **Node.js 20+**
 - **npm** (the lockfile is npm-format)
 - A **Supabase** project for Auth (Admin sign-in). Guest mode needs no data — the client is just
   constructed at boot.
@@ -76,7 +73,7 @@ NEXT_PUBLIC_ADMIN_EMAIL=<admin-account-email>
 
 > Only variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. Never prefix
 > server-only secrets (e.g. service-role keys) with `NEXT_PUBLIC_`. `.env.local` is gitignored;
-> mirror these values in the Vercel dashboard and GitHub Secrets for deploys.
+> mirror these values in your hosting provider's dashboard when you deploy.
 
 ### Run the dev server
 
@@ -86,9 +83,6 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) — the root redirects to `/win7`, the Windows 7
 login screen. Sign in as **Guest** to explore.
-
-> A `docker-compose.yml` is also provided for a production-parity runtime. Day-to-day development
-> should use host Node.js so editor extensions (ESLint, Prettier, TS server) work correctly.
 
 ## Make it yours
 
@@ -112,7 +106,7 @@ To add a whole new app window, see the [Architecture overview](#architecture-ove
 
 The intended model: keep your fork private with this repo as an `upstream` remote, put your
 personal content in the registries above, and `git fetch upstream && git merge upstream/main` to
-pick up scaffold improvements.
+pick up template improvements.
 
 ## Architecture overview
 
@@ -145,37 +139,28 @@ A few intentional constraints worth calling out:
   module singleton — SSR passes never share state across requests).
 - **Two dragging problems, two solutions.** Icons use `@dnd-kit` with snap-to-grid; windows use
   raw `pointermove` with boundary clamping and z-index promotion.
+- **Design tokens only.** Every color, shadow, blur, gradient, and radius is a CSS custom
+  property in `src/app/globals.css` — component stylesheets reference tokens, never literals.
 
 ## Tech stack
 
-| Layer        | Technology                                                                             |
-| ------------ | -------------------------------------------------------------------------------------- |
-| Framework    | Next.js (App Router) + React 19 + TypeScript (`strict`)                                |
-| State        | Redux Toolkit (typed `useAppDispatch` / `useAppSelector`)                              |
-| Styling      | CSS Modules + Aero Glass design tokens in `globals.css`, over `7.css`                  |
-| Animation    | Framer Motion (`AnimatePresence`, layout animations)                                   |
-| Drag & drop  | `@dnd-kit` (icons only — window dragging uses raw `pointermove`)                       |
-| Validation   | Zod                                                                                    |
-| Auth         | Supabase Auth (Admin); cookie-marked Guest sessions                                    |
-| Testing      | Vitest + React Testing Library (unit/component), Cypress (E2E), Storybook + a11y addon |
-| Tooling      | ESLint flat config, Prettier, Husky, commitlint, lint-staged                           |
-| CI / Hosting | GitHub Actions → Vercel (Hobby tier)                                                   |
+| Layer       | Technology                                                            |
+| ----------- | --------------------------------------------------------------------- |
+| Framework   | Next.js (App Router) + React 19 + TypeScript (`strict`)               |
+| State       | Redux Toolkit (typed `useAppDispatch` / `useAppSelector`)             |
+| Styling     | CSS Modules + Aero Glass design tokens in `globals.css`, over `7.css` |
+| Animation   | Framer Motion (`AnimatePresence`, layout animations)                  |
+| Drag & drop | `@dnd-kit` (icons only — window dragging uses raw `pointermove`)      |
+| Validation  | Zod                                                                   |
+| Auth        | Supabase Auth (Admin); cookie-marked Guest sessions                   |
 
 ## Available scripts
 
-| Script                    | Purpose                                            |
-| ------------------------- | -------------------------------------------------- |
-| `npm run dev`             | Start the Next.js dev server                       |
-| `npm run dev:docker`      | Dev server with Webpack (for container hot reload) |
-| `npm run build`           | Production build (also runs type-checking)         |
-| `npm run start`           | Run the production server                          |
-| `npm run lint`            | ESLint (flat config, `--max-warnings=0` in CI)     |
-| `npm run test`            | Vitest unit + component tests                      |
-| `npm run test:watch`      | Vitest in watch mode                               |
-| `npm run storybook`       | Launch Storybook on port 6006                      |
-| `npm run build-storybook` | Build a static Storybook bundle                    |
-| `npm run cypress:open`    | Open the Cypress E2E runner                        |
-| `npm run e2e`             | Run the Cypress E2E suite headlessly               |
+| Script          | Purpose                                    |
+| --------------- | ------------------------------------------ |
+| `npm run dev`   | Start the Next.js dev server               |
+| `npm run build` | Production build (also runs type-checking) |
+| `npm run start` | Run the production server                  |
 
 ## Project layout
 
@@ -189,7 +174,7 @@ src/
       desktop/            Desktop, IconGrid, Taskbar, StartMenu, WindowManager,
                           InternetExplorer, WelcomeWindow
       transition/         Boot / welcome transition
-    windows7/             Reusable Windows 7 primitives built on 7.css (+ Storybook stories)
+    windows7/             Reusable Windows 7 primitives built on 7.css
   config/
     site.ts               ★ Fork configuration — start here to make it yours
   hooks/                  Shared React hooks (auth listener, dnd-kit sensors)
@@ -199,21 +184,8 @@ src/
     index.ts              setupStore factory + RootState / AppDispatch exports
     hooks.ts              Typed useAppDispatch / useAppSelector
     slices/               One file per Redux domain slice (window, session, desktop)
-  test-utils/             renderWithProviders and shared test helpers
   proxy.ts                Next.js route protection for /win7/desktop
 ```
-
-## Quality gates
-
-- **Pre-commit** — `lint-staged` runs `eslint --fix --max-warnings=0` and `prettier --write`
-  on staged files.
-- **commit-msg** — commitlint enforces
-  [Conventional Commits](https://www.conventionalcommits.org/) (`feat`, `fix`, `docs`,
-  `style`, `refactor`, `test`, `chore`, `perf`, `ci`, `revert`).
-- **CI** — every PR runs **lint → format check → unit tests → production build** on Node 20.
-
-Bypassing these gates (`--no-verify`, ignoring warnings) is not permitted — investigate the
-root cause instead.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how to fork, where content goes, and coding
 conventions. Bug reports and suggestions are welcome via
