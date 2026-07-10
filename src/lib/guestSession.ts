@@ -20,7 +20,6 @@ export const GUEST_COOKIE_NAME = COOKIE_NAME
 
 export const GuestSessionSchema = z.object({
   role: z.literal('guest'),
-  jwt: z.null(),
   startedAt: z.number(),
   // Markers written before the avatar field existed parse to the default
   avatar: z.string().catch(DEFAULT_USER_ICON),
@@ -40,7 +39,6 @@ export function beginGuestSession(avatarSrc: string): GuestSession | null {
   }
   const session: GuestSession = {
     role: 'guest',
-    jwt: null,
     startedAt: Date.now(),
     avatar: avatarSrc,
   }

@@ -44,8 +44,8 @@ const FILES = [
 
 export const USER_ICONS: readonly string[] = FILES.map((f) => `${DIR}/${f}`)
 
-// Fallback avatar for sessions rehydrated without one (e.g. an Admin session
-// restored from Supabase after a reload — the logon pick is not persisted there).
+// Fallback avatar for sessions rehydrated without one (e.g. a session marker
+// written before the avatar field existed, so it carries no logon pick).
 export const DEFAULT_USER_ICON = `${DIR}/user.bmp`
 
 function randomIndex(): number {
