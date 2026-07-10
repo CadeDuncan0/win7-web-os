@@ -2,7 +2,10 @@ import type { NextConfig } from 'next'
 
 // Legacy/alias paths that resolve to the canonical OS route. Append here as
 // more are needed — each entry becomes a temporary (307) redirect to /win7.
-const legacyRedirects = ['/', '/hub', '/login', '/desktop']
+// The root path is not in this list: it is *rewritten* (not redirected) to
+// /win7 below, so the URL the visitor entered at — the domain root, or the
+// mount point under a BASE_PATH deployment — never changes in the address bar.
+const legacyRedirects = ['/hub', '/login', '/desktop']
 
 // Optional subpath mount, e.g. '/desktop' to serve the app at
 // example.com/desktop behind a rewrite zone. Empty = served at the domain root.
@@ -23,6 +26,11 @@ const nextConfig: NextConfig = {
       destination: '/win7',
       permanent: false,
     }))
+  },
+  async rewrites() {
+    // Serve the OS at the root (and, with basePath set, at the mount point —
+    // source and destination are auto-prefixed) without touching the URL.
+    return [{ source: '/', destination: '/win7' }]
   },
 }
 

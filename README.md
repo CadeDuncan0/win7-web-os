@@ -84,8 +84,9 @@ ADMIN_PASSWORD=<the password for your Admin account>
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — the root redirects to `/win7`, the Windows 7
-login screen. Sign in as **Guest** to explore.
+Open [http://localhost:3000](http://localhost:3000) — the root serves the Windows 7 login screen
+(rewritten to `/win7` without changing the URL). Sign in as **Guest** to explore; the desktop
+renders at the same URL.
 
 ## Make it yours
 
@@ -115,8 +116,8 @@ pick up template improvements.
 ```text
 [ Browser ]
     |
-[ Next.js + React ]   — /win7 (logon) and /win7/desktop routes; legacy paths redirect
-    |                   src/proxy.ts gates /win7/desktop server-side (admin cookie or guest cookie)
+[ Next.js + React ]   — /win7 server-renders logon or desktop by session cookie; URL never changes
+    |                   / rewrites to /win7; src/proxy.ts gates the /win7/desktop deep link
 [ /api/admin ]        — verifies the ADMIN_PASSWORD secret, issues the httpOnly admin cookie
 [ Redux Toolkit ]     — windowSlice (window manager), sessionSlice (auth), desktopSlice (icons)
 [ CSS Modules ]       — scoped per component; Aero Glass design tokens in globals.css over 7.css
@@ -168,7 +169,7 @@ A few intentional constraints worth calling out:
 
 ```text
 src/
-  app/                    App Router: /win7 (logon), /win7/desktop, layout, globals.css
+  app/                    App Router: /win7 (logon/desktop switch), /win7/desktop, layout, globals.css
     api/admin/            Route handler: POST verifies the password, DELETE signs out
   components/
     providers/            Client context providers (ReduxProviderWrapper, AuthListener)

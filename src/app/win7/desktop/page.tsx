@@ -1,16 +1,7 @@
-'use client'
+import { DesktopScreen } from '@/components/screens/desktop/DesktopScreen'
 
-import { Desktop } from '@/components/screens/desktop/Desktop'
-import { DESKTOP_ICONS } from '@/components/screens/desktop/desktopIcons'
-import { IconGrid } from '@/components/screens/desktop/IconGrid'
-import { Taskbar } from '@/components/screens/desktop/Taskbar'
-import { WindowManager } from '@/components/screens/desktop/WindowManager'
-
+// Gated deep link to the desktop (see src/proxy.ts). The primary flow renders
+// the desktop at /win7 itself without ever changing the URL.
 export default function DesktopPage() {
-  return (
-    <>
-      <Desktop iconGrid={<IconGrid icons={DESKTOP_ICONS} />} windowLayer={<WindowManager />} />
-      <Taskbar />
-    </>
-  )
+  return <DesktopScreen />
 }

@@ -126,7 +126,9 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
     } else if (action.type === 'signOut') {
       await signOut()
       dispatch(clearSession())
-      router.push('/win7')
+      // Cookies are gone — refresh so the server re-renders this same URL as
+      // the logon screen (at /win7/desktop the proxy redirects to /win7).
+      router.refresh()
     }
     // add more actions here as needed
   }
