@@ -11,6 +11,10 @@ export type AuthResult<T> = { ok: true; data: T } | { ok: false; error: string }
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
+// Unlike router navigations, plain fetch() calls are not basePath-aware — the
+// admin endpoint must be prefixed by hand or it 404s under a BASE_PATH mount.
+const ADMIN_API = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/api/admin`
+
 export const AppSessionSchema = z.discriminatedUnion('role', [
   // Each role's schema is owned by the module that persists its client marker,
   // so the marker written and the union here can never drift apart.
@@ -47,7 +51,7 @@ export async function signInAsAdmin(
 ): Promise<AuthResult<AppSession>> {
   let response: Response
   try {
-    response = await fetch('/api/admin', {
+    response = await fetch(ADMIN_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password }),
@@ -63,7 +67,7 @@ export async function signInAsAdmin(
 
   const session = adminSession.beginAdminSession(avatarSrc)
   if (!session) {
-    return { ok: false, error: 'window object is undefined' }
+    return { ok: false, error: 'Sign-in unavailable' }
   }
   return { ok: true, data: session }
 }
@@ -83,7 +87,7 @@ export async function signOut(): Promise<AuthResult<null>> {
   // Ask the server to clear the httpOnly admin cookie. Best effort — the markers
   // are already gone and the cookie expires when the browser closes regardless.
   try {
-    await fetch('/api/admin', { method: 'DELETE' })
+    await fetch(ADMIN_API, { method: 'DELETE' })
   } catch {
     // ignore — see above
   }

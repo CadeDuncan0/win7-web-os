@@ -14,7 +14,11 @@ export async function proxy(request: NextRequest) {
   }
 
   // Unauthenticated: redirect to the logon screen with original path preserved.
-  const loginUrl = new URL('/win7', request.url)
+  // Clone nextUrl rather than building a raw URL — NextURL re-applies basePath
+  // when serialized, so the redirect stays inside a BASE_PATH-mounted app.
+  const loginUrl = request.nextUrl.clone()
+  loginUrl.pathname = '/win7'
+  loginUrl.search = ''
   loginUrl.searchParams.set('from', request.nextUrl.pathname)
   return NextResponse.redirect(loginUrl)
 }
