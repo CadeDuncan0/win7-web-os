@@ -9,7 +9,6 @@ export type AuthStatus = 'unknown' | 'authenticated' | 'unauthenticated'
 export interface SessionState {
   role: 'guest' | 'admin' | null
   authStatus: AuthStatus
-  jwt: string | null
   startedAt: number | null
   // The avatar picked on the logon screen — the desktop and Start Menu read
   // this single source of truth instead of re-deriving it.
@@ -21,7 +20,6 @@ export interface SessionState {
 const initialState: SessionState = {
   role: null,
   authStatus: 'unknown',
-  jwt: null,
   startedAt: null,
   avatar: null,
 }
@@ -34,7 +32,6 @@ const sessionSlice = createSlice({
   reducers: {
     setSession(state, action: PayloadAction<AppSession>) {
       state.authStatus = 'authenticated'
-      state.jwt = action.payload.jwt
       state.role = action.payload.role
       state.startedAt = action.payload.startedAt
       state.avatar = action.payload.avatar
@@ -42,7 +39,6 @@ const sessionSlice = createSlice({
 
     clearSession(state) {
       state.authStatus = 'unauthenticated'
-      state.jwt = null
       state.role = null
       state.startedAt = null
       state.avatar = null
@@ -62,10 +58,6 @@ export const selectRole = (state: RootState): 'guest' | 'admin' | null => {
 
 export const selectAuthStatus = (state: RootState): AuthStatus => {
   return state.session.authStatus
-}
-
-export const selectJwt = (state: RootState): string | null => {
-  return state.session.jwt
 }
 
 export const selectIsAdmin = (state: RootState): boolean => {

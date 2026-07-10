@@ -28,8 +28,8 @@ minutes.
 
 - **Authentic Windows 7 Aero Glass UI** — frosted-glass surfaces, Segoe UI typography, and a
   fully tokenized design system (no hardcoded colors, shadows, or radii) layered on `7.css`.
-- **Dual-role authentication** — Guest (public, session-scoped) and Admin (Supabase Auth,
-  JWT-persisted), with server-side route protection via the Next.js proxy.
+- **Dual-role authentication** — Guest (public, session-scoped) and Admin (a single server-only
+  password secret, no external service), with server-side route protection via the Next.js proxy.
 - **Full window manager** — open, close, minimize, maximize, focus, z-index stacking, and
   viewport boundary clamping, animated via Framer Motion. All state lives in Redux.
 - **In-desktop Internet Explorer** — a working browser window with a toolbar, page links,
@@ -41,8 +41,8 @@ minutes.
   uses raw `pointermove` for pixel-perfect control.
 - **Reusable Windows 7 UI kit** — 25+ Win7 primitives (buttons, tabs, tree view, menus, sliders,
   scrollbars, and more), ready to compose into new apps.
-- **Zero-cost infrastructure** — a Supabase free-tier project is the only external dependency;
-  deploy the Next.js app anywhere you like.
+- **Zero-cost, zero-dependency infrastructure** — no database or external auth service; the only
+  secret is the Admin password. Deploy the Next.js app anywhere you like.
 
 ## Getting started
 
@@ -50,8 +50,9 @@ minutes.
 
 - **Node.js 20+**
 - **npm** (the lockfile is npm-format)
-- A **Supabase** project for Auth (Admin sign-in). Guest mode needs no data — the client is just
-  constructed at boot.
+
+No database or external services are required. Guest mode needs no configuration at all; Admin
+sign-in needs only a password you choose.
 
 ### Install
 
@@ -63,17 +64,19 @@ npm ci
 
 ### Configure environment
 
-Copy [`.env.example`](.env.example) to `.env.local` and fill in your Supabase values:
+Copy [`.env.example`](.env.example) to `.env.local` and set the Admin password:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<supabase-anon-key>
-NEXT_PUBLIC_ADMIN_EMAIL=<admin-account-email>
+ADMIN_PASSWORD=<the password for your Admin account>
 ```
 
-> Only variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. Never prefix
-> server-only secrets (e.g. service-role keys) with `NEXT_PUBLIC_`. `.env.local` is gitignored;
-> mirror these values in your hosting provider's dashboard when you deploy.
+> `ADMIN_PASSWORD` is a **server-only secret** — it has no `NEXT_PUBLIC_` prefix, so it is never
+> shipped to the browser. The Admin sign-in form posts the entered password to the `/api/admin`
+> route, which compares it server-side and, on success, issues an `httpOnly` session cookie the
+> proxy gates on. Leave it unset to disable Admin sign-in (Guest still works). `.env.local` is
+> gitignored; set the same value as a secret env var in your hosting provider when you deploy.
+> The endpoint has no built-in rate limiting — choose a long, unguessable password and enable
+> your host's rate limiting / bot protection if it offers one.
 
 ### Run the dev server
 
@@ -81,8 +84,9 @@ NEXT_PUBLIC_ADMIN_EMAIL=<admin-account-email>
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — the root redirects to `/win7`, the Windows 7
-login screen. Sign in as **Guest** to explore.
+Open [http://localhost:3000](http://localhost:3000) — the root serves the Windows 7 login screen
+(rewritten to `/win7` without changing the URL). Sign in as **Guest** to explore; the desktop
+renders at the same URL.
 
 ## Make it yours
 
@@ -112,9 +116,9 @@ pick up template improvements.
 ```text
 [ Browser ]
     |
-[ Next.js + React ]   — /win7 (logon) and /win7/desktop routes; legacy paths redirect
-    |                   src/proxy.ts gates /win7/desktop server-side (Supabase session or guest cookie)
-[ Supabase ]          — Auth for the Admin account only; Guest is a client-side role assertion
+[ Next.js + React ]   — /win7 server-renders logon or desktop by session cookie; URL never changes
+    |                   / rewrites to /win7; src/proxy.ts gates the /win7/desktop deep link
+[ /api/admin ]        — verifies the ADMIN_PASSWORD secret, issues the httpOnly admin cookie
 [ Redux Toolkit ]     — windowSlice (window manager), sessionSlice (auth), desktopSlice (icons)
 [ CSS Modules ]       — scoped per component; Aero Glass design tokens in globals.css over 7.css
 ```
@@ -151,7 +155,7 @@ A few intentional constraints worth calling out:
 | Animation   | Framer Motion (`AnimatePresence`, layout animations)                  |
 | Drag & drop | `@dnd-kit` (icons only — window dragging uses raw `pointermove`)      |
 | Validation  | Zod                                                                   |
-| Auth        | Supabase Auth (Admin); cookie-marked Guest sessions                   |
+| Auth        | Server-only `ADMIN_PASSWORD` secret + httpOnly cookie; cookie-marked Guest sessions |
 
 ## Available scripts
 
@@ -165,7 +169,8 @@ A few intentional constraints worth calling out:
 
 ```text
 src/
-  app/                    App Router: /win7 (logon), /win7/desktop, layout, globals.css
+  app/                    App Router: /win7 (logon/desktop switch), /win7/desktop, layout, globals.css
+    api/admin/            Route handler: POST verifies the password, DELETE signs out
   components/
     providers/            Client context providers (ReduxProviderWrapper, AuthListener)
     screens/
@@ -176,7 +181,9 @@ src/
     windows7/             Reusable Windows 7 primitives built on 7.css
   hooks/                  Shared React hooks (auth listener, dnd-kit sensors)
   lib/
-    supabase/             Supabase clients (browser, server, proxy)
+    adminAuth.ts          Server-side password check + httpOnly cookie token (route + proxy)
+    auth.ts               Client auth orchestration (guest / admin sign-in, sign-out, rehydrate)
+    adminSession.ts       Client Admin session marker; guestSession.ts is its Guest counterpart
   store/
     index.ts              setupStore factory + RootState / AppDispatch exports
     hooks.ts              Typed useAppDispatch / useAppSelector

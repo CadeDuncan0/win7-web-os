@@ -12,7 +12,8 @@
  *
  * NOTE: CSS cannot import TypeScript, so the `url(...)` values in
  * `globals.css` (backdrops, `--avatar-frame`) mirror these paths by hand and
- * must be updated alongside this file.
+ * must be updated alongside this file. When the app is mounted under a subpath
+ * (see `cssAssetVars` below) those `url()` fallbacks are overridden at runtime.
  */
 const ASSETS = '/assets'
 
@@ -43,3 +44,32 @@ export const assetPaths = {
     border: `${ASSETS}/account-icon-border.png`,
   },
 } as const
+
+/**
+ * Optional subpath the app is mounted under (e.g. `/desktop` when served at
+ * cadeduncan.com/desktop via a Vercel rewrite zone). Empty for a standalone
+ * deployment at the domain root. Kept in sync with `basePath` in
+ * `next.config.ts` — both derive from the same env var.
+ */
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? ''
+
+/**
+ * CSS `url()` custom properties that point at `public/` assets.
+ *
+ * Next.js prefixes `next/image` sources and framework assets with `basePath`
+ * automatically, but absolute paths inside CSS `url()` are emitted verbatim —
+ * so under a subpath mount they resolve against the domain root and 404. The
+ * root layout spreads these onto `<html>` as inline styles, which override the
+ * `:root` fallbacks in `globals.css` (those remain correct at the root and for
+ * Storybook, where `BASE_PATH` is empty and the values are identical).
+ *
+ * The keys must match the hand-authored `url(...)` variables in `globals.css`.
+ */
+export function cssAssetVars(): Record<string, string> {
+  return {
+    '--logon-backdrop': `url('${BASE_PATH}${assetPaths.backgrounds.login}')`,
+    '--desktop-backdrop': `url('${BASE_PATH}${assetPaths.backgrounds.desktop}')`,
+    '--avatar-frame': `url('${BASE_PATH}${assetPaths.accountIcons.border}')`,
+    '--tb-orb-img': `url('${BASE_PATH}${assetPaths.taskbar.startOrb}')`,
+  }
+}

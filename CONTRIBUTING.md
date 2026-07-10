@@ -12,7 +12,7 @@ If you're building **your own** desktop site:
 2. Edit the plain-data registries — `desktopIcons.ts`, `startMenuItems.ts`, and `ieRoutes.ts`.
    The README's **Make it yours** section maps every content location (icons, Start Menu
    shortcuts, IE pages and external links, branding, redirects, assets).
-3. Copy `.env.example` to `.env.local` and point it at your own Supabase project.
+3. Copy `.env.example` to `.env.local` and set `ADMIN_PASSWORD` to your Admin account password.
 4. Keep this repo as an `upstream` remote and merge periodically to pick up template fixes:
 
    ```bash
