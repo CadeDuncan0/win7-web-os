@@ -17,7 +17,7 @@ const ADMIN_SESSION_KEY = 'win7.adminSession'
 export const AdminSessionSchema = z.object({
   role: z.literal('admin'),
   startedAt: z.number(),
-  // Markers written before the avatar field existed parse to the default
+  // A marker with a missing or malformed avatar parses to the default
   avatar: z.string().catch(DEFAULT_USER_ICON),
 })
 

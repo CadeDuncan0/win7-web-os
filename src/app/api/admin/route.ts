@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     )
   }
 
-  if (!isAdminPassword(parsed.data.password)) {
+  if (!(await isAdminPassword(parsed.data.password))) {
     return NextResponse.json({ ok: false, error: 'Incorrect password' }, { status: 401 })
   }
 

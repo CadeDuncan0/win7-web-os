@@ -75,6 +75,8 @@ ADMIN_PASSWORD=<the password for your Admin account>
 > route, which compares it server-side and, on success, issues an `httpOnly` session cookie the
 > proxy gates on. Leave it unset to disable Admin sign-in (Guest still works). `.env.local` is
 > gitignored; set the same value as a secret env var in your hosting provider when you deploy.
+> The endpoint has no built-in rate limiting — choose a long, unguessable password and enable
+> your host's rate limiting / bot protection if it offers one.
 
 ### Run the dev server
 
