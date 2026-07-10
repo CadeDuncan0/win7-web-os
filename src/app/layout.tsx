@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 import ReduxProviderWrapper from '@/components/providers/ReduxProvider'
+import { cssAssetVars } from '@/lib/assetPaths'
 
 // globals.css imports 7.css into a low cascade layer (see globals.css header)
 import './globals.css'
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" style={cssAssetVars() as CSSProperties}>
       <body>
         <ReduxProviderWrapper>{children}</ReduxProviderWrapper>
       </body>
