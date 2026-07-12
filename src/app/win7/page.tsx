@@ -18,5 +18,5 @@ export default async function Win7Page() {
   const isAdmin = await isAdminCookieValid(cookieStore.get(ADMIN_COOKIE_NAME)?.value)
   const isGuest = cookieStore.get(GUEST_COOKIE_NAME)?.value === '1'
 
-  return isAdmin || isGuest ? <DesktopScreen /> : <LoginScreen />
+  return isAdmin || isGuest ? <DesktopScreen isAdmin={isAdmin} /> : <LoginScreen />
 }

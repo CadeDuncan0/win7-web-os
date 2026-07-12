@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { isWindowDisabled } from '../disabledWindows'
+import { openWindowIfEnabled } from '../openWindowIfEnabled'
 import styles from './StartMenu.module.css'
 import { StartMenuItem } from './StartMenuItem'
 import {
@@ -16,8 +18,7 @@ import { Button } from '@/components/windows7/Button/index'
 import { signOut } from '@/lib/auth'
 import { DEFAULT_USER_ICON } from '@/lib/userIcons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { clearSession, selectAvatar } from '@/store/slices/sessionSlice'
-import { openWindow } from '@/store/slices/windowSlice'
+import { clearSession, selectAvatar, selectIsAdmin } from '@/store/slices/sessionSlice'
 
 /** Aero glass Start Menu panel. Controlled by parent via isOpen/onClose —
  *  the Taskbar (Task 14) owns the toggle state. Search filters the left
@@ -29,9 +30,23 @@ export interface StartMenuProps {
   avatarSrc?: string // Optional override (stories); defaults to the session avatar
 }
 
+/** A shortcut is dropped when its window is turned off site-wide, or (for guests)
+ *  when it is flagged hideForGuest. Non-window actions carry no key to disable. */
+function isShortcutDisabled(s: StartMenuShortcut, isAdmin: boolean): boolean {
+  return (
+    (isAdmin && Boolean(s.hideForAdmin)) ||
+    (!isAdmin && Boolean(s.hideForGuest)) ||
+    (s.action.type === 'openWindow' && isWindowDisabled(s.action.windowKey, isAdmin))
+  )
+}
+
 export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
   const dispatch = useAppDispatch()
   const sessionAvatar = useAppSelector(selectAvatar)
+  // Shortcuts flagged hideForGuest are dropped entirely for guest sessions —
+  // guests cannot see or open them. The menu mounts on click, well after the
+  // session rehydrates, so reading the store role here cannot flash.
+  const isAdmin = useAppSelector(selectIsAdmin)
   const router = useRouter()
   const panelRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
@@ -43,13 +58,22 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
     onClose()
   }, [onClose])
 
+  const visibleLeft = useMemo(
+    () => LEFT_COLUMN_SHORTCUTS.filter((s) => !isShortcutDisabled(s, isAdmin)),
+    [isAdmin]
+  )
+  const visibleRight = useMemo(
+    () => RIGHT_COLUMN_SHORTCUTS.filter((s) => !isShortcutDisabled(s, isAdmin)),
+    [isAdmin]
+  )
+
   const filteredLeft = useMemo(() => {
     if (!searchQuery.trim()) {
-      return LEFT_COLUMN_SHORTCUTS
+      return visibleLeft
     }
     const q = searchQuery.toLowerCase()
-    return LEFT_COLUMN_SHORTCUTS.filter((s) => s.label.toLowerCase().includes(q))
-  }, [searchQuery])
+    return visibleLeft.filter((s) => s.label.toLowerCase().includes(q))
+  }, [searchQuery, visibleLeft])
 
   useEffect(() => {
     if (!isOpen) {
@@ -119,7 +143,14 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
   async function handleAction(action: StartMenuShortcut['action']) {
     handleClose()
     if (action.type === 'openWindow') {
-      dispatch(openWindow({ kind: action.kind, title: action.title }))
+      dispatch(
+        openWindowIfEnabled({
+          kind: action.kind,
+          title: action.title,
+          windowKey: action.windowKey,
+          size: action.size,
+        })
+      )
     } else if (action.type === 'openLink') {
       // External destinations go straight to a new tab — no IE window.
       window.open(action.url, '_blank', 'noopener')
@@ -176,7 +207,7 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
             </div>
 
             <ul className={styles.shortcutList}>
-              {RIGHT_COLUMN_SHORTCUTS.map((shortcut) => (
+              {visibleRight.map((shortcut) => (
                 <StartMenuItem
                   key={shortcut.id}
                   {...(shortcut.iconSrc ? { iconSrc: shortcut.iconSrc } : {})}

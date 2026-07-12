@@ -1,3 +1,4 @@
+import { WINDOW_KEYS, type WindowKey } from '../windowKeys'
 import { assetPaths } from '@/lib/assetPaths'
 import type { WindowKind } from '@/store/slices/windowSlice'
 
@@ -10,8 +11,18 @@ export interface StartMenuShortcut {
   id: string
   label: string
   iconSrc?: string
+  hideForAdmin?: boolean
+  hideForGuest?: boolean
   action:
-    | { type: 'openWindow'; kind: WindowKind; title: string }
+    | {
+        type: 'openWindow'
+        kind: WindowKind
+        title: string
+        /** Stable id used for the disabled-window switch and the openWindow gate. */
+        windowKey: WindowKey
+        /** Optional initial window geometry; omitted = windowSlice default. */
+        size?: { width: number; height: number }
+      }
     | { type: 'openLink'; url: string }
     | { type: 'signOut' }
 }
@@ -32,13 +43,34 @@ export const LEFT_COLUMN_SHORTCUTS: StartMenuShortcut[] = [
     id: 'sm-ie',
     label: 'Internet Explorer',
     iconSrc: assetPaths.desktopIcons.internetExplorer,
-    action: { type: 'openWindow', kind: 'internet-explorer', title: 'Internet Explorer' },
+    action: {
+      type: 'openWindow',
+      kind: 'internet-explorer',
+      title: 'Internet Explorer',
+      windowKey: WINDOW_KEYS.internetExplorer,
+    },
+  },
+  {
+    id: 'sm-welcome',
+    label: 'Welcome',
+    iconSrc: FOLDER_ICON,
+    action: {
+      type: 'openWindow',
+      kind: 'internet-explorer',
+      title: 'Welcome',
+      windowKey: WINDOW_KEYS.welcome,
+    },
   },
   {
     id: 'sm-getting-started',
     label: 'Getting Started',
     iconSrc: FOLDER_ICON,
-    action: { type: 'openWindow', kind: 'internet-explorer', title: 'Getting Started' },
+    action: {
+      type: 'openWindow',
+      kind: 'internet-explorer',
+      title: 'Getting Started',
+      windowKey: WINDOW_KEYS.gettingStarted,
+    },
   },
 ]
 
