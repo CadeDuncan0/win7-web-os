@@ -2,6 +2,7 @@
 
 import { taskbarAppMeta } from './taskbarApps'
 import styles from './TaskbarIcon.module.css'
+import { withBasePath } from '@/lib/assetPaths'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   closeWindow,
@@ -65,7 +66,14 @@ export function TaskbarIcon({ kind, windows }: TaskbarIconProps) {
         type="button"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className={styles.icon} src={icon} alt="" width={24} height={24} draggable={false} />
+        <img
+          className={styles.icon}
+          src={withBasePath(icon)}
+          alt=""
+          width={24}
+          height={24}
+          draggable={false}
+        />
       </button>
 
       <ul className={styles.popup}>
@@ -80,7 +88,7 @@ export function TaskbarIcon({ kind, windows }: TaskbarIconProps) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 className={styles.popupIcon}
-                src={icon}
+                src={withBasePath(icon)}
                 alt=""
                 width={20}
                 height={20}

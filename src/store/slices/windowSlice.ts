@@ -4,7 +4,7 @@ import type { RootState } from '@/store'
 
 // ─── Constants ──────────────────────────────────────────────────────────────────
 
-const DEFAULT_WINDOW_SIZE = { width: 640, height: 440 }
+const DEFAULT_WINDOW_SIZE = { width: 880, height: 640 }
 const DEFAULT_WINDOW_POSITION = { x: 80, y: 80 }
 // Canonical minimum — the --mw-min-* tokens in globals.css are kept in sync
 // by src/lib/designTokens.test.ts.
@@ -45,6 +45,14 @@ export interface WindowState {
   ids: string[]
   zCounter: number
   nextIdSeed: number
+  // Last committed size per window kind — a reopened window of that kind
+  // restores it. Hydrated from sessionStorage at desktop boot and written
+  // back on change by useDesktopPersistence.
+  sizeByKind: Partial<Record<WindowKind, { width: number; height: number }>>
+  // Last committed position per window kind — a reopened window of that kind
+  // restores it. Hydrated from sessionStorage at desktop boot and written
+  // back on change by useDesktopPersistence.
+  positionByKind: Partial<Record<WindowKind, { x: number; y: number }>>
 }
 
 // ─── Initial State ──────────────────────────────────────────────────────────
@@ -56,6 +64,8 @@ const initialState: WindowState = {
   ids: [],
   zCounter: 0,
   nextIdSeed: 0,
+  sizeByKind: {},
+  positionByKind: {},
 }
 
 const windowSlice = createSlice({
@@ -79,10 +89,21 @@ const windowSlice = createSlice({
       //   2. Bump state.zCounter; the new window's zIndex = state.zCounter
       state.zCounter++
       const zIndex = state.zCounter
-      //   3. Default position to { x: 80, y: 80 } if not provided.
-      const position = action.payload.position ?? DEFAULT_WINDOW_POSITION
-      //   4. Default size to { width: 640, height: 440 } if not provided.
-      const size = action.payload.size ?? DEFAULT_WINDOW_SIZE
+      //   3. Position precedence mirrors size: last committed position for
+      //      this kind (restores the user's placement on reopen) → caller-
+      //      provided position → the module default. Copied so byId never
+      //      aliases the positionByKind entry.
+      const position = {
+        ...(state.positionByKind[action.payload.kind] ??
+          action.payload.position ??
+          DEFAULT_WINDOW_POSITION),
+      }
+      //   4. Size precedence: last committed size for this kind (restores the
+      //      user's sizing on reopen) → caller-provided initial size → the
+      //      module default. Copied so byId never aliases the sizeByKind entry.
+      const size = {
+        ...(state.sizeByKind[action.payload.kind] ?? action.payload.size ?? DEFAULT_WINDOW_SIZE),
+      }
       //   5. isMinimized and isMaximized start false; prevGeometry starts null.
       const isMinimized = false
       const isMaximized = false
@@ -232,6 +253,9 @@ const windowSlice = createSlice({
       //      DO NOT clamp here. Boundary clamping is the responsibility of the
       //      component drag handler (Task 11) which has access to the viewport.
       window.position = { x: action.payload.x, y: action.payload.y }
+      //   4. Remember the committed position for this kind so the next window
+      //      of the same kind reopens at it.
+      state.positionByKind[window.kind] = { ...window.position }
     },
 
     // ── resizeWindow ──────────────────────────────────────────────────────
@@ -252,6 +276,29 @@ const windowSlice = createSlice({
         width: Math.max(action.payload.width, MIN_WINDOW_SIZE.width),
         height: Math.max(action.payload.height, MIN_WINDOW_SIZE.height),
       }
+      //   4. Remember the committed size for this kind so the next window of
+      //      the same kind (and reloads, via persistence) reopens at it.
+      state.sizeByKind[window.kind] = { ...window.size }
+    },
+
+    // ── hydrateWindowSizes ────────────────────────────────────────────────
+    // Payload: the persisted per-kind size map. Dispatched once at desktop
+    // boot (useDesktopPersistence) before any window opens.
+    hydrateWindowSizes(
+      state,
+      action: PayloadAction<Partial<Record<WindowKind, { width: number; height: number }>>>
+    ) {
+      state.sizeByKind = action.payload
+    },
+
+    // ── hydrateWindowPositions ────────────────────────────────────────────
+    // Payload: the persisted per-kind position map. Dispatched once at desktop
+    // boot (useDesktopPersistence) before any window opens.
+    hydrateWindowPositions(
+      state,
+      action: PayloadAction<Partial<Record<WindowKind, { x: number; y: number }>>>
+    ) {
+      state.positionByKind = action.payload
     },
   },
 })
@@ -261,6 +308,22 @@ const windowSlice = createSlice({
 // Category 1 — primitive field access. No memoization needed.
 export const selectZCounter = (state: RootState): number => {
   return state.window.zCounter
+}
+
+// Category 2 — returns the stored reference; consumed by useDesktopPersistence
+// to change-detect (by identity) and write the map through to sessionStorage.
+export const selectWindowSizes = (
+  state: RootState
+): Partial<Record<WindowKind, { width: number; height: number }>> => {
+  return state.window.sizeByKind
+}
+
+// Category 2 — returns the stored reference; consumed by useDesktopPersistence
+// to change-detect (by identity) and write the map through to sessionStorage.
+export const selectWindowPositions = (
+  state: RootState
+): Partial<Record<WindowKind, { x: number; y: number }>> => {
+  return state.window.positionByKind
 }
 
 // Category 2 — O(1) lookup. Returns a stored reference; no new allocation.
@@ -319,5 +382,7 @@ export const {
   toggleMaximize,
   moveWindow,
   resizeWindow,
+  hydrateWindowSizes,
+  hydrateWindowPositions,
 } = windowSlice.actions
 export default windowSlice.reducer

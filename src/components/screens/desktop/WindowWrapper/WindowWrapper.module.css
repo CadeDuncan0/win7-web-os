@@ -74,6 +74,14 @@
   user-select: none;
 }
 
+/* During a drag/resize gesture, embedded documents (game canvases, PDF
+   viewers) must not hit-test or hover-track the pointer sweeping across
+   them — the gesture belongs to the captured handle, and cross-document hit
+   testing is wasted work per pointermove. */
+.dragging iframe {
+  pointer-events: none;
+}
+
 .maximized :global(.window) {
   border-radius: 0;
   box-shadow: none;

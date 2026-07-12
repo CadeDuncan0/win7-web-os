@@ -6,6 +6,8 @@
 import { DndContext, type DragEndEvent } from '@dnd-kit/core'
 import { useEffect, useState } from 'react'
 import { DesktopIcon } from '../DesktopIcon'
+import { openWindowIfEnabled } from '../openWindowIfEnabled'
+import type { WindowKey } from '../windowKeys'
 import styles from './IconGrid.module.css'
 import { useDesktopSensors } from '@/hooks/useDesktopSensors'
 import {
@@ -25,7 +27,7 @@ import {
   clearSelection,
   selectDesktopIcons,
 } from '@/store/slices/desktopSlice'
-import { openWindow, type WindowKind } from '@/store/slices/windowSlice'
+import type { WindowKind } from '@/store/slices/windowSlice'
 
 interface IconGridProps {
   icons: Array<{
@@ -34,6 +36,8 @@ interface IconGridProps {
     iconSrc: string
     windowKind: WindowKind
     windowTitle: string
+    windowKey: WindowKey
+    windowSize?: { width: number; height: number }
   }>
 }
 
@@ -117,9 +121,11 @@ export function IconGrid({ icons: _icons }: IconGridProps) {
             iconSrc={iconDef.iconSrc}
             onOpen={() =>
               dispatch(
-                openWindow({
+                openWindowIfEnabled({
                   kind: iconDef.windowKind,
                   title: iconDef.windowTitle,
+                  windowKey: iconDef.windowKey,
+                  size: iconDef.windowSize,
                 })
               )
             }

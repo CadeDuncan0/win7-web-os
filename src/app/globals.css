@@ -397,11 +397,10 @@
   --ie-titlebar-icon-size: var(--tb-popup-icon-size);
   --ie-address-height: 24px;
   --ie-address-bg: #fff;
-  /* Inset (sunken) border in the same grey as the refresh-button dividers. */
-  --ie-address-border: 2px inset var(--ie-action-divider-color);
-  /* Light-blue accent ring just outside the inset border — a second, outer
-     border drawn with box-shadow spread so it hugs the border radius. */
-  --ie-address-radius: 2px;
+  /* Flat 1px hairline, square corners — IE7's address field sits flush on the
+     glass rather than sunken (the 2px inset read as IE6/XP). */
+  --ie-address-border: 1px solid rgba(130, 146, 162, 0.9);
+  --ie-address-radius: 0;
   --ie-address-text: #333;
   --ie-address-icon-size: 16px;
   /* Refresh + clear buttons: square, sized to the address-bar height and
@@ -439,6 +438,26 @@
   --ie-content-bg: #fff;
   /* Placeholder project-thumbnail fill (replaced with real assets in Task 12). */
   --ie-project-thumb-bg: rgba(200, 210, 220, 0.5);
+  /* In-page content cards (Home tiles, Getting Started card).
+     Referenced by the IE page stylesheets. */
+  --ie-external-card-bg: rgba(245, 249, 253, 0.9);
+  --ie-external-card-border: 1px solid rgba(160, 180, 200, 0.55);
+  --ie-external-card-radius: 4px;
+  /* IE7 retro chrome — soft blue band shared by the tab strip and page-links
+     row, plus the tab and bottom status-bar treatments. */
+  --ie-chrome-band-bg: linear-gradient(#f4f8fc, #dee9f5);
+  --ie-chrome-band-border: 1px solid rgba(150, 168, 190, 0.7);
+  --ie-tab-height: 24px;
+  --ie-tab-bg: linear-gradient(#fefefe, #e9f1fa);
+  --ie-tab-border: 1px solid rgba(120, 142, 170, 0.85);
+  --ie-tab-title-color: #1a3a5c;
+  --ie-tab-font-size: 11px;
+  --ie-tab-star-color: #e8a33d;
+  --ie-status-height: 22px;
+  --ie-status-bg: linear-gradient(#f6f8fa, #dde6ef);
+  --ie-status-text: #3b4b5c;
+  --ie-status-font-size: 11px;
+  --ie-status-divider: 1px solid rgba(150, 168, 190, 0.6);
 }
 
 /* =====================================================================

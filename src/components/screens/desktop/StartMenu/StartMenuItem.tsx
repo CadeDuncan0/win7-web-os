@@ -1,6 +1,7 @@
 'use client'
 
 import styles from './StartMenuItem.module.css'
+import { withBasePath } from '@/lib/assetPaths'
 
 /** Single shortcut row used in both Start Menu columns.
  *  Follows WAI-ARIA menuitem pattern: focus is managed by the parent
@@ -30,7 +31,7 @@ export function StartMenuItem({ label, onClick, iconSrc = '' }: StartMenuItemPro
         // eslint-disable-next-line @next/next/no-img-element
         <img
           className={styles.itemIcon}
-          src={iconSrc}
+          src={withBasePath(iconSrc)}
           alt="" // Decorative — accessible name comes from the menuitem's label text
           width={24}
           height={24}

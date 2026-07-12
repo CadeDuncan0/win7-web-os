@@ -73,3 +73,14 @@ export function cssAssetVars(): Record<string, string> {
     '--tb-orb-img': `url('${BASE_PATH}${assetPaths.taskbar.startOrb}')`,
   }
 }
+
+/**
+ * Prefixes a root-absolute `public/` path with the configured BASE_PATH.
+ * Required for plain <img>/<iframe> srcs, anchor hrefs, and fetch() URLs —
+ * unlike router navigations and next/image, raw element URLs are not
+ * basePath-aware and would resolve against the domain root under a subpath
+ * mount.
+ */
+export function withBasePath(path: string): string {
+  return `${BASE_PATH}${path}`
+}
