@@ -50,7 +50,8 @@ export interface WindowState {
   // back on change by useDesktopPersistence.
   sizeByKind: Partial<Record<WindowKind, { width: number; height: number }>>
   // Last committed position per window kind — a reopened window of that kind
-  // restores it. Slice memory only (not persisted across reloads).
+  // restores it. Hydrated from sessionStorage at desktop boot and written
+  // back on change by useDesktopPersistence.
   positionByKind: Partial<Record<WindowKind, { x: number; y: number }>>
 }
 
@@ -289,6 +290,16 @@ const windowSlice = createSlice({
     ) {
       state.sizeByKind = action.payload
     },
+
+    // ── hydrateWindowPositions ────────────────────────────────────────────
+    // Payload: the persisted per-kind position map. Dispatched once at desktop
+    // boot (useDesktopPersistence) before any window opens.
+    hydrateWindowPositions(
+      state,
+      action: PayloadAction<Partial<Record<WindowKind, { x: number; y: number }>>>
+    ) {
+      state.positionByKind = action.payload
+    },
   },
 })
 
@@ -305,6 +316,14 @@ export const selectWindowSizes = (
   state: RootState
 ): Partial<Record<WindowKind, { width: number; height: number }>> => {
   return state.window.sizeByKind
+}
+
+// Category 2 — returns the stored reference; consumed by useDesktopPersistence
+// to change-detect (by identity) and write the map through to sessionStorage.
+export const selectWindowPositions = (
+  state: RootState
+): Partial<Record<WindowKind, { x: number; y: number }>> => {
+  return state.window.positionByKind
 }
 
 // Category 2 — O(1) lookup. Returns a stored reference; no new allocation.
@@ -364,5 +383,6 @@ export const {
   moveWindow,
   resizeWindow,
   hydrateWindowSizes,
+  hydrateWindowPositions,
 } = windowSlice.actions
 export default windowSlice.reducer
