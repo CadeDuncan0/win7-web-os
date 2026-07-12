@@ -4,7 +4,7 @@ import { useId, useRef, useState } from 'react'
 
 import { filterPages, IE_PAGES, inputToRoute, pageUrl, resolvePage } from './ieRoutes'
 import styles from './IEToolbar.module.css'
-import { assetPaths } from '@/lib/assetPaths'
+import { assetPaths, withBasePath } from '@/lib/assetPaths'
 
 interface IEAddressBarProps {
   /** Nickname of the current page (history-stack value). */
@@ -109,7 +109,7 @@ export function IEAddressBar({ currentUrl, onOpentab, onNavigate, onRefresh }: I
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className={styles.favicon}
-        src={assetPaths.desktopIcons.internetExplorer}
+        src={withBasePath(assetPaths.desktopIcons.internetExplorer)}
         alt=""
         aria-hidden="true"
       />

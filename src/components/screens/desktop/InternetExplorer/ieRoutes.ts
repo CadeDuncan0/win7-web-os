@@ -43,6 +43,10 @@ export const IE_PAGES: IEPage[] = [
   },
 ]
 
+/** Top-level pages only — nested nicknames (subpages, e.g. `about:projects/…`)
+ *  stay out of the page-links row and the Home tiles. */
+export const IE_TOP_PAGES: IEPage[] = IE_PAGES.filter((page) => !page.nickname.includes('/'))
+
 /** The page IE opens on by default (its nickname). */
 export const DEFAULT_ROUTE = IE_PAGES[0].nickname
 

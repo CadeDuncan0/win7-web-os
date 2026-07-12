@@ -7,7 +7,7 @@ import { IEToolbar } from './IEToolbar'
 import styles from './InternetExplorerWindow.module.css'
 import { GettingStartedPage, HomePage, RedirectPage } from './pages'
 import { useIENavigation } from './useIENavigation'
-import { assetPaths } from '@/lib/assetPaths'
+import { assetPaths, withBasePath } from '@/lib/assetPaths'
 
 export interface InternetExplorerWindowProps {
   /** Redux window id — wires the OS chrome (geometry, focus, controls). */
@@ -60,20 +60,44 @@ export function InternetExplorerWindow({ windowId, initialRoute }: InternetExplo
     // eslint-disable-next-line @next/next/no-img-element
     <img
       className={styles.titleBarIcon}
-      src={assetPaths.desktopIcons.internetExplorer}
+      src={withBasePath(assetPaths.desktopIcons.internetExplorer)}
       alt=""
       aria-hidden="true"
     />
   )
 
+  const currentPage = resolvePage(nav.currentUrl)
+
   return (
     <WindowWrapper windowId={windowId} icon={icon} toolbar={toolbar} bodySpace={false}>
       <div className={styles.ieBody}>
+        {/* IE7-style single-tab strip. Decorative chrome (hence aria-hidden):
+            the star and new-tab stub don't act; the tab mirrors the page the
+            window is already on. */}
+        <div className={styles.tabStrip} aria-hidden="true">
+          <span className={styles.favStar}>★</span>
+          <div className={styles.tab}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className={styles.tabFavicon}
+              src={withBasePath(assetPaths.desktopIcons.internetExplorer)}
+              alt=""
+            />
+            <span className={styles.tabTitle}>{currentPage?.title ?? nav.currentUrl}</span>
+          </div>
+          <div className={styles.tabStub} />
+        </div>
         <IEPageLinks onNavigate={nav.navigate} onOpentab={handleOpentab} />
         {/* reloadKey changes on navigation and refresh, remounting the page so a
             refresh re-runs it without adding a history entry. */}
         <div key={nav.reloadKey} className={styles.content}>
           {renderContent()}
+        </div>
+        {/* IE7 status bar — Done · security zone · zoom, all static chrome. */}
+        <div className={styles.statusBar} aria-hidden="true">
+          <span className={styles.statusDone}>Done</span>
+          <span className={styles.statusSegment}>Internet | Protected Mode: Off</span>
+          <span className={styles.statusSegment}>100%</span>
         </div>
       </div>
     </WindowWrapper>

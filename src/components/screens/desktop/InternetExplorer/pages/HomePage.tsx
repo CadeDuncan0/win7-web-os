@@ -1,6 +1,6 @@
 'use client'
 
-import { DEFAULT_ROUTE, IE_PAGES } from '../ieRoutes'
+import { DEFAULT_ROUTE, IE_TOP_PAGES } from '../ieRoutes'
 
 import styles from './HomePage.module.css'
 
@@ -11,7 +11,7 @@ interface HomePageProps {
   onOpentab: (nickname: string) => void
 }
 
-const pageLinks = IE_PAGES.filter((page) => page.nickname !== DEFAULT_ROUTE)
+const pageLinks = IE_TOP_PAGES.filter((page) => page.nickname !== DEFAULT_ROUTE)
 
 export function HomePage({ onNavigate, onOpentab }: HomePageProps) {
   return (

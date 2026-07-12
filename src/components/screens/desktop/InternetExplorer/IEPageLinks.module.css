@@ -1,11 +1,13 @@
 /* Blue underlined page links pinned to the top-left of the IE content area,
-   replacing the former favorites bar. Sits on the white content background. */
+   replacing the former favorites bar. Sits on the IE7 chrome band so it reads
+   as the browser's Links bar rather than page content. */
 .pageLinks {
   display: flex;
   align-items: center;
   gap: var(--ie-pagelinks-gap);
   padding: var(--ie-pagelinks-padding);
-  background: var(--ie-content-bg);
+  background: var(--ie-chrome-band-bg);
+  border-bottom: var(--ie-chrome-band-border);
   flex-shrink: 0;
 }
 

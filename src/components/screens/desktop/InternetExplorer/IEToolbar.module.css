@@ -82,7 +82,7 @@
   align-items: center;
   justify-content: center;
   border: none;
-  border-left: 2px solid var(--ie-action-divider-color);
+  border-left: 1px solid var(--ie-action-divider-color);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
