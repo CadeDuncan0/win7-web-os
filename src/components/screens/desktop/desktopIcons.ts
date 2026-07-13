@@ -16,6 +16,10 @@ export interface DesktopIconDefinition {
   hideForAdmin?: boolean
   /** Hide this icon from guest sessions (guests cannot see or open it). */
   hideForGuest?: boolean
+  /** When true, the icon is retired for everyone: it claims no grid cell and
+   *  cannot launch its window. Independent of the site-wide window kill switch
+   *  in disabledWindows — this drops just this launcher. */
+  disabled?: boolean
 }
 
 const FOLDER_ICON = assetPaths.desktopIcons.folderWithDocuments

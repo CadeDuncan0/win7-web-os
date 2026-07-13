@@ -31,7 +31,7 @@ export function DesktopScreen({ isAdmin = false }: DesktopScreenProps) {
   // IconGrid's registration effect.
   const visibleIcons = useMemo(() => {
     const availableIcons = DESKTOP_ICONS.filter(
-      (icon) => !isWindowDisabled(icon.windowKey, isAdmin)
+      (icon) => !icon.disabled && !isWindowDisabled(icon.windowKey, isAdmin)
     )
     return isAdmin
       ? availableIcons.filter((icon) => !icon.hideForAdmin)

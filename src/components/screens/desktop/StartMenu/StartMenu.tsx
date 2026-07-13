@@ -30,10 +30,13 @@ export interface StartMenuProps {
   avatarSrc?: string // Optional override (stories); defaults to the session avatar
 }
 
-/** A shortcut is dropped when its window is turned off site-wide, or (for guests)
- *  when it is flagged hideForGuest. Non-window actions carry no key to disable. */
+/** A shortcut is dropped when it is retired outright (disabled), when its window
+ *  is turned off site-wide, or (for guests) when it is flagged hideForGuest. The
+ *  disabled flag covers non-window actions too — e.g. external links, which carry
+ *  no key for the window gate. */
 function isShortcutDisabled(s: StartMenuShortcut, isAdmin: boolean): boolean {
   return (
+    Boolean(s.disabled) ||
     (isAdmin && Boolean(s.hideForAdmin)) ||
     (!isAdmin && Boolean(s.hideForGuest)) ||
     (s.action.type === 'openWindow' && isWindowDisabled(s.action.windowKey, isAdmin))

@@ -13,6 +13,11 @@ export interface StartMenuShortcut {
   iconSrc?: string
   hideForAdmin?: boolean
   hideForGuest?: boolean
+  /** When true, the shortcut is dropped from the menu for everyone (both
+   *  columns) and its action can never fire. The one switch to retire an entry
+   *  — including an external link whose window.open would otherwise bypass the
+   *  window gate entirely. */
+  disabled?: boolean
   action:
     | {
         type: 'openWindow'
@@ -30,12 +35,15 @@ export interface StartMenuShortcut {
 export interface StartMenuTab {
   title: string
   url: string /* Destination opened directly in a new browser tab. */
+  disabled?: boolean /* When true, the link is retired (see StartMenuShortcut.disabled). */
 }
 
 const FOLDER_ICON = assetPaths.desktopIcons.windowsExplorer
 
 const RIGHT_COLUMN_TABS = [
-  { title: 'Source Code', url: 'https://github.com/CadeDuncan0/win7-web-os' },
+  // External link retired site-wide: it leaves the sandbox via window.open, so
+  // it is disabled here rather than gated. Flip to false to restore it.
+  { title: 'Source Code', url: 'https://github.com/CadeDuncan0/win7-web-os', disabled: true },
 ] as StartMenuTab[]
 
 export const LEFT_COLUMN_SHORTCUTS: StartMenuShortcut[] = [
@@ -79,5 +87,6 @@ export const LEFT_COLUMN_SHORTCUTS: StartMenuShortcut[] = [
 export const RIGHT_COLUMN_SHORTCUTS: StartMenuShortcut[] = RIGHT_COLUMN_TABS.map((link) => ({
   id: `sm-${link.title.toLowerCase().replace(/\s+/g, '-')}`,
   label: link.title,
+  disabled: link.disabled,
   action: { type: 'openLink', url: link.url },
 }))

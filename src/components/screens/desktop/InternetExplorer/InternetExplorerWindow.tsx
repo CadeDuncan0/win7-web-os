@@ -2,7 +2,7 @@
 
 import { WindowWrapper } from '../WindowWrapper'
 import { IEPageLinks } from './IEPageLinks'
-import { DEFAULT_ROUTE, pageUrl, resolvePage } from './ieRoutes'
+import { DEFAULT_ROUTE, resolvePage } from './ieRoutes'
 import { IEToolbar } from './IEToolbar'
 import styles from './InternetExplorerWindow.module.css'
 import { GettingStartedPage, HomePage, RedirectPage } from './pages'
@@ -23,9 +23,16 @@ export function InternetExplorerWindow({ windowId, initialRoute }: InternetExplo
   // the in-app redirect page. window.open stays in this click-path handler (not
   // the page component) so revisiting via back/forward or refresh never
   // re-opens the tab unprompted — the page's manual link covers those cases.
+  // Resolve through the enabled registry first: a disabled (or unknown, or
+  // non-redirect) nickname resolves to nothing here, so it can never leave the
+  // sandbox — this is the gate that a filtered-out link cannot bypass.
   function handleOpentab(nickname: string) {
+    const page = resolvePage(nickname)
+    if (!page?.redirect) {
+      return
+    }
     nav.opentab(nickname)
-    window.open(pageUrl(nickname), '_blank', 'noopener')
+    window.open(page.url, '_blank', 'noopener')
   }
 
   function renderContent() {

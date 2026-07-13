@@ -23,6 +23,11 @@ export interface IEPage {
   /** When true, selecting this entry opens `url` in a new browser tab and IE
    *  shows the redirect page instead of rendering in-app content. */
   redirect?: boolean
+  /** When true, the route is retired: it is dropped from every launcher (the
+   *  page-links row, the Home tiles, the address-bar list) and cannot be
+   *  resolved or rendered — typing its nickname yields the not-found page.
+   *  The one switch to turn a page (or an external redirect) off everywhere. */
+  disabled?: boolean
 }
 
 const SITE = 'www.win7webos.com'
@@ -34,6 +39,9 @@ export const IE_PAGES: IEPage[] = [
     url: `https://github.com/CadeDuncan0/win7-web-os`,
     title: 'Source Code',
     redirect: true,
+    // External link retired site-wide: it leaves the sandbox via window.open,
+    // so it is disabled here rather than gated. Flip to false to restore it.
+    disabled: true,
   },
   {
     nickname: 'about:getting-started',
@@ -43,15 +51,22 @@ export const IE_PAGES: IEPage[] = [
   },
 ]
 
-/** Top-level pages only — nested nicknames (subpages, e.g. `about:projects/…`)
- *  stay out of the page-links row and the Home tiles. */
-export const IE_TOP_PAGES: IEPage[] = IE_PAGES.filter((page) => !page.nickname.includes('/'))
+/** Pages a user can actually reach — disabled routes are filtered out once here
+ *  so every downstream lookup (resolver, links, tiles, address bar) excludes
+ *  them and a disabled route can never be navigated to or rendered. */
+export const IE_ENABLED_PAGES: IEPage[] = IE_PAGES.filter((page) => !page.disabled)
+
+/** Top-level enabled pages only — nested nicknames (subpages, e.g.
+ *  `about:projects/…`) stay out of the page-links row and the Home tiles. */
+export const IE_TOP_PAGES: IEPage[] = IE_ENABLED_PAGES.filter(
+  (page) => !page.nickname.includes('/')
+)
 
 /** The page IE opens on by default (its nickname). */
-export const DEFAULT_ROUTE = IE_PAGES[0].nickname
+export const DEFAULT_ROUTE = IE_ENABLED_PAGES[0].nickname
 
 const PAGES_BY_NICKNAME: Record<string, IEPage> = Object.fromEntries(
-  IE_PAGES.map((page) => [page.nickname, page])
+  IE_ENABLED_PAGES.map((page) => [page.nickname, page])
 )
 
 /** Resolve a nickname (history-stack value) to its page, if any. */
@@ -70,7 +85,7 @@ export function pageUrl(nickname: string): string {
  * the default page.
  */
 export function titleToRoute(title: string): string {
-  const match = IE_PAGES.find((page) => page.title === title)
+  const match = IE_ENABLED_PAGES.find((page) => page.title === title)
   return match?.nickname ?? DEFAULT_ROUTE
 }
 
@@ -81,9 +96,9 @@ export function titleToRoute(title: string): string {
 export function filterPages(query: string): IEPage[] {
   const q = query.trim().toLowerCase()
   if (!q) {
-    return IE_PAGES
+    return IE_ENABLED_PAGES
   }
-  return IE_PAGES.filter(
+  return IE_ENABLED_PAGES.filter(
     (page) =>
       page.title.toLowerCase().includes(q) ||
       page.url.toLowerCase().includes(q) ||
@@ -106,7 +121,7 @@ export function inputToRoute(input: string): string | undefined {
     return raw
   }
   const lower = raw.toLowerCase()
-  const exact = IE_PAGES.find(
+  const exact = IE_ENABLED_PAGES.find(
     (page) => page.url.toLowerCase() === lower || page.title.toLowerCase() === lower
   )
   if (exact) {
