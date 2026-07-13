@@ -1,0 +1,175 @@
+/* Shared IE7-era "portal" chrome for the default IE pages (Home, Getting
+   Started, and the error/redirect states). All colours and measures come from
+   the `--ie-*` tokens in globals.css; this file only composes them into the
+   layout. The shell is a query container so the sidebar re-flows against the IE
+   *window* width (which resizes independently of the viewport). */
+.pageShell {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ie-columns-gap);
+  min-height: 100%;
+  padding: var(--ie-page-padding);
+  background: var(--ie-page-bg);
+}
+
+/* Glossy blue banner at the top of every portal page. */
+.headerBand {
+  padding: var(--ie-band-padding);
+  background: var(--ie-band-bg);
+  border: var(--ie-band-border);
+  border-radius: var(--ie-band-radius);
+  box-shadow: var(--ie-band-shadow);
+}
+
+.bandTitle {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 17pt;
+  line-height: 1.1;
+  color: var(--ie-band-title-color);
+  text-shadow: var(--ie-band-title-shadow);
+}
+
+.bandTagline {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--ie-band-tagline-color);
+  text-shadow: var(--ie-band-title-shadow);
+}
+
+/* Sidebar + main. Single column by default (narrow window); two columns with a
+   left sidebar once the shell is wide enough. */
+.columns {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ie-columns-gap);
+}
+
+.main {
+  min-width: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ie-columns-gap);
+}
+
+@container (min-width: 480px) {
+  .columns {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .main {
+    flex: 1;
+  }
+  .sidebar {
+    /* order:-1 puts the rail on the LEFT when side-by-side, while keeping the
+       main column first in the source so it stacks ON TOP when single-column. */
+    order: -1;
+    flex: 0 0 var(--ie-sidebar-width);
+  }
+}
+
+/* Boxed content module — a titled header strip over a white body. */
+.module {
+  overflow: hidden;
+  background: var(--ie-module-bg);
+  border: var(--ie-module-border);
+  border-radius: var(--ie-module-radius);
+  box-shadow: var(--ie-module-shadow);
+}
+
+.moduleHeader {
+  padding: 7px 14px;
+  background: var(--ie-module-header-bg);
+  border-bottom: var(--ie-module-header-border);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--ie-module-header-color);
+}
+
+.moduleBody {
+  padding: var(--ie-module-padding);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ie-module-body-color);
+}
+
+/* Titled side-rail box. */
+.sideBox {
+  overflow: hidden;
+  background: var(--ie-sidebox-bg);
+  border: var(--ie-sidebox-border);
+  border-radius: var(--ie-sidebox-radius);
+  box-shadow: var(--ie-sidebox-shadow);
+}
+
+.sideBoxTitle {
+  padding: 5px 10px;
+  background: var(--ie-sidebox-title-bg);
+  border-bottom: var(--ie-sidebox-title-border);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--ie-sidebox-title-color);
+}
+
+.sideList {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+}
+
+.sideList li + li .sideLink {
+  border-top: var(--ie-sidebox-link-divider);
+}
+
+/* In-app routing links styled as classic hyperlinks — reset 7.css button
+   chrome down to plain text (the targets are in-app routes, not real URLs). */
+.sideLink {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  font-size: 11px;
+  text-align: left;
+  text-decoration: underline;
+  color: var(--ie-sidebox-link-color);
+  cursor: pointer;
+}
+
+.sideLink::before,
+.sideLink::after {
+  display: none;
+}
+
+.sideLink:hover {
+  color: var(--ie-sidebox-link-hover-color);
+}
+
+.sideText {
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ie-sidebox-text-color);
+}
+
+/* Glossy call-out pill, used sparingly (e.g. a "New" flag on the band). */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  vertical-align: middle;
+  background: var(--ie-badge-bg);
+  border: var(--ie-badge-border);
+  border-radius: var(--ie-badge-radius);
+  font-size: 10px;
+  font-weight: bold;
+  color: var(--ie-badge-color);
+  text-shadow: none;
+}

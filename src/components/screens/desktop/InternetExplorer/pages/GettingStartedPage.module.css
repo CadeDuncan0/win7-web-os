@@ -1,36 +1,15 @@
-.gettingStartedPage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px 20px;
-  background: var(--ie-content-bg);
-  min-height: 100%;
+/* Getting-Started specifics only — the shell, header band, columns, sidebar and
+   content module come from IEPortal.module.css. Colours/measures are `--ie-*`
+   tokens from globals.css. */
+.para {
+  margin: 0 0 10px;
 }
 
-.heading {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 16pt;
-  color: var(--ie-favbar-link-color);
-  margin-bottom: 16px;
-}
-
-.card {
-  width: 100%;
-  max-width: 600px;
-  padding: 16px 20px;
-  background: var(--ie-external-card-bg);
-  border: var(--ie-external-card-border);
-  border-radius: var(--ie-external-card-radius);
-  color: var(--ie-address-text);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.card p {
-  margin-bottom: 8px;
+.para:last-child {
+  margin-bottom: 0;
 }
 
 .path {
   font-family: Consolas, monospace;
-  color: var(--ie-favbar-link-color);
+  color: var(--ie-module-header-color);
 }

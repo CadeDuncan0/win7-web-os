@@ -13,11 +13,6 @@
   background: var(--ie-content-bg);
 }
 
-.notFound {
-  padding: var(--space-4);
-  color: var(--ie-address-text);
-}
-
 /* App logo in the window title bar — sized to match the taskbar window-stack
    popup icon, per the design reference. */
 .titleBarIcon {

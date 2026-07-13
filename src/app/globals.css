@@ -458,6 +458,61 @@
   --ie-status-text: #3b4b5c;
   --ie-status-font-size: 11px;
   --ie-status-divider: 1px solid rgba(150, 168, 190, 0.6);
+
+  /* IE7 retro page body — the in-page "portal" look for the default IE pages.
+     A restrained mid-2000s Web 2.0 vocabulary (glossy gradient bands, boxed
+     modules, glass tiles, a boxed side rail) layered over the content area so
+     the pages read as a period web page rather than a blank document. Kept
+     subtle on purpose — over-glossy reads cartoonish. */
+  --ie-page-bg: linear-gradient(180deg, #eef4fb 0%, #dfe9f4 100%);
+  --ie-page-padding: 16px;
+  --ie-columns-gap: 14px;
+  /* Glossy blue header band — evokes the "Welcome to Internet Explorer" tour
+     banner. The stop break at ~50% is the classic glass reflection line. */
+  --ie-band-bg: linear-gradient(180deg, #6fb1e2 0%, #3f8ac6 49%, #2f76b3 51%, #27689e 100%);
+  --ie-band-border: 1px solid rgba(28, 72, 112, 0.65);
+  --ie-band-radius: 5px;
+  --ie-band-padding: 14px 18px;
+  --ie-band-shadow: 0 1px 3px rgba(20, 50, 80, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  --ie-band-title-color: #ffffff;
+  --ie-band-title-shadow: 0 1px 1px rgba(0, 28, 56, 0.6);
+  --ie-band-tagline-color: rgba(255, 255, 255, 0.92);
+  /* Boxed content module — white body under a titled header strip. */
+  --ie-module-bg: #ffffff;
+  --ie-module-border: 1px solid rgba(150, 172, 196, 0.7);
+  --ie-module-radius: 5px;
+  --ie-module-shadow: 0 1px 3px rgba(40, 70, 100, 0.12);
+  --ie-module-header-bg: linear-gradient(#f4f9fd, #e2edf8);
+  --ie-module-header-border: 1px solid rgba(160, 182, 205, 0.7);
+  --ie-module-header-color: #17456f;
+  --ie-module-body-color: #333333;
+  --ie-module-padding: 14px 16px;
+  /* Boxed side rail with per-group titled boxes. */
+  --ie-sidebar-width: 176px;
+  --ie-sidebox-bg: linear-gradient(#ffffff, #f3f8fc);
+  --ie-sidebox-border: 1px solid rgba(150, 172, 196, 0.65);
+  --ie-sidebox-radius: 5px;
+  --ie-sidebox-shadow: 0 1px 2px rgba(40, 70, 100, 0.1);
+  --ie-sidebox-title-bg: linear-gradient(#eaf3fb, #d3e3f3);
+  --ie-sidebox-title-border: 1px solid rgba(160, 182, 205, 0.7);
+  --ie-sidebox-title-color: #17456f;
+  --ie-sidebox-link-color: #0066cc;
+  --ie-sidebox-link-hover-color: #003d99;
+  --ie-sidebox-link-divider: 1px solid rgba(200, 214, 230, 0.8);
+  --ie-sidebox-text-color: #4a5b6c;
+  /* Glossy "Web 2.0" feature tiles (Home page). */
+  --ie-tile-bg: linear-gradient(#ffffff, #e9f2fb);
+  --ie-tile-bg-hover: linear-gradient(#f2f8ff, #d7e8fa);
+  --ie-tile-border: 1px solid rgba(140, 165, 195, 0.75);
+  --ie-tile-radius: 5px;
+  --ie-tile-shadow: 0 1px 2px rgba(40, 70, 100, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --ie-tile-title-color: #17456f;
+  --ie-tile-desc-color: #5a6b7c;
+  /* Glossy call-out badge ("New" / "Tip") — used sparingly. */
+  --ie-badge-bg: linear-gradient(#ffe07a, #f2a733);
+  --ie-badge-border: 1px solid rgba(198, 138, 22, 0.85);
+  --ie-badge-color: #6b4300;
+  --ie-badge-radius: 9px;
 }
 
 /* =====================================================================

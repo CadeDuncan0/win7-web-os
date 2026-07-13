@@ -1,34 +1,46 @@
+/* Redirect state — a centered boxed module on the portal page background so it
+   matches the other IE pages instead of sitting on bare white. Colours/measures
+   are `--ie-*` tokens from globals.css. */
 .redirectPage {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 24px 20px;
-  background: var(--ie-content-bg);
+  gap: 10px;
   min-height: 100%;
+  padding: 24px 20px;
+  background: var(--ie-page-bg);
   text-align: center;
 }
 
 .redirectMessage {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+  padding: 16px 20px;
+  background: var(--ie-module-bg);
+  border: var(--ie-module-border);
+  border-radius: var(--ie-module-radius);
+  box-shadow: var(--ie-module-shadow);
 }
 
 .message {
-  color: var(--ie-address-text);
-  font-size: 14px;
+  color: var(--ie-module-body-color);
+  font-size: 13px;
   line-height: 1.5;
 }
 
 .fallback {
-  color: var(--ie-address-text);
+  color: var(--ie-module-body-color);
   font-size: 11px;
   line-height: 1.5;
 }
 
 .link {
-  color: var(--ie-favbar-link-color);
+  color: var(--ie-sidebox-link-color);
   text-decoration: underline;
+}
+
+.link:hover {
+  color: var(--ie-sidebox-link-hover-color);
 }
