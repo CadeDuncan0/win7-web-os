@@ -36,6 +36,11 @@ export const assetPaths = {
   taskbar: {
     startOrb: `${ASSETS}/desktop-icons/taskbar-startmenu.png`,
   },
+  /** Authentic Win7 system glyphs (extracted imageres icons). */
+  systemIcons: {
+    info: `${ASSETS}/desktop-icons/original-win7-icons/81.ico`,
+    windowsFlag: `${ASSETS}/desktop-icons/original-win7-icons/24.ico`,
+  },
   /** Directory of authentic Win7 user-tile avatars (see lib/userIcons.ts). */
   accountIcons: {
     dir: `${ASSETS}/account-icons`,

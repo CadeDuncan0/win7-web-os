@@ -383,6 +383,19 @@
   --tb-orb-glow: brightness(1.15) saturate(1.4) drop-shadow(0 0 6px rgba(140, 215, 255, 0.95));
   --tb-z: var(--dsk-z-taskbar);
 
+  /* ─── SEMANTIC: Tray notifications ────────────────────────────── */
+  /* Persistent notification icons beside the clock + their balloon. */
+  --ntf-icon-size: 16px;
+  --ntf-icon-button-size: 24px;
+  --ntf-icon-radius: 3px;
+  --ntf-icon-bg-active: var(--tb-item-bg-active);
+  /* Win7 balloon headers: a glyph beside a title in the deep balloon blue. */
+  --ntf-header-icon-size: 16px;
+  --ntf-title-c: #00339a;
+
+  --ntf-balloon-width: 350px;
+  --ntf-balloon-height: 95px;
+
   /* ─── SEMANTIC: Internet Explorer chrome ──────────────────────── */
   /* The toolbar sits inside the glass title bar (transparent background). No
      horizontal padding so it spans the same width as the window body; 8px above

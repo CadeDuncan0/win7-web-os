@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 
 import desktopReducer from './slices/desktopSlice'
+import notificationReducer from './slices/notificationSlice'
 import sessionReducer from './slices/sessionSlice'
 import windowReducer from './slices/windowSlice'
 
@@ -8,6 +9,7 @@ const rootReducer = combineReducers({
   window: windowReducer,
   session: sessionReducer,
   desktop: desktopReducer,
+  notification: notificationReducer,
 })
 
 // Store factory — the ONLY way a store comes into existence. There is no

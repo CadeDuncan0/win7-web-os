@@ -1,0 +1,118 @@
+/* Balloon chrome (surface, border, shadow, tail) comes from 7.css's
+   [role=tooltip] rules — this module renders the persistent tray icons beside
+   the clock, anchors the balloon above the tray, and styles the parts 7.css
+   leaves out (header, close ✕, action link). */
+
+.tray {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+/* Persistent notification icon — bare glyph at rest; only the open balloon's
+   icon carries a frame (hovering is not highlighted, matching the app buttons). */
+.trayIcon {
+  all: unset;
+  box-sizing: border-box;
+  width: var(--ntf-icon-button-size);
+  height: var(--ntf-icon-button-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ntf-icon-radius);
+}
+
+.trayIcon.open {
+  background: var(--ntf-icon-bg-active);
+}
+
+.trayIcon:focus-visible {
+  box-shadow: var(--tb-item-selector-hover);
+}
+
+.trayIconImage {
+  width: var(--ntf-icon-size);
+  height: var(--ntf-icon-size);
+}
+
+/* Wraps a single tray icon so its balloon can anchor directly above it. */
+.iconWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Balloon sits above this icon; the 18px tail (--w7-blt-size) hangs from the
+   body's bottom back down onto the icon. Right-aligned so it grows leftward
+   into the desktop (the tray hugs the screen's right edge). */
+.balloonAnchor {
+  position: absolute;
+  bottom: calc(120%);
+  right: 0;
+}
+
+.balloon {
+  width: var(--ntf-balloon-width);
+  height: var(--ntf-balloon-height);
+}
+
+/* ─── Balloon header: glyph + blue title, per the Win7 reference ── */
+
+.header {
+  display: flex;
+  align-items: center;
+  font-size: 1.15em;
+  gap: var(--space-1);
+  /* Keep clear of the absolutely-positioned close button. */
+  padding-right: var(--space-4);
+}
+
+.headerIcon {
+  width: var(--ntf-header-icon-size);
+  height: var(--ntf-header-icon-size);
+  flex-shrink: 0;
+  margin-left: -1.5em;
+}
+
+.title {
+  font-weight: bold;
+  color: var(--ntf-title-c);
+}
+
+.message {
+  margin: 0;
+}
+
+.close {
+  all: unset;
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-3);
+  padding: 0 var(--space-1);
+  cursor: pointer;
+  font-size: 0.7rem;
+  color: var(--w7-el-c-d);
+  border-radius: var(--w7-el-bdr);
+}
+
+.close:hover {
+  color: var(--w7-el-c);
+}
+
+.link {
+  all: unset;
+  display: inline-block;
+  margin-top: var(--space-1);
+  cursor: pointer;
+  color: var(--w7-link-c);
+}
+
+.link:hover {
+  color: var(--w7-link-c-h);
+  text-decoration: underline;
+}
+
+.link:focus-visible {
+  outline: 1px dotted var(--w7-el-c);
+}
