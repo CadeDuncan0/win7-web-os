@@ -1,7 +1,10 @@
 'use client'
 
-import { taskbarAppMeta } from './taskbarApps'
+import { useState } from 'react'
+
 import styles from './TaskbarIcon.module.css'
+import { ContextMenu } from '@/components/shell/ContextMenu'
+import { taskbarAppMeta } from '@/config/applications'
 import { withBasePath } from '@/lib/assetPaths'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
@@ -23,6 +26,7 @@ export interface TaskbarIconProps {
 export function TaskbarIcon({ kind, windows }: TaskbarIconProps) {
   const dispatch = useAppDispatch()
   const topWindowId = useAppSelector(selectTopWindowId)
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
 
   const { icon, label } = taskbarAppMeta(kind)
 
@@ -60,6 +64,10 @@ export function TaskbarIcon({ kind, windows }: TaskbarIconProps) {
       <button
         className={buttonClass}
         onClick={handleMainClick}
+        onContextMenu={(e) => {
+          e.preventDefault()
+          setContextMenu({ x: e.clientX, y: e.clientY })
+        }}
         aria-label={label}
         aria-pressed={isActive}
         title={label}
@@ -106,6 +114,26 @@ export function TaskbarIcon({ kind, windows }: TaskbarIconProps) {
           </li>
         ))}
       </ul>
+
+      {contextMenu && (
+        <ContextMenu
+          items={[
+            {
+              // Acts on the group's representative window (most recently focused).
+              label: 'Close window',
+              onSelect: () => dispatch(closeWindow({ id: topInGroup.id })),
+            },
+            {
+              label: 'Close all windows',
+              disabled: isSingle,
+              onSelect: () => windows.forEach((win) => dispatch(closeWindow({ id: win.id }))),
+            },
+          ]}
+          position={contextMenu}
+          onClose={() => setContextMenu(null)}
+          ariaLabel={`${label} context menu`}
+        />
+      )}
     </div>
   )
 }

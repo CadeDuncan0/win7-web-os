@@ -57,6 +57,9 @@ export function DesktopIcon({ id, label, iconSrc, onOpen }: DesktopIconProps) {
       ref={setNodeRef}
       className={clsx(styles.icon, isSelected && styles.selected)}
       style={style}
+      // Lets the desktop surface's context-menu handler resolve which icon
+      // (if any) a right-click landed on.
+      data-icon-id={id}
       onClick={() => dispatch(setSelectedIcon({ id }))}
       onDoubleClick={onOpen}
       aria-label={label}

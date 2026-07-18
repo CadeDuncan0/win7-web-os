@@ -1,17 +1,24 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
-import { Desktop } from '@/components/screens/desktop/Desktop'
-import { DESKTOP_ICONS } from '@/components/screens/desktop/desktopIcons'
-import { isWindowDisabled } from '@/components/screens/desktop/disabledWindows'
-import { IconGrid } from '@/components/screens/desktop/IconGrid'
-import { Taskbar } from '@/components/screens/desktop/Taskbar'
-import { WindowManager } from '@/components/screens/desktop/WindowManager'
+import { ContextMenu, type ContextMenuItem } from '@/components/shell/ContextMenu'
+import { Desktop } from '@/components/shell/Desktop'
+import { IconGrid } from '@/components/shell/IconGrid'
+import { Taskbar } from '@/components/shell/Taskbar'
+import { WindowManager } from '@/components/shell/WindowManager'
+import { desktopIconApps, desktopIconId } from '@/config/applications'
 import { useDesktopPersistence } from '@/hooks/useDesktopPersistence'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import {
+  arrangeIcons,
+  resetGuestPositions,
+  selectHiddenIconIds,
+  setIconHidden,
+} from '@/store/slices/desktopSlice'
 
 export interface DesktopScreenProps {
-  /** Server-derived admin flag — passed by the page so icons flagged
+  /** Server-derived admin flag — passed by the page so apps flagged
    *  hideForAdmin are filtered before first render (no flash, and the hidden
    *  icons never register grid cells). Guest is the complement: !isAdmin. */
   isAdmin?: boolean
@@ -22,25 +29,90 @@ export interface DesktopScreenProps {
  * a valid session cookie (src/app/page.tsx).
  */
 export function DesktopScreen({ isAdmin = false }: DesktopScreenProps) {
-  useDesktopPersistence()
+  useDesktopPersistence(isAdmin)
+  const dispatch = useAppDispatch()
+  const hiddenIconIds = useAppSelector(selectHiddenIconIds)
+  const [desktopMenu, setDesktopMenu] = useState<{
+    x: number
+    y: number
+    iconId?: string
+  } | null>(null)
 
-  // Windows turned off site-wide never register a grid cell, in any session;
-  // the role then drops its own hidden icons. Guest is the complement of admin
-  // (assume guest whenever !isAdmin), so it needs no separate flag. Memoized so
+  // Applications hidden from this role never register a grid cell. Memoized so
   // the array identity is stable across re-renders — it is a dependency of
   // IconGrid's registration effect.
-  const visibleIcons = useMemo(() => {
-    const availableIcons = DESKTOP_ICONS.filter(
-      (icon) => !icon.disabled && !isWindowDisabled(icon.windowKey, isAdmin)
-    )
-    return isAdmin
-      ? availableIcons.filter((icon) => !icon.hideForAdmin)
-      : availableIcons.filter((icon) => !icon.hideForGuest)
-  }, [isAdmin])
+  const iconApps = useMemo(() => desktopIconApps(isAdmin), [isAdmin])
+
+  // User-hidden icons stay registered (their cells survive for re-showing) but
+  // don't render.
+  const visibleApps = useMemo(
+    () => iconApps.filter((app) => !hiddenIconIds.includes(desktopIconId(app.key))),
+    [iconApps, hiddenIconIds]
+  )
+
+  // Icon-specific action, present only when the right-click landed on one.
+  const menuIconId = desktopMenu?.iconId
+  const desktopMenuItems: ContextMenuItem[] = [
+    ...(menuIconId
+      ? [
+          {
+            label: 'Hide icon',
+            onSelect: () => dispatch(setIconHidden({ id: menuIconId, hidden: true })),
+          },
+        ]
+      : []),
+    {
+      label: 'Show icons',
+      // Every enabled desktop icon, checked when currently shown; clicking
+      // toggles its user-hidden state.
+      submenu: iconApps.map((app) => {
+        const iconId = desktopIconId(app.key)
+        const hidden = hiddenIconIds.includes(iconId)
+        return {
+          label: app.title,
+          checked: !hidden,
+          onSelect: () => dispatch(setIconHidden({ id: iconId, hidden: !hidden })),
+        }
+      }),
+    },
+    {
+      label: 'Sort icons',
+      onSelect: () =>
+        dispatch(
+          arrangeIcons({
+            ids: [...visibleApps]
+              .sort((a, b) => a.title.localeCompare(b.title))
+              .map((app) => desktopIconId(app.key)),
+          })
+        ),
+    },
+    {
+      label: 'Reset icons',
+      onSelect: () => dispatch(resetGuestPositions()),
+    },
+  ]
 
   return (
     <>
-      <Desktop iconGrid={<IconGrid icons={visibleIcons} />} windowLayer={<WindowManager />} />
+      <Desktop
+        iconGrid={
+          <IconGrid
+            apps={visibleApps}
+            onContextMenu={(position, iconId) => setDesktopMenu({ ...position, iconId })}
+          />
+        }
+        windowLayer={<WindowManager />}
+        overlay={
+          desktopMenu && (
+            <ContextMenu
+              items={desktopMenuItems}
+              position={desktopMenu}
+              onClose={() => setDesktopMenu(null)}
+              ariaLabel="Desktop context menu"
+            />
+          )
+        }
+      />
       <Taskbar />
     </>
   )

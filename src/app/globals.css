@@ -519,10 +519,6 @@
    Document baseline
    ===================================================================== */
 
-html {
-  font-size: 16px;
-}
-
 body {
   margin: 0;
   font: var(--w7-font);
@@ -541,16 +537,5 @@ body {
   *::before,
   *::after {
     box-sizing: border-box;
-  }
-
-  ul,
-  ol {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  button {
-    font-family: inherit;
   }
 }

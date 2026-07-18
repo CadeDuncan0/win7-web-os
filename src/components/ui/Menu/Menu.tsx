@@ -23,9 +23,14 @@ export function Menu({ children, ...rest }: MenuProps) {
 }
 
 function Item({ disabled, className, children, ...rest }: MenuItemProps) {
-  const merged = [disabled && 'is-disabled', className].filter(Boolean).join(' ')
   return (
-    <li role="menuitem" tabIndex={disabled ? -1 : 0} className={merged || undefined} {...rest}>
+    <li
+      role="menuitem"
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled || undefined}
+      className={className}
+      {...rest}
+    >
       {children}
     </li>
   )
