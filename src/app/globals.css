@@ -458,7 +458,10 @@
   --ie-nav-btn-disabled-filter: grayscale(0.9) brightness(1.2) opacity(0.55);
   --ie-titlebar-icon-size: var(--tb-popup-icon-size);
   --ie-address-height: 24px;
-  --ie-address-bg: #fff;
+  /* Vertical glass gradient sampled from internet-explorer-addressbar-gradient.png:
+     1px bright edge highlights, cool blue-gray body, green-tinted midline. Slight
+     alpha lets the toolbar glass show through (see internet-explorer-OG.png). */
+  --ie-address-bg: rgba(255, 255, 255, 0.9);
   /* Flat 1px hairline, square corners — IE7's address field sits flush on the
      glass rather than sunken (the 2px inset read as IE6/XP). */
   --ie-address-border: 1px solid rgba(130, 146, 162, 0.9);
@@ -472,10 +475,6 @@
   --ie-action-divider-color: rgb(101, 115, 115);
   --ie-action-btn-bg: transparent;
   --ie-action-btn-bg-hover: rgba(101, 115, 115, 0.15);
-  --ie-refresh-color: rgba(40, 110, 160, 0.85);
-  --ie-refresh-color-hover: rgba(25, 90, 140, 1);
-  --ie-clear-color: rgba(170, 50, 45, 0.85);
-  --ie-clear-color-hover: rgba(150, 30, 25, 1);
   /* Address autocomplete dropdown. */
   --ie-dropdown-z: 20;
   --ie-dropdown-max-height: 220px;

@@ -87,31 +87,12 @@
   background: transparent;
   box-shadow: none;
   cursor: pointer;
-  transition:
-    background 0.1s ease,
-    color 0.1s ease;
-}
-
-/* Refresh is the only action button with borders — 1px dividers on each side. */
-.refreshBtn {
-  color: var(--ie-refresh-color);
-}
-
-.clearBtn {
-  color: var(--ie-clear-color);
+  transition: background 0.1s ease;
 }
 
 .refreshBtn:hover,
 .clearBtn:hover {
   background: var(--ie-action-btn-bg-hover);
-}
-
-.refreshBtn:hover {
-  color: var(--ie-refresh-color-hover);
-}
-
-.clearBtn:hover {
-  color: var(--ie-clear-color-hover);
 }
 
 .refreshBtn::before,

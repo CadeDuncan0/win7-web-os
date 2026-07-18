@@ -100,12 +100,6 @@ export function InternetExplorerWindow({ windowId, initialRoute }: InternetExplo
         <div key={nav.reloadKey} className={styles.content}>
           {renderContent()}
         </div>
-        {/* IE7 status bar — Done · security zone · zoom, all static chrome. */}
-        <div className={styles.statusBar} aria-hidden="true">
-          <span className={styles.statusDone}>Done</span>
-          <span className={styles.statusSegment}>Internet | Protected Mode: Off</span>
-          <span className={styles.statusSegment}>100%</span>
-        </div>
       </div>
     </WindowWrapper>
   )

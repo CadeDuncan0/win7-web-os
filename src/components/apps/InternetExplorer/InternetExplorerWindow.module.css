@@ -28,7 +28,6 @@
 .tabStrip {
   display: flex;
   align-items: flex-end;
-  gap: 2px;
   height: var(--ie-tab-height);
   padding: 2px 4px 0;
   background: var(--ie-chrome-band-bg);
@@ -50,7 +49,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  height: calc(100% - 2px);
+  height: 100%;
   min-width: 120px;
   max-width: 220px;
   padding: 0 10px;
@@ -76,35 +75,11 @@
 
 /* Short empty nub after the active tab — IE7's new-tab stub. */
 .tabStub {
-  width: 18px;
-  height: calc(100% - 6px);
+  width: 24px;
+  height: calc(100% - 2px);
   background: var(--ie-tab-bg);
   border: var(--ie-tab-border);
   border-bottom: none;
   border-radius: 3px 3px 0 0;
   opacity: 0.7;
-}
-
-/* Status bar along the window bottom: Done · security zone · zoom. */
-.statusBar {
-  display: flex;
-  align-items: center;
-  height: var(--ie-status-height);
-  padding: 0 8px;
-  background: var(--ie-status-bg);
-  border-top: var(--ie-status-divider);
-  font-size: var(--ie-status-font-size);
-  color: var(--ie-status-text);
-  flex-shrink: 0;
-  user-select: none;
-}
-
-.statusDone {
-  flex: 1;
-}
-
-.statusSegment {
-  padding: 0 10px;
-  border-left: var(--ie-status-divider);
-  white-space: nowrap;
 }
