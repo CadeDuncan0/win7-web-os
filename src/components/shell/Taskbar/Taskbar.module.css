@@ -34,6 +34,42 @@
   padding: 0 var(--space-1);
 }
 
+/* Aero Peek "Show desktop" sliver at the taskbar's far right edge — white
+   glossy glass over the taskbar gradient, brightening on hover. */
+.showDesktop {
+  all: unset;
+  flex-shrink: 0;
+  width: 14px;
+  align-self: stretch;
+  box-sizing: border-box;
+  margin-left: var(--space-1);
+  /* Bleed to the screen edge past the taskbar's right padding. */
+  margin-right: calc(var(--space-1) * -1);
+  border: 1px solid var(--tb-peek-border);
+  border-top: 0;
+  border-radius: var(--tb-peek-radius);
+  background: var(--tb-peek-bg);
+  box-shadow: var(--tb-peek-shadow);
+}
+
+/* `all: unset` drops 7.css's `position: relative`, so its button-gloss ::before
+   (position: absolute, 100%×100%) would anchor to the fixed .taskbar and fade a
+   blue gradient across the whole bar on hover. This button paints its own hover
+   glass, so remove the 7.css pseudos entirely. */
+.showDesktop::before,
+.showDesktop::after {
+  content: none;
+}
+
+.showDesktop:hover {
+  background: var(--tb-peek-bg-hover);
+  box-shadow: var(--tb-peek-shadow-hover);
+}
+
+.showDesktop:active {
+  background: var(--tb-peek-bg-active);
+}
+
 .buttonGroup {
   flex: 1;
   display: flex;

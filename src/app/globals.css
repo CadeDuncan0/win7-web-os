@@ -288,31 +288,80 @@
   --mw-min-height: 160px;
   /* Bottom-right corner resize hit target (invisible — no grip icon). */
   --mw-resize-handle-size: 16px;
+  /* Aero Peek: diagonal glass sheen laid over each sheet while peeking — a
+     bright top-left highlight thinning to a faint cool-tinted reflection. */
+  --mw-peek-gloss: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(255, 255, 255, 0.15) 24%,
+    rgba(255, 255, 255, 0.05) 48%,
+    rgba(210, 230, 250, 0.04) 56%,
+    rgba(255, 255, 255, 0.13) 100%
+  );
 
   /* ─── SEMANTIC: Taskbar ────────────────────────────────────────── */
   --tb-height: 40px;
   --tb-height-fill: 41px;
-  /* Aero glass: a light, translucent blue body the backdrop blur (below)
-     shows through — bright at the top edge, faintly deeper at the base.
-     Low alphas let the wallpaper tint it so it reads as glass, not paint. */
+  /* Aero glass: a translucent blue body the backdrop blur (below) shows
+     through — bright at the top edge, deepening toward the base (matched to
+     references/taskbar-full.png, which reads darker than pure glass).
+     Alphas stay low enough for the wallpaper to tint it. */
   --tb-bg: linear-gradient(
     to bottom,
-    rgba(188, 214, 238, 0.5) 0%,
-    rgba(138, 178, 214, 0.42) 9%,
-    rgba(104, 150, 195, 0.4) 52%,
-    rgba(86, 132, 180, 0.48) 100%
+    rgba(160, 190, 220, 0.52) 0%,
+    rgba(106, 148, 192, 0.46) 9%,
+    rgba(68, 110, 158, 0.48) 52%,
+    rgba(44, 78, 118, 0.58) 100%
   );
   --tb-glass-blur: 12px;
   --tb-border-top: 1px solid rgba(255, 255, 255, 0.6);
   --tb-shadow: 0 -1px 0px rgba(0, 0, 0, 1);
 
-  /* Square, grouped app-icon buttons. No chrome at rest — a soft frame
-     appears only on hover/active (never a persistent solid white border). */
+  /* Aero Peek "Show desktop" sliver past the clock: a white glossy glass pane
+     over the taskbar gradient (a bright sheen fading to a gloss break at the
+     midline), lightening under the pointer and dimming on press. */
+  --tb-peek-border: rgba(255, 255, 255, 0.45);
+  --tb-peek-radius: 0px;
+  --tb-peek-bg:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.42) 0%,
+      rgba(255, 255, 255, 0.1) 26%,
+      rgba(255, 255, 255, 0.03) 50%,
+      rgba(255, 255, 255, 0.14) 74%,
+      rgba(255, 255, 255, 0.24) 100%
+    ),
+    var(--tb-bg);
+  --tb-peek-bg-hover:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.65) 0%,
+      rgba(255, 255, 255, 0.22) 46%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.26) 54%,
+      rgba(255, 255, 255, 0.4) 100%
+    ),
+    var(--tb-bg);
+  --tb-peek-bg-active:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.06) 50%,
+      rgba(255, 255, 255, 0.16) 100%
+    ),
+    var(--tb-bg);
+  --tb-peek-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  --tb-peek-shadow-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 0 7px rgba(185, 218, 248, 0.5);
+
+  /* Square, grouped app-icon buttons. No chrome at rest — a frame appears only
+     for the active app (hovering is not highlighted). --tb-item-selector-hover
+     also draws the tray icons' keyboard focus ring. */
   --tb-item-width: 58px;
   --tb-item-height: 40px;
   --tb-item-icon-size: 36px;
   --tb-item-radius: 3px;
-  --tb-item-bg-hover: rgba(255, 255, 255, 0.22);
   --tb-item-bg-active: rgba(255, 255, 255, 0.3);
   --tb-item-selector-hover: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
   --tb-item-selector-active: inset 0 0 0 1px rgba(255, 255, 255, 0.45);

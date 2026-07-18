@@ -57,6 +57,9 @@ export interface WindowState {
   // restores it. Hydrated from sessionStorage at desktop boot and written
   // back on change by useDesktopPersistence.
   positionByKind: Partial<Record<WindowKind, { x: number; y: number }>>
+  // Aero Peek: true while the Show Desktop button is hovered — open windows
+  // render as bare glass sheets (WindowWrapper reads this flag).
+  isPeeking: boolean
 }
 
 // ─── Initial State ──────────────────────────────────────────────────────────
@@ -70,6 +73,7 @@ const initialState: WindowState = {
   nextIdSeed: 0,
   sizeByKind: {},
   positionByKind: {},
+  isPeeking: false,
 }
 
 const windowSlice = createSlice({
@@ -179,6 +183,23 @@ const windowSlice = createSlice({
       }
       //   2. Set isMinimized = true.
       window.isMinimized = true
+    },
+
+    // ── minimizeAll ───────────────────────────────────────────────────────
+    // No payload. The Show Desktop button: every open window minimizes; each
+    // window's state (geometry, z-order) survives for restore-on-focus.
+    minimizeAll(state) {
+      state.ids.forEach((id) => {
+        state.byId[id].isMinimized = true
+      })
+    },
+
+    // ── setPeek ───────────────────────────────────────────────────────────
+    // Payload: boolean. Aero Peek — dispatched on Show Desktop button
+    // hover-in/out; open windows keep rendering, WindowWrapper just swaps
+    // them to the glass-sheet treatment while true.
+    setPeek(state, action: PayloadAction<boolean>) {
+      state.isPeeking = action.payload
     },
 
     // ── restoreWindow ─────────────────────────────────────────────────────
@@ -317,6 +338,11 @@ export const selectZCounter = (state: RootState): number => {
   return state.window.zCounter
 }
 
+// Category 1 — primitive field access. No memoization needed.
+export const selectIsPeeking = (state: RootState): boolean => {
+  return state.window.isPeeking
+}
+
 // Category 2 — returns the stored reference; consumed by useDesktopPersistence
 // to change-detect (by identity) and write the map through to sessionStorage.
 export const selectWindowSizes = (
@@ -385,6 +411,8 @@ export const {
   closeWindow,
   focusWindow,
   minimizeWindow,
+  minimizeAll,
+  setPeek,
   restoreWindow,
   toggleMaximize,
   moveWindow,

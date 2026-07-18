@@ -8,7 +8,6 @@
   padding: 0;
   border: none;
   box-shadow: none;
-  cursor: pointer;
   position: relative;
   background: var(--tb-orb-img) center / contain no-repeat;
   filter: drop-shadow(var(--tb-orb-shadow));

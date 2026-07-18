@@ -101,6 +101,48 @@
   z-index: 1;
 }
 
+/* ─── Aero Peek ──────────────────────────────────────────────────────────
+   While the Show Desktop sliver is hovered, every open window fades to a bare
+   glass sheet: the opaque body, controls, toolbar, icon, and title dissolve so
+   the .window::before Aero gradient shows through the full footprint, while the
+   window border and inner highlight survive. The title (and its shadow) fade
+   out entirely — no ghost glow. The transition below runs both ways, so peek
+   animates in and out rather than snapping. */
+.WindowWrapper :global(.window-body),
+.WindowWrapper :global(.title-bar-controls),
+.WindowWrapper :global(.title-bar-toolbar),
+.WindowWrapper :global(.title-bar-icon),
+.WindowWrapper :global(.title-bar-text),
+.WindowWrapper .resizeHandle {
+  transition: opacity 0.2s ease;
+}
+
+.peek :global(.window-body),
+.peek :global(.title-bar-controls),
+.peek :global(.title-bar-toolbar),
+.peek :global(.title-bar-icon),
+.peek :global(.title-bar-text),
+.peek .resizeHandle {
+  opacity: 0;
+}
+
+/* Glossy sheen across the whole sheet, per the Aero Peek reference. Always
+   present but transparent so its opacity can transition in on peek. */
+.WindowWrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--w7-w-bdr);
+  background: var(--mw-peek-gloss);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.peek::after {
+  opacity: 1;
+}
+
 /* Glass blur performance.
    7.css paints `backdrop-filter: blur()` over the FULL window via
    `.window.glass:after` (width/height: 100%). The window body is opaque, so

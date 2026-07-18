@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 import { type CSSProperties, type ReactNode, useRef } from 'react'
 
 import styles from './WindowWrapper.module.css'
-import { Window } from '@/components/windows7/Window'
+import { Window } from '@/components/ui/Window'
 import { useWindowDrag } from '@/hooks/useWindowDrag'
 import { useWindowResize } from '@/hooks/useWindowResize'
 import { TASKBAR_RESERVE } from '@/lib/gridMath'
@@ -17,6 +17,7 @@ import {
   closeWindow,
   focusWindow,
   minimizeWindow,
+  selectIsPeeking,
   selectTopWindowId,
   selectWindowById,
   toggleMaximize,
@@ -43,6 +44,7 @@ export function WindowWrapper({
   const dispatch = useAppDispatch()
   const windowData = useAppSelector(selectWindowById(windowId))
   const topWindowId = useAppSelector(selectTopWindowId)
+  const isPeeking = useAppSelector(selectIsPeeking)
 
   const exitModeRef = useRef<'close' | 'minimize'>('close')
 
@@ -126,6 +128,7 @@ export function WindowWrapper({
     styles.WindowWrapper,
     (drag.isDragging || resize.isResizing) && styles.dragging,
     windowData.isMaximized && styles.maximized,
+    isPeeking && styles.peek,
   ]
     .filter(Boolean)
     .join(' ')

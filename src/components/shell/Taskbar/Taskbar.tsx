@@ -6,9 +6,16 @@ import { StartOrb } from './StartOrb'
 import { SystemTray } from './SystemTray'
 import styles from './Taskbar.module.css'
 import { TaskbarIcon } from './TaskbarIcon'
-import { StartMenu } from '@/components/screens/desktop/StartMenu'
-import { useAppSelector } from '@/store/hooks'
-import { selectOpenWindows, type WindowInstance, type WindowKind } from '@/store/slices/windowSlice'
+import { StartMenu } from '@/components/shell/StartMenu'
+import { TrayNotifications } from '@/components/shell/TrayNotifications'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import {
+  minimizeAll,
+  selectOpenWindows,
+  setPeek,
+  type WindowInstance,
+  type WindowKind,
+} from '@/store/slices/windowSlice'
 
 // Compact open windows into one entry per application (`kind`), preserving the
 // order in which each app's first window was opened.
@@ -28,6 +35,7 @@ function groupByKind(
 }
 
 export function Taskbar() {
+  const dispatch = useAppDispatch()
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const openWindows = useAppSelector(selectOpenWindows)
   const groups = useMemo(() => groupByKind(openWindows), [openWindows])
@@ -57,7 +65,26 @@ export function Taskbar() {
         ))}
       </div>
 
+      {/* Notification icons sit left of the clock, Win7 tray order. */}
+      <TrayNotifications />
+
       <SystemTray />
+
+      {/* Aero Peek: the slim rectangle past the clock — hovering previews the
+          desktop (open windows turn to glass sheets), clicking minimizes all.
+          Peek ends on click too: the windows are gone, nothing left to peek. */}
+      <button
+        className={styles.showDesktop}
+        onClick={() => {
+          dispatch(minimizeAll())
+          dispatch(setPeek(false))
+        }}
+        onMouseEnter={() => dispatch(setPeek(true))}
+        onMouseLeave={() => dispatch(setPeek(false))}
+        aria-label="Show desktop"
+        title="Show desktop"
+        type="button"
+      />
 
       <StartMenu isOpen={isStartMenuOpen} onClose={() => setIsStartMenuOpen(false)} />
     </nav>

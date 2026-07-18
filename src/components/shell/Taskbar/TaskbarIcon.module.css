@@ -15,7 +15,7 @@
 .TaskbarIcon {
   /* width/padding reset neutralizes the 7.css `button` defaults
      (min-width: 75px; padding: 0 12px). No background or border at rest —
-     a soft frame appears only on hover/active. */
+     a frame appears only for the active app; hovering is not highlighted. */
   width: var(--tb-item-width);
   height: var(--tb-height-fill);
   min-width: var(--tb-item-width);
@@ -28,7 +28,6 @@
   box-shadow: none;
   border-radius: var(--tb-item-radius);
   background: transparent;
-  cursor: pointer;
   transition:
     background 0.1s ease,
     box-shadow 0.1s ease;
@@ -37,17 +36,6 @@
 .TaskbarIcon::after,
 .TaskbarIcon::before {
   opacity: 0.25;
-}
-
-.TaskbarIcon:hover {
-  background: var(--tb-item-bg-hover);
-  box-shadow: var(--tb-item-selector-hover);
-  cursor: default;
-}
-
-.TaskbarIcon:hover::after,
-.TaskbarIcon:hover::before {
-  opacity: 0.7;
 }
 
 /* Square selector for the active app (replaces the bar indicator). */
