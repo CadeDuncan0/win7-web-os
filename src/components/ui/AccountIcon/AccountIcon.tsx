@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useId } from 'react'
 
 import styles from './AccountIcon.module.css'
-import { assetPaths } from '@/lib/assetPaths'
+import { assetPaths, withBasePath } from '@/lib/assetPaths'
 
 interface AccountIconProps {
   className?: string
@@ -90,8 +90,10 @@ export function AccountIcon({
         onClick={onClick}
       >
         <span className={styles.mask}>
+          {/* unoptimized bypasses the basePath-aware image loader, so the
+              subpath prefix must be applied to the raw src by hand. */}
           <Image
-            src={iconSrc ?? assetPaths.accountIcons.user}
+            src={withBasePath(iconSrc ?? assetPaths.accountIcons.user)}
             alt="User avatar"
             className={styles.image}
             width={width}

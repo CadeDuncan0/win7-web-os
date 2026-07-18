@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import styles from './OsBranding.module.css'
-import { assetPaths } from '@/lib/assetPaths'
+import { assetPaths, withBasePath } from '@/lib/assetPaths'
 
 interface OsBrandingProps {
   subtitle?: string
@@ -11,8 +11,10 @@ export function OsBranding({ subtitle = 'Web OS', className }: OsBrandingProps) 
   const merged = [styles.brand, className].filter(Boolean).join(' ')
   return (
     <div className={merged}>
+      {/* unoptimized bypasses the basePath-aware image loader, so the subpath
+          prefix must be applied to the raw src by hand. */}
       <Image
-        src={assetPaths.branding.windowsLogoWebp}
+        src={withBasePath(assetPaths.branding.windowsLogoWebp)}
         alt=""
         width={32}
         height={32}

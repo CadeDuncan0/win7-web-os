@@ -9,6 +9,7 @@ import clsx from 'clsx'
 import Image from 'next/image'
 import type { CSSProperties } from 'react'
 import styles from './DesktopIcon.module.css'
+import { withBasePath } from '@/lib/assetPaths'
 import { gridCellToPixels } from '@/lib/gridMath'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { selectIconById, selectSelectedIconId, setSelectedIcon } from '@/store/slices/desktopSlice'
@@ -70,9 +71,11 @@ export function DesktopIcon({ id, label, iconSrc, onOpen }: DesktopIconProps) {
         }
       }}
     >
+      {/* The image optimizer resolves its url param against the domain root,
+          so the subpath prefix must be baked into the src by hand. */}
       <Image
         className={styles.image}
-        src={iconSrc}
+        src={withBasePath(iconSrc)}
         alt="" // Decorative — accessible name comes from the button's aria-label
         draggable={false}
         width={64}
