@@ -6,9 +6,8 @@
 import { DndContext, type DragEndEvent } from '@dnd-kit/core'
 import { useEffect, useState } from 'react'
 import { DesktopIcon } from '../DesktopIcon'
-import { openWindowIfEnabled } from '../openWindowIfEnabled'
-import type { WindowKey } from '../windowKeys'
 import styles from './IconGrid.module.css'
+import { DEFAULT_APP_ICON, desktopIconId, type Application } from '@/config/applications'
 import { useDesktopSensors } from '@/hooks/useDesktopSensors'
 import {
   CELL_HEIGHT,
@@ -20,6 +19,7 @@ import {
   isCellOccupied,
   findNextFreeCell,
 } from '@/lib/gridMath'
+import { launchApplication } from '@/lib/launchApplication'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   registerIcon,
@@ -27,37 +27,32 @@ import {
   clearSelection,
   selectDesktopIcons,
 } from '@/store/slices/desktopSlice'
-import type { WindowKind } from '@/store/slices/windowSlice'
 
 interface IconGridProps {
-  icons: Array<{
-    id: string
-    label: string
-    iconSrc: string
-    windowKind: WindowKind
-    windowTitle: string
-    windowKey: WindowKey
-    windowSize?: { width: number; height: number }
-  }>
+  /** Applications rendering a desktop icon (registry order = seed order). */
+  apps: Application[]
+  /** Fired on right-click anywhere on the desktop surface (viewport coords).
+   *  `iconId` is set when the click landed on a desktop icon. */
+  onContextMenu?: (position: { x: number; y: number }, iconId?: string) => void
 }
 
-export function IconGrid({ icons: _icons }: IconGridProps) {
+export function IconGrid({ apps, onContextMenu }: IconGridProps) {
   // Pull hooks
   const dispatch = useAppDispatch()
   const sensors = useDesktopSensors()
   const desktopIcons = useAppSelector(selectDesktopIcons)
 
   useEffect(() => {
-    _icons.forEach((iconDef, index) => {
+    apps.forEach((app, index) => {
       dispatch(
         registerIcon({
-          id: iconDef.id,
+          id: desktopIconId(app.key),
           position: { column: 0, row: index },
           defaultPosition: { column: 0, row: index },
         })
       )
     })
-  }, [dispatch, _icons])
+  }, [dispatch, apps])
 
   const [gridBounds, setGridBounds] = useState({ maxColumns: 1, maxRows: 1 })
 
@@ -110,25 +105,32 @@ export function IconGrid({ icons: _icons }: IconGridProps) {
       dispatch(clearSelection())
     }
   }
+
+  // The whole desktop surface (icons included) suppresses the browser menu and
+  // opens the OS one — matching Win7, where no surface shows the native menu.
+  // A right-click on an icon reports that icon's id so the menu can offer
+  // icon-specific actions (e.g. "Hide icon").
+  const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    const iconId = (e.target as Element).closest('[data-icon-id]')?.getAttribute('data-icon-id')
+    onContextMenu?.({ x: e.clientX, y: e.clientY }, iconId ?? undefined)
+  }
+
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-      <div className={styles.grid} data-testid="icon-grid" onClick={handleDeselect}>
-        {_icons.map((iconDef) => (
+      <div
+        className={styles.grid}
+        data-testid="icon-grid"
+        onClick={handleDeselect}
+        onContextMenu={handleContextMenu}
+      >
+        {apps.map((app) => (
           <DesktopIcon
-            key={iconDef.id}
-            id={iconDef.id}
-            label={iconDef.label}
-            iconSrc={iconDef.iconSrc}
-            onOpen={() =>
-              dispatch(
-                openWindowIfEnabled({
-                  kind: iconDef.windowKind,
-                  title: iconDef.windowTitle,
-                  windowKey: iconDef.windowKey,
-                  size: iconDef.windowSize,
-                })
-              )
-            }
+            key={app.key}
+            id={desktopIconId(app.key)}
+            label={app.title}
+            iconSrc={app.iconSrc ?? DEFAULT_APP_ICON}
+            onOpen={() => dispatch(launchApplication(app.key))}
           />
         ))}
       </div>

@@ -5,42 +5,24 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { isWindowDisabled } from '../disabledWindows'
-import { openWindowIfEnabled } from '../openWindowIfEnabled'
 import styles from './StartMenu.module.css'
 import { StartMenuItem } from './StartMenuItem'
-import {
-  LEFT_COLUMN_SHORTCUTS,
-  RIGHT_COLUMN_SHORTCUTS,
-  type StartMenuShortcut,
-} from './startMenuItems'
-import { Button } from '@/components/windows7/Button/index'
+import { Button } from '@/components/ui/Button/index'
+import { startMenuApps } from '@/config/applications'
+import { withBasePath } from '@/lib/assetPaths'
 import { signOut } from '@/lib/auth'
+import { launchApplication } from '@/lib/launchApplication'
 import { DEFAULT_USER_ICON } from '@/lib/userIcons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { clearSession, selectAvatar, selectIsAdmin } from '@/store/slices/sessionSlice'
 
-/** Aero glass Start Menu panel. Controlled by parent via isOpen/onClose —
- *  the Taskbar (Task 14) owns the toggle state. Search filters the left
- *  column only; right column shortcuts remain fixed. */
+/** Aero glass Start Menu panel. Controlled by parent via isOpen/onClose — the Taskbar owns the toggle state.
+ *  Search filters the left column only; right column shortcuts remain fixed. */
 
 export interface StartMenuProps {
   isOpen: boolean
   onClose: () => void
   avatarSrc?: string // Optional override (stories); defaults to the session avatar
-}
-
-/** A shortcut is dropped when it is retired outright (disabled), when its window
- *  is turned off site-wide, or (for guests) when it is flagged hideForGuest. The
- *  disabled flag covers non-window actions too — e.g. external links, which carry
- *  no key for the window gate. */
-function isShortcutDisabled(s: StartMenuShortcut, isAdmin: boolean): boolean {
-  return (
-    Boolean(s.disabled) ||
-    (isAdmin && Boolean(s.hideForAdmin)) ||
-    (!isAdmin && Boolean(s.hideForGuest)) ||
-    (s.action.type === 'openWindow' && isWindowDisabled(s.action.windowKey, isAdmin))
-  )
 }
 
 export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
@@ -61,13 +43,16 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
     onClose()
   }, [onClose])
 
+  // Shortcuts split by their registry column: left is the white programs
+  // list, right is the glass quick-links column (e.g. external-link apps).
+  const visibleApps = useMemo(() => startMenuApps(isAdmin), [isAdmin])
   const visibleLeft = useMemo(
-    () => LEFT_COLUMN_SHORTCUTS.filter((s) => !isShortcutDisabled(s, isAdmin)),
-    [isAdmin]
+    () => visibleApps.filter((app) => (app.startMenuColumn ?? 'left') === 'left'),
+    [visibleApps]
   )
   const visibleRight = useMemo(
-    () => RIGHT_COLUMN_SHORTCUTS.filter((s) => !isShortcutDisabled(s, isAdmin)),
-    [isAdmin]
+    () => visibleApps.filter((app) => app.startMenuColumn === 'right'),
+    [visibleApps]
   )
 
   const filteredLeft = useMemo(() => {
@@ -75,7 +60,7 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
       return visibleLeft
     }
     const q = searchQuery.toLowerCase()
-    return visibleLeft.filter((s) => s.label.toLowerCase().includes(q))
+    return visibleLeft.filter((app) => app.title.toLowerCase().includes(q))
   }, [searchQuery, visibleLeft])
 
   useEffect(() => {
@@ -143,28 +128,20 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
     }
   }
 
-  async function handleAction(action: StartMenuShortcut['action']) {
+  // Windowed apps open their window; windowless link apps open their external
+  // destination — the launch gate decides, so both columns share this handler.
+  function handleLaunch(key: string) {
     handleClose()
-    if (action.type === 'openWindow') {
-      dispatch(
-        openWindowIfEnabled({
-          kind: action.kind,
-          title: action.title,
-          windowKey: action.windowKey,
-          size: action.size,
-        })
-      )
-    } else if (action.type === 'openLink') {
-      // External destinations go straight to a new tab — no IE window.
-      window.open(action.url, '_blank', 'noopener')
-    } else if (action.type === 'signOut') {
-      await signOut()
-      dispatch(clearSession())
-      // Cookies are gone — refresh so the server re-renders this same URL as
-      // the logon screen (at /win7/desktop the proxy redirects to /win7).
-      router.refresh()
-    }
-    // add more actions here as needed
+    dispatch(launchApplication(key))
+  }
+
+  async function handleSignOut() {
+    handleClose()
+    await signOut()
+    dispatch(clearSession())
+    // Cookies are gone — refresh so the server re-renders this same URL as
+    // the logon screen (at /win7/desktop the proxy redirects to /win7).
+    router.refresh()
   }
 
   return (
@@ -183,12 +160,12 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
         >
           <div className={styles.leftColumn}>
             <ul className={styles.shortcutList}>
-              {filteredLeft.map((shortcut) => (
+              {filteredLeft.map((app) => (
                 <StartMenuItem
-                  key={shortcut.id}
-                  iconSrc={shortcut.iconSrc}
-                  label={shortcut.label}
-                  onClick={() => handleAction(shortcut.action)}
+                  key={app.key}
+                  iconSrc={app.iconSrc}
+                  label={app.title}
+                  onClick={() => handleLaunch(app.key)}
                 />
               ))}
               {filteredLeft.length === 0 && <li className={styles.emptyMessage}>No matches</li>}
@@ -198,9 +175,11 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
           <div className={styles.rightColumn}>
             <div className={styles.avatarHeader}>
               <div className={styles.avatarFrame}>
+                {/* unoptimized bypasses the basePath-aware image loader, so
+                    the subpath prefix must be applied to the raw src by hand. */}
                 <Image
                   className={styles.avatarImage}
-                  src={avatarSrc ?? sessionAvatar ?? DEFAULT_USER_ICON}
+                  src={withBasePath(avatarSrc ?? sessionAvatar ?? DEFAULT_USER_ICON)}
                   alt="User avatar"
                   width={48}
                   height={48}
@@ -210,12 +189,11 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
             </div>
 
             <ul className={styles.shortcutList}>
-              {visibleRight.map((shortcut) => (
+              {visibleRight.map((app) => (
                 <StartMenuItem
-                  key={shortcut.id}
-                  {...(shortcut.iconSrc ? { iconSrc: shortcut.iconSrc } : {})}
-                  label={shortcut.label}
-                  onClick={() => handleAction(shortcut.action)}
+                  key={app.key}
+                  label={app.title}
+                  onClick={() => handleLaunch(app.key)}
                 />
               ))}
             </ul>
@@ -228,7 +206,7 @@ export function StartMenu({ isOpen, onClose, avatarSrc }: StartMenuProps) {
               // is reachable by the arrow-key handler, not orphaned as a button.
               role="menuitem"
               tabIndex={-1}
-              onClick={() => handleAction({ type: 'signOut' })}
+              onClick={handleSignOut}
             >
               Sign Out
             </Button>

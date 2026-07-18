@@ -26,19 +26,22 @@ export function GettingStartedPage({ onNavigate, onOpentab }: GettingStartedPage
             <div className={portal.moduleBody}>
               <p className={styles.para}>
                 This desktop is a template — fork it and make it your own. Everything you would
-                change lives in plain data registries next to the components that render them:
+                change lives in plain data registries under{' '}
+                <code className={styles.path}>src/config/</code>:
               </p>
               <p className={styles.para}>
-                <code className={styles.path}>desktopIcons.ts</code> (desktop icons),{' '}
-                <code className={styles.path}>startMenuItems.ts</code> (Start Menu shortcuts and
-                external links), and <code className={styles.path}>ieRoutes.ts</code> (the pages in
-                this browser — entries with <code className={styles.path}>redirect: true</code> open
-                in a new browser tab).
+                <code className={styles.path}>applications.ts</code> (one record per app — its
+                desktop icon, Start Menu shortcut, window component, and taskbar meta all derive
+                from it), <code className={styles.path}>notifications.ts</code> (tray balloons), and{' '}
+                <code className={styles.path}>ieRoutes.ts</code> (the pages in this browser —
+                entries with <code className={styles.path}>redirect: true</code> open in a new
+                browser tab).
               </p>
               <p className={styles.para}>
                 Add a new app by extending the
-                <code className={styles.path}> WindowKind</code> union and giving it a case in the
-                WindowManager.
+                <code className={styles.path}> WindowKind</code> union and adding one{' '}
+                <code className={styles.path}>Application</code> record — every launcher and the
+                window renderer pick it up from there.
               </p>
             </div>
           </article>

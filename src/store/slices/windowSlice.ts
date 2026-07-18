@@ -6,16 +6,16 @@ import type { RootState } from '@/store'
 
 const DEFAULT_WINDOW_SIZE = { width: 880, height: 640 }
 const DEFAULT_WINDOW_POSITION = { x: 80, y: 80 }
-// Canonical minimum — the --mw-min-* tokens in globals.css are kept in sync
-// by src/lib/designTokens.test.ts.
 export const MIN_WINDOW_SIZE = { width: 240, height: 160 }
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
-// Discriminator for what content renders inside the window. The slice is
-// content-agnostic — a registry component (Task 17) maps kind → React component.
-// Add new kinds here as windows are introduced.
-export type WindowKind = 'internet-explorer' | 'welcome'
+// Discriminator for what content renders inside the window (taskbar grouping,
+// per-kind size/position persistence). The slice is content-agnostic — plain
+// string. Kind values are declared once, in the WindowApp descriptor each app
+// module under components/apps/ exports; registry records reference the
+// descriptor, so kinds are enforced where they are declared, never here.
+export type WindowKind = string
 
 export interface WindowGeometry {
   x: number
@@ -27,6 +27,10 @@ export interface WindowGeometry {
 export interface WindowInstance {
   id: string
   kind: WindowKind
+  // Application registry key (config/applications.ts). Kept as a plain string
+  // so the slice stays content-agnostic — WindowManager resolves it to a
+  // component at render time.
+  appKey: string
   title: string
   position: { x: number; y: number }
   size: { width: number; height: number }
@@ -73,11 +77,13 @@ const windowSlice = createSlice({
   initialState,
   reducers: {
     // ── openWindow ────────────────────────────────────────────────────────
-    // Payload: { kind: WindowKind; title: string; position?: {x,y}; size?: {w,h} }
+    // Payload: { kind: WindowKind; appKey: string; title: string;
+    //            position?: {x,y}; size?: {w,h} }
     openWindow(
       state,
       action: PayloadAction<{
         kind: WindowKind
+        appKey: string
         title: string
         position?: { x: number; y: number }
         size?: { width: number; height: number }
@@ -112,6 +118,7 @@ const windowSlice = createSlice({
       state.byId[id] = {
         id,
         kind: action.payload.kind,
+        appKey: action.payload.appKey,
         title: action.payload.title,
         position,
         size,

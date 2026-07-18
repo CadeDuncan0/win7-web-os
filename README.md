@@ -127,13 +127,15 @@ pick up template improvements.
 z-index promotion) plus `WindowManager`, which renders each visible window, and `WindowWrapper`,
 which supplies the OS chrome (title bar, controls, drag/resize) around any app content.
 
-**Adding an app** is three small steps — the Welcome window is a minimal worked example:
+**Adding an app** is two small steps — the Welcome window is a minimal worked example:
 
-1. Add your kind to the `WindowKind` union in `src/store/slices/windowSlice.ts`.
-2. Render it: add a case in `src/components/screens/desktop/WindowManager/WindowManager.tsx`
-   returning your component (wrap content in `WindowWrapper` for the OS chrome), and give it a
-   taskbar icon/label in `src/components/screens/desktop/Taskbar/taskbarApps.ts`.
-3. Launch it: add entries to `desktopIcons.ts` and/or `startMenuItems.ts` with your kind.
+1. Build your window component under `src/components/apps/` (wrap content in `WindowWrapper`
+   for the OS chrome) and export a `WindowApp` descriptor (its window `kind` + component)
+   from the folder's barrel.
+2. Register it: add one `Application` record referencing the descriptor in
+   `src/config/applications.ts` — the desktop icon, Start Menu shortcut, taskbar meta, and
+   window renderer all derive from that one record, and its `key` joins the typed id space
+   automatically.
 
 A few intentional constraints worth calling out:
 
@@ -147,14 +149,14 @@ A few intentional constraints worth calling out:
 
 ## Tech stack
 
-| Layer       | Technology                                                            |
-| ----------- | ---------------------------------------------------------------------- |
-| Framework   | Next.js (App Router) + React 19 + TypeScript (`strict`)               |
-| State       | Redux Toolkit (typed `useAppDispatch` / `useAppSelector`)             |
-| Styling     | CSS Modules + Aero Glass design tokens in `globals.css`, over `7.css` |
-| Animation   | Framer Motion (`AnimatePresence`, layout animations)                  |
-| Drag & drop | `@dnd-kit` (icons only — window dragging uses raw `pointermove`)      |
-| Validation  | Zod                                                                   |
+| Layer       | Technology                                                                          |
+| ----------- | ----------------------------------------------------------------------------------- |
+| Framework   | Next.js (App Router) + React 19 + TypeScript (`strict`)                             |
+| State       | Redux Toolkit (typed `useAppDispatch` / `useAppSelector`)                           |
+| Styling     | CSS Modules + Aero Glass design tokens in `globals.css`, over `7.css`               |
+| Animation   | Framer Motion (`AnimatePresence`, layout animations)                                |
+| Drag & drop | `@dnd-kit` (icons only — window dragging uses raw `pointermove`)                    |
+| Validation  | Zod                                                                                 |
 | Auth        | Server-only `ADMIN_PASSWORD` secret + httpOnly cookie; cookie-marked Guest sessions |
 
 ## Available scripts

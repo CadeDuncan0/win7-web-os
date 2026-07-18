@@ -3,28 +3,22 @@
 import { AnimatePresence } from 'framer-motion'
 import type { ReactNode } from 'react'
 
-import { InternetExplorerWindow } from '../InternetExplorer'
-import { titleToRoute } from '../InternetExplorer/ieRoutes'
-import { WelcomeWindow } from '../WelcomeWindow'
+import { applicationByKey } from '@/config/applications'
 import { useAppSelector } from '@/store/hooks'
 import { selectVisibleWindows, type WindowInstance } from '@/store/slices/windowSlice'
 
-// Each window kind renders its own WindowWrapper so it can compose app-specific
+// The application registry maps each window's appKey to its app-module
+// descriptor (kind + component), so a new app never touches this file. Each
+// app component renders its own WindowWrapper so it can compose app-specific
 // chrome (e.g. IE's nav/address toolbar lives inside the title bar). The key
 // stays on the direct AnimatePresence child for correct exit animations.
 function renderWindow(win: WindowInstance): ReactNode {
-  switch (win.kind) {
-    case 'internet-explorer':
-      return (
-        <InternetExplorerWindow
-          key={win.id}
-          windowId={win.id}
-          initialRoute={titleToRoute(win.title)}
-        />
-      )
-    case 'welcome':
-      return <WelcomeWindow key={win.id} windowId={win.id} />
+  const app = applicationByKey(win.appKey)
+  if (!app?.component) {
+    return null
   }
+  const AppComponent = app.component.component
+  return <AppComponent key={win.id} windowId={win.id} initialRoute={app.ieRoute} />
 }
 
 export function WindowManager() {

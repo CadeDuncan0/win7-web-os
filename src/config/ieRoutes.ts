@@ -39,9 +39,7 @@ export const IE_PAGES: IEPage[] = [
     url: `https://github.com/CadeDuncan0/win7-web-os`,
     title: 'Source Code',
     redirect: true,
-    // External link retired site-wide: it leaves the sandbox via window.open,
-    // so it is disabled here rather than gated. Flip to false to restore it.
-    disabled: true,
+    disabled: false,
   },
   {
     nickname: 'about:getting-started',
@@ -77,16 +75,6 @@ export function resolvePage(nickname: string): IEPage | undefined {
 /** Full address-bar URL for a nickname; falls back to the nickname itself. */
 export function pageUrl(nickname: string): string {
   return resolvePage(nickname)?.url ?? nickname
-}
-
-/**
- * Map a window title (`Home` / `Getting Started`, or the app label
- * `Internet Explorer`) to the nickname IE should open on. Unknown titles open
- * the default page.
- */
-export function titleToRoute(title: string): string {
-  const match = IE_ENABLED_PAGES.find((page) => page.title === title)
-  return match?.nickname ?? DEFAULT_ROUTE
 }
 
 /**

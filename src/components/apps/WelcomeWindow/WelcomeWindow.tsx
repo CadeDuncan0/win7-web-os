@@ -1,7 +1,7 @@
 'use client'
 
-import { WindowWrapper } from '../WindowWrapper'
 import styles from './WelcomeWindow.module.css'
+import { WindowWrapper } from '@/components/shell/WindowWrapper'
 
 export interface WelcomeWindowProps {
   /** Redux window id — wires the OS chrome (geometry, focus, controls). */
@@ -9,8 +9,9 @@ export interface WelcomeWindowProps {
 }
 
 /** Minimal static demo app. Exists to show the app-registration pattern:
- *  a `WindowKind`, a `WindowManager` case, taskbar meta, and registry entries
- *  are all it takes to put a new window on the desktop. */
+ *  a `WindowApp` descriptor exported from this folder plus one record in
+ *  `config/applications.ts` are all it takes to put a new window on the
+ *  desktop. */
 export function WelcomeWindow({ windowId }: WelcomeWindowProps) {
   return (
     <WindowWrapper windowId={windowId}>
@@ -21,9 +22,9 @@ export function WelcomeWindow({ windowId }: WelcomeWindowProps) {
           browser. Drag the icons, open windows, and explore.
         </p>
         <p>
-          Forking this template? Open Internet Explorer and visit the Getting Started page — it
-          maps the data registries (<code>desktopIcons.ts</code>, <code>startMenuItems.ts</code>,{' '}
-          <code>ieRoutes.ts</code>) where all the content lives.
+          Forking this template? Open Internet Explorer and visit the Getting Started page — it maps
+          the data registries (<code>applications.ts</code>, <code>ieRoutes.ts</code>,{' '}
+          <code>notifications.ts</code>) where all the content lives.
         </p>
       </div>
     </WindowWrapper>

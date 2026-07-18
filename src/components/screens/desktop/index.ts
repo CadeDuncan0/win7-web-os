@@ -1,7 +1,0 @@
-export * from './Desktop'
-export * from './DesktopIcon'
-export * from './IconGrid'
-export * from './StartMenu'
-export * from './WelcomeWindow'
-export * from './WindowManager'
-export * from './WindowWrapper'
