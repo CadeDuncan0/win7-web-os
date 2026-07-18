@@ -62,7 +62,8 @@ function firstFreeCell(
   icons: DesktopIcon[],
   cellOf: (icon: DesktopIcon) => GridCell
 ): GridCell {
-  let { column, row } = desired
+  const { column } = desired
+  let { row } = desired
   while (icons.some((icon) => cellOf(icon).column === column && cellOf(icon).row === row)) {
     row += 1
   }

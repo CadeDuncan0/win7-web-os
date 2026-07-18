@@ -1,7 +1,7 @@
 'use client'
 
-import styles from './NotFoundPage.module.css'
 import portal from './IEPortal.module.css'
+import styles from './NotFoundPage.module.css'
 
 interface NotFoundPageProps {
   /** The address that failed to resolve (a nickname or full URL). */
@@ -16,9 +16,7 @@ export function NotFoundPage({ url }: NotFoundPageProps) {
     <div className={portal.pageShell}>
       <header className={portal.headerBand}>
         <h1 className={portal.bandTitle}>This page cannot be displayed</h1>
-        <p className={portal.bandTagline}>
-          Internet Explorer cannot find the page you requested.
-        </p>
+        <p className={portal.bandTagline}>Internet Explorer cannot find the page you requested.</p>
       </header>
 
       <section className={portal.module}>
