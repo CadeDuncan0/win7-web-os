@@ -2,8 +2,14 @@
 
 import { useId, useRef, useState } from 'react'
 
-import { filterPages, IE_ENABLED_PAGES, inputToRoute, pageUrl, resolvePage } from './ieRoutes'
 import styles from './IEToolbar.module.css'
+import {
+  filterPages,
+  IE_ENABLED_PAGES,
+  inputToRoute,
+  pageUrl,
+  resolvePage,
+} from '@/config/ieRoutes'
 import { assetPaths, withBasePath } from '@/lib/assetPaths'
 
 interface IEAddressBarProps {

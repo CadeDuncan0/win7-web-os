@@ -1,8 +1,7 @@
 'use client'
 
-import { IE_TOP_PAGES } from '../ieRoutes'
-
 import portal from './IEPortal.module.css'
+import { IE_TOP_PAGES } from '@/config/ieRoutes'
 
 interface IESidebarProps {
   onNavigate: (nickname: string) => void

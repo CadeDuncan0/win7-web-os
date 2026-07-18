@@ -1,7 +1,7 @@
 'use client'
 
 import styles from './IEPageLinks.module.css'
-import { IE_TOP_PAGES } from './ieRoutes'
+import { IE_TOP_PAGES } from '@/config/ieRoutes'
 
 interface IEPageLinksProps {
   onNavigate: (nickname: string) => void

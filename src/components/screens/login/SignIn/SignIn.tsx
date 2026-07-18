@@ -4,9 +4,9 @@ import { type Ref, type SubmitEvent } from 'react'
 
 import login from '../Login.module.css'
 import styles from './SignIn.module.css'
-import { AccountIcon } from '@/components/windows7/AccountIcon'
-import { ArrowButton } from '@/components/windows7/ArrowButton'
-import { OsBranding } from '@/components/windows7/OsBranding'
+import { AccountIcon } from '@/components/ui/AccountIcon'
+import { ArrowButton } from '@/components/ui/ArrowButton'
+import { OsBranding } from '@/components/ui/OsBranding'
 
 interface SignInProps {
   accountLabel: string

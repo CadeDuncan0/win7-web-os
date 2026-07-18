@@ -91,14 +91,14 @@ renders at the same URL.
 ## Make it yours
 
 This is the one section a forker needs. Everything you would change is plain-data registries
-next to the components that render them:
+collected in `src/config/`:
 
 | To change…                            | Edit…                                                          |
 | ------------------------------------- | -------------------------------------------------------------- |
-| Desktop icons                         | `src/components/screens/desktop/desktopIcons.ts`               |
-| Start Menu shortcuts + external links | `src/components/screens/desktop/StartMenu/startMenuItems.ts`   |
-| Pages inside Internet Explorer        | `src/components/screens/desktop/InternetExplorer/ieRoutes.ts`  |
-| Logon-screen branding subtitle        | the `subtitle` default in `src/components/windows7/OsBranding` |
+| Desktop icons                         | `src/config/desktopIcons.ts`                                   |
+| Start Menu shortcuts + external links | `src/config/startMenuItems.ts`                                 |
+| Pages inside Internet Explorer        | `src/config/ieRoutes.ts`                                       |
+| Logon-screen branding subtitle        | the `subtitle` default in `src/components/ui/OsBranding`       |
 | Legacy-path redirects to `/win7`      | the `legacyRedirects` list in `next.config.ts`                 |
 | Wallpapers / icons / avatars          | `public/assets/` (paths registered in `src/lib/assetPaths.ts`) |
 
@@ -148,7 +148,7 @@ A few intentional constraints worth calling out:
 ## Tech stack
 
 | Layer       | Technology                                                            |
-| ----------- | --------------------------------------------------------------------- |
+| ----------- | ---------------------------------------------------------------------- |
 | Framework   | Next.js (App Router) + React 19 + TypeScript (`strict`)               |
 | State       | Redux Toolkit (typed `useAppDispatch` / `useAppSelector`)             |
 | Styling     | CSS Modules + Aero Glass design tokens in `globals.css`, over `7.css` |
@@ -172,13 +172,17 @@ src/
   app/                    App Router: /win7 (logon/desktop switch), /win7/desktop, layout, globals.css
     api/admin/            Route handler: POST verifies the password, DELETE signs out
   components/
+    apps/                 Window content (InternetExplorer, WelcomeWindow)
     providers/            Client context providers (ReduxProviderWrapper, AuthListener)
     screens/
       login/              Logon screen (AccountSelection, SignIn)
-      desktop/            Desktop, IconGrid, Taskbar, StartMenu, WindowManager,
-                          InternetExplorer, WelcomeWindow
+      desktop/            DesktopScreen — composes the shell into the desktop page
       transition/         Boot / welcome transition
-    windows7/             Reusable Windows 7 primitives built on 7.css
+    shell/                OS shell (Desktop, IconGrid, Taskbar, StartMenu,
+                          WindowManager, WindowWrapper)
+    ui/                   Reusable Windows 7 primitives built on 7.css
+  config/                 Fork configuration: plain-data registries (applications,
+                          ieRoutes, notifications)
   hooks/                  Shared React hooks (auth listener, dnd-kit sensors)
   lib/
     adminAuth.ts          Server-side password check + httpOnly cookie token (route + proxy)

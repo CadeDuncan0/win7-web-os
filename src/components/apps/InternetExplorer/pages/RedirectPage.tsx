@@ -1,9 +1,8 @@
 'use client'
 
-import type { IEPage } from '../ieRoutes'
-
 import styles from './RedirectPage.module.css'
-import { Spinner } from '@/components/windows7/Spinner'
+import { Spinner } from '@/components/ui/Spinner'
+import type { IEPage } from '@/config/ieRoutes'
 
 interface RedirectPageProps {
   /** The `redirect: true` registry entry whose `url` opened in a new tab. */

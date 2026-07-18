@@ -1,10 +1,9 @@
 'use client'
 
-import { DEFAULT_ROUTE, IE_TOP_PAGES } from '../ieRoutes'
-
 import styles from './HomePage.module.css'
 import portal from './IEPortal.module.css'
 import { IESidebar } from './IESidebar'
+import { DEFAULT_ROUTE, IE_TOP_PAGES } from '@/config/ieRoutes'
 
 interface HomePageProps {
   onNavigate: (nickname: string) => void

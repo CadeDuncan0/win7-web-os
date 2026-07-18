@@ -2,7 +2,7 @@
 
 import { IEAddressBar } from './IEAddressBar'
 import styles from './IEToolbar.module.css'
-import { ArrowButton } from '@/components/windows7/ArrowButton'
+import { ArrowButton } from '@/components/ui/ArrowButton'
 
 interface IEToolbarProps {
   currentUrl: string
