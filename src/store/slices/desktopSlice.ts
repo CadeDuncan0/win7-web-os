@@ -1,5 +1,6 @@
 import { createSlice, createSelector, type PayloadAction } from '@reduxjs/toolkit'
 
+import { findNextFreeCell } from '@/lib/gridMath'
 import type { RootState } from '@/store'
 import { setSession, clearSession } from '@/store/slices/sessionSlice'
 
@@ -141,30 +142,41 @@ const desktopSlice = createSlice({
     },
 
     // ── arrangeIcons ──────────────────────────────────────────────────────
-    // Payload: icon ids in the desired order. Re-lays the listed icons out in
-    // the seed pattern (single column, top to bottom) in that order — the
-    // caller decides the order (e.g. the desktop menu's "Sort by name" sorts
-    // registry titles); this slice knows nothing about labels. Unknown ids are
-    // skipped; unlisted icons keep their cells.
-    arrangeIcons(state, action: PayloadAction<{ ids: string[] }>) {
+    // Payload: icon ids in the desired order + the viewport row bound. Lays the
+    // listed icons out column-major (top to bottom, wrapping to the next column
+    // at maxRows so none land below the taskbar) in that order — the caller
+    // decides the order (e.g. the desktop menu's "Sort by name" sorts registry
+    // titles); this slice knows nothing about labels. Only the listed icons
+    // move: hidden icons are omitted by the caller, so their cells are freed and
+    // reused here — a re-shown icon resolves any resulting overlap
+    // (setIconHidden). Unknown ids are skipped without leaving a gap.
+    arrangeIcons(state, action: PayloadAction<{ ids: string[]; maxRows: number }>) {
+      const { ids, maxRows } = action.payload
+      let column = 0
       let row = 0
-      action.payload.ids.forEach((id) => {
+      ids.forEach((id) => {
         const icon = state.iconsById[id]
         if (!icon) {
           return
         }
-        icon.position = { column: 0, row }
+        icon.position = { column, row }
         row += 1
+        if (row >= maxRows) {
+          row = 0
+          column += 1
+        }
       })
     },
 
     // ── setIconHidden ─────────────────────────────────────────────────────
-    // Payload: { id: string; hidden: boolean }. Toggles an icon's user-hidden
-    // state (context menu "Hide icon" / Show icons checkboxes). Hiding the
-    // selected icon also drops the selection — a hidden icon cannot stay
-    // selected.
-    setIconHidden(state, action: PayloadAction<{ id: string; hidden: boolean }>) {
-      const { id, hidden } = action.payload
+    // Payload: { id, hidden, maxRows }. Toggles an icon's user-hidden state
+    // (context menu "Hide icon" / Show icons checkboxes). A hidden icon frees
+    // its cell, so sorts and manual moves may fill it while the icon is gone.
+    // On re-show the old cell may now be taken, so the icon slides to the next
+    // free cell among the currently-visible icons (wrapping at maxRows, which is
+    // consulted only on this path). Hiding the selected icon drops the selection.
+    setIconHidden(state, action: PayloadAction<{ id: string; hidden: boolean; maxRows: number }>) {
+      const { id, hidden, maxRows } = action.payload
       if (hidden) {
         if (!state.hiddenIconIds.includes(id)) {
           state.hiddenIconIds.push(id)
@@ -172,9 +184,17 @@ const desktopSlice = createSlice({
         if (state.selectedIconId === id) {
           state.selectedIconId = null
         }
-      } else {
-        state.hiddenIconIds = state.hiddenIconIds.filter((hiddenId) => hiddenId !== id)
+        return
       }
+      state.hiddenIconIds = state.hiddenIconIds.filter((hiddenId) => hiddenId !== id)
+      const icon = state.iconsById[id]
+      if (!icon) {
+        return
+      }
+      const visible = state.iconIds
+        .filter((otherId) => otherId !== id && !state.hiddenIconIds.includes(otherId))
+        .map((otherId) => state.iconsById[otherId])
+      icon.position = findNextFreeCell(icon.position, visible, id, maxRows)
     },
 
     // ── hydrateHiddenIcons ────────────────────────────────────────────────
@@ -192,9 +212,17 @@ const desktopSlice = createSlice({
       state.savedPositions = action.payload
       Object.entries(action.payload).forEach(([id, position]) => {
         const icon = state.iconsById[id]
-        if (icon) {
-          icon.position = { ...position }
+        if (!icon) {
+          return
         }
+        // Saved cells can collide with cells other icons already hold (e.g. an
+        // app added in a later release seeds onto a saved icon's row). Resolve
+        // each through the same free-cell scan registration uses, excluding the
+        // icon itself so a cell it already occupies stays put.
+        const others = state.iconIds
+          .filter((otherId) => otherId !== id)
+          .map((otherId) => state.iconsById[otherId])
+        icon.position = firstFreeCell(position, others, (other) => other.position)
       })
     },
   },

@@ -12,6 +12,14 @@ export const CELL_HEIGHT = 80
 export const GRID_PADDING = 12
 export const TASKBAR_RESERVE = 40
 
+// Rows that fit above the taskbar at the current viewport height — the bound
+// arrangeIcons wraps at. Reads window, so call from client event handlers only,
+// never during render/SSR. Mirrors IconGrid's live gridBounds.maxRows.
+export function gridMaxRows(): number {
+  const availableHeight = window.innerHeight - TASKBAR_RESERVE - GRID_PADDING * 2
+  return Math.max(1, Math.floor(availableHeight / CELL_HEIGHT))
+}
+
 export function gridCellToPixels(cell: GridCell): { x: number; y: number } {
   return {
     x: cell.column * CELL_WIDTH + GRID_PADDING,

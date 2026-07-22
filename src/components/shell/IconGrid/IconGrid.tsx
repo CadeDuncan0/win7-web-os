@@ -26,6 +26,7 @@ import {
   setIconPosition,
   clearSelection,
   selectDesktopIcons,
+  selectHiddenIconIds,
 } from '@/store/slices/desktopSlice'
 
 interface IconGridProps {
@@ -41,6 +42,7 @@ export function IconGrid({ apps, onContextMenu }: IconGridProps) {
   const dispatch = useAppDispatch()
   const sensors = useDesktopSensors()
   const desktopIcons = useAppSelector(selectDesktopIcons)
+  const hiddenIconIds = useAppSelector(selectHiddenIconIds)
 
   useEffect(() => {
     apps.forEach((app, index) => {
@@ -91,9 +93,10 @@ export function IconGrid({ apps, onContextMenu }: IconGridProps) {
       row: Math.max(0, Math.min(gridCell.row, gridBounds.maxRows - 1)),
     }
 
-    // If the target cell is taken, scan for the next free cell
-    if (isCellOccupied(gridCell, desktopIcons, id)) {
-      gridCell = findNextFreeCell(gridCell, desktopIcons, id, gridBounds.maxRows)
+    // Hidden icons free their cells, so a drop only collides with visible ones.
+    const visibleIcons = desktopIcons.filter((i) => !hiddenIconIds.includes(i.id))
+    if (isCellOccupied(gridCell, visibleIcons, id)) {
+      gridCell = findNextFreeCell(gridCell, visibleIcons, id, gridBounds.maxRows)
     }
 
     dispatch(setIconPosition({ id, position: gridCell }))

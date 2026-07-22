@@ -9,6 +9,7 @@ import { Taskbar } from '@/components/shell/Taskbar'
 import { WindowManager } from '@/components/shell/WindowManager'
 import { desktopIconApps, desktopIconId } from '@/config/applications'
 import { useDesktopPersistence } from '@/hooks/useDesktopPersistence'
+import { gridMaxRows } from '@/lib/gridMath'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   arrangeIcons,
@@ -57,7 +58,8 @@ export function DesktopScreen({ isAdmin = false }: DesktopScreenProps) {
       ? [
           {
             label: 'Hide icon',
-            onSelect: () => dispatch(setIconHidden({ id: menuIconId, hidden: true })),
+            onSelect: () =>
+              dispatch(setIconHidden({ id: menuIconId, hidden: true, maxRows: gridMaxRows() })),
           },
         ]
       : []),
@@ -71,7 +73,8 @@ export function DesktopScreen({ isAdmin = false }: DesktopScreenProps) {
         return {
           label: app.title,
           checked: !hidden,
-          onSelect: () => dispatch(setIconHidden({ id: iconId, hidden: !hidden })),
+          onSelect: () =>
+            dispatch(setIconHidden({ id: iconId, hidden: !hidden, maxRows: gridMaxRows() })),
         }
       }),
     },
@@ -83,6 +86,7 @@ export function DesktopScreen({ isAdmin = false }: DesktopScreenProps) {
             ids: [...visibleApps]
               .sort((a, b) => a.title.localeCompare(b.title))
               .map((app) => desktopIconId(app.key)),
+            maxRows: gridMaxRows(),
           })
         ),
     },
