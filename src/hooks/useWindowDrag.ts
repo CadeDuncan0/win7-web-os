@@ -33,7 +33,10 @@ export function useWindowDrag({ windowId, position, size, isMaximized }: UseWind
     if (!(e.target as Element).closest('.title-bar')) {
       return
     }
-    if ((e.target as Element).closest('.title-bar-controls')) {
+    if (
+      (e.target as Element).closest('.title-bar-controls') ||
+      (e.target as Element).closest('.title-bar-icon')
+    ) {
       return
     }
     // The optional title-bar toolbar row (browser nav/address bar) is interactive
