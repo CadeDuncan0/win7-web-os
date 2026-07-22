@@ -14,19 +14,10 @@
  */
 
 export interface IEPage {
-  /** Stored in the history stack and accepted as a typed alias, e.g. `about:home`. */
-  nickname: string
-  /** Full URL displayed in the address bar, e.g. `https://www.example.com/home`. */
+  nickname: string // id
   url: string
-  /** Condensed label for the address dropdown + page-links row, e.g. `Home`. */
-  title: string
-  /** When true, selecting this entry opens `url` in a new browser tab and IE
-   *  shows the redirect page instead of rendering in-app content. */
-  redirect?: boolean
-  /** When true, the route is retired: it is dropped from every launcher (the
-   *  page-links row, the Home tiles, the address-bar list) and cannot be
-   *  resolved or rendered — typing its nickname yields the not-found page.
-   *  The one switch to turn a page (or an external redirect) off everywhere. */
+  title: string // search dropdown label
+  redirect?: boolean // opens in new tab
   disabled?: boolean
 }
 
@@ -35,17 +26,17 @@ const SITE = 'www.win7webos.com'
 export const IE_PAGES: IEPage[] = [
   { nickname: 'about:home', url: `${SITE}/home`, title: 'Home', redirect: false },
   {
+    nickname: 'about:getting-started',
+    url: `${SITE}/getting-started`,
+    title: 'Getting Started',
+    redirect: false,
+  },
+  {
     nickname: 'about:source-code',
     url: `https://github.com/CadeDuncan0/win7-web-os`,
     title: 'Source Code',
     redirect: true,
     disabled: false,
-  },
-  {
-    nickname: 'about:getting-started',
-    url: `${SITE}/getting-started`,
-    title: 'Getting Started',
-    redirect: false,
   },
 ]
 
@@ -77,12 +68,10 @@ export function pageUrl(nickname: string): string {
   return resolvePage(nickname)?.url ?? nickname
 }
 
-/**
- * Filter pages for the address-bar dropdown. An empty query lists every page;
- * otherwise matches against the condensed title, the full URL, or the nickname.
- */
+/** Filter pages for the address-bar dropdown. */
 export function filterPages(query: string): IEPage[] {
   const q = query.trim().toLowerCase()
+  // list all pages
   if (!q) {
     return IE_ENABLED_PAGES
   }
