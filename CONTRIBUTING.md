@@ -9,7 +9,7 @@ apart.
 If you're building **your own** desktop site:
 
 1. Fork the repo (it's a GitHub template — "Use this template" also works).
-2. Edit the plain-data registries — `desktopIcons.ts`, `startMenuItems.ts`, and `ieRoutes.ts`.
+2. Edit the plain-data registries in `src/config/` — `desktopIcons.ts`, `startMenuItems.ts`, and `ieRoutes.ts`.
    The README's **Make it yours** section maps every content location (icons, Start Menu
    shortcuts, IE pages and external links, branding, redirects, assets).
 3. Copy `.env.example` to `.env.local` and set `ADMIN_PASSWORD` to your Admin account password.
@@ -27,11 +27,14 @@ Personal content (your bio, projects, photos, analytics IDs) should never be PR'
 Bug fixes, new Windows 7 primitives, window-manager improvements, and a11y work are all welcome.
 
 - **Where things live:** the OS engine is `src/store/slices/` (state) +
-  `src/components/screens/desktop/` (chrome); reusable Win7 primitives are
-  `src/components/windows7/`.
-- **Adding an app window:** extend the `WindowKind` union, add a `WindowManager` case and
-  `taskbarApps.ts` meta, then register a launcher in `desktopIcons.ts` / `startMenuItems.ts`.
-  Keep demo content generic — no personal data in the template.
+  `src/components/shell/` (chrome) + `src/components/apps/` (window content);
+  reusable Win7 primitives are `src/components/ui/`; fork-editable registries
+  are `src/config/`.
+- **Adding an app window:** export a `WindowApp` descriptor (kind + component) from your app
+  folder under `src/components/apps/`, then add one `Application` record referencing it in
+  `src/config/applications.ts` — launchers, taskbar meta, the window renderer, and the typed
+  key space all derive from it. Keep demo content generic — no personal data in the
+  template.
 - **Style:** match the existing code. Every color, shadow, blur, gradient, and radius goes
   through the Aero Glass tokens in `src/app/globals.css` — never write raw literals in a
   component stylesheet. Asset paths go through `src/lib/assetPaths.ts`.

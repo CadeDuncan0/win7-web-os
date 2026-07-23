@@ -1,7 +1,8 @@
 import { createSlice, createSelector, type PayloadAction } from '@reduxjs/toolkit'
 
+import { findNextFreeCell } from '@/lib/gridMath'
 import type { RootState } from '@/store'
-import { setSession, clearSession } from '@/store/slices/sessionSlice'
+import { clearSession } from '@/store/slices/sessionSlice'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -26,24 +27,25 @@ export interface DesktopState {
   iconsById: Record<string, DesktopIcon> // O(1) lookup, mirrors windowSlice.byId
   iconIds: string[] // stable registration order for rendering
   selectedIconId: string | null // single-selection model
-  persistPositions: boolean // role-derived: is the current layout durable?
   // Positions hydrated from sessionStorage (useDesktopPersistence). Kept as a
   // standalone map — not merged into iconsById — because hydration and icon
   // registration race at boot: whichever runs second consults the other.
   savedPositions: Record<string, GridCell>
+  // Icons the user hid via the context menu ("Hide icon" / the Show icons
+  // toggles). Hidden icons stay registered — their grid cells survive for
+  // re-showing — they just don't render. Persisted like positions.
+  hiddenIconIds: string[]
 }
 
 // ─── Initial State ──────────────────────────────────────────────────────────
 // No icons until the desktop mounts and dispatches registerIcon for each.
-// persistPositions starts false — no session yet, so treat the layout as
-// ephemeral until a setSession tells us otherwise.
 
 const initialState: DesktopState = {
   iconsById: {},
   iconIds: [],
   selectedIconId: null,
-  persistPositions: false,
   savedPositions: {},
+  hiddenIconIds: [],
 }
 
 function resetDesktopIcons(state: DesktopState): void {
@@ -62,7 +64,8 @@ function firstFreeCell(
   icons: DesktopIcon[],
   cellOf: (icon: DesktopIcon) => GridCell
 ): GridCell {
-  let { column, row } = desired
+  const { column } = desired
+  let { row } = desired
   while (icons.some((icon) => cellOf(icon).column === column && cellOf(icon).row === row)) {
     row += 1
   }
@@ -134,6 +137,69 @@ const desktopSlice = createSlice({
       state.selectedIconId = null
     },
 
+    // ── arrangeIcons ──────────────────────────────────────────────────────
+    // Payload: icon ids in the desired order + the viewport row bound. Lays the
+    // listed icons out column-major (top to bottom, wrapping to the next column
+    // at maxRows so none land below the taskbar) in that order — the caller
+    // decides the order (e.g. the desktop menu's "Sort by name" sorts registry
+    // titles); this slice knows nothing about labels. Only the listed icons
+    // move: hidden icons are omitted by the caller, so their cells are freed and
+    // reused here — a re-shown icon resolves any resulting overlap
+    // (setIconHidden). Unknown ids are skipped without leaving a gap.
+    arrangeIcons(state, action: PayloadAction<{ ids: string[]; maxRows: number }>) {
+      const { ids, maxRows } = action.payload
+      let column = 0
+      let row = 0
+      ids.forEach((id) => {
+        const icon = state.iconsById[id]
+        if (!icon) {
+          return
+        }
+        icon.position = { column, row }
+        row += 1
+        if (row >= maxRows) {
+          row = 0
+          column += 1
+        }
+      })
+    },
+
+    // ── setIconHidden ─────────────────────────────────────────────────────
+    // Payload: { id, hidden, maxRows }. Toggles an icon's user-hidden state
+    // (context menu "Hide icon" / Show icons checkboxes). A hidden icon frees
+    // its cell, so sorts and manual moves may fill it while the icon is gone.
+    // On re-show the old cell may now be taken, so the icon slides to the next
+    // free cell among the currently-visible icons (wrapping at maxRows, which is
+    // consulted only on this path). Hiding the selected icon drops the selection.
+    setIconHidden(state, action: PayloadAction<{ id: string; hidden: boolean; maxRows: number }>) {
+      const { id, hidden, maxRows } = action.payload
+      if (hidden) {
+        if (!state.hiddenIconIds.includes(id)) {
+          state.hiddenIconIds.push(id)
+        }
+        if (state.selectedIconId === id) {
+          state.selectedIconId = null
+        }
+        return
+      }
+      state.hiddenIconIds = state.hiddenIconIds.filter((hiddenId) => hiddenId !== id)
+      const icon = state.iconsById[id]
+      if (!icon) {
+        return
+      }
+      const visible = state.iconIds
+        .filter((otherId) => otherId !== id && !state.hiddenIconIds.includes(otherId))
+        .map((otherId) => state.iconsById[otherId])
+      icon.position = findNextFreeCell(icon.position, visible, id, maxRows)
+    },
+
+    // ── hydrateHiddenIcons ────────────────────────────────────────────────
+    // Payload: the persisted hidden-icon id list. Dispatched once at desktop
+    // boot (useDesktopPersistence).
+    hydrateHiddenIcons(state, action: PayloadAction<string[]>) {
+      state.hiddenIconIds = action.payload
+    },
+
     // ── hydrateIconPositions ──────────────────────────────────────────────
     // Payload: the persisted id → grid-cell map. Dispatched once at desktop
     // boot (useDesktopPersistence). Applies to icons already registered and
@@ -142,32 +208,28 @@ const desktopSlice = createSlice({
       state.savedPositions = action.payload
       Object.entries(action.payload).forEach(([id, position]) => {
         const icon = state.iconsById[id]
-        if (icon) {
-          icon.position = { ...position }
+        if (!icon) {
+          return
         }
+        // Saved cells can collide with cells other icons already hold (e.g. an
+        // app added in a later release seeds onto a saved icon's row). Resolve
+        // each through the same free-cell scan registration uses, excluding the
+        // icon itself so a cell it already occupies stays put.
+        const others = state.iconIds
+          .filter((otherId) => otherId !== id)
+          .map((otherId) => state.iconsById[otherId])
+        icon.position = firstFreeCell(position, others, (other) => other.position)
       })
     },
   },
 
-  // extraReducers added in Step 4.
   extraReducers: (builder) => {
-    // ── capture the persistence intent when a session begins ──────────────
-    // setSession is the ONLY moment the role is observable to this slice.
-    // Translate it immediately into the durability fact this slice cares about.
-    builder.addCase(setSession, (state, action) => {
-      state.persistPositions = action.payload.role === 'admin'
-    })
-
+    // Sign-out clears the live layout so the next account starts clean; each
+    // role's own arrangement is restored from its namespaced sessionStorage
+    // markers at desktop boot (useDesktopPersistence), never inherited here.
     builder.addCase(clearSession, (state) => {
-      // 1. If persistPositions is false (Guest): reuse the reset helper from
-      //    Step 3 — positions ⟵ defaults, selection ⟵ null.
-      //    If persistPositions is true (Admin): leave the layout untouched.
-      if (!state.persistPositions) {
-        resetDesktopIcons(state)
-      }
-      // 2. Always reset persistPositions back to false. The next boot starts
-      //    ephemeral until a fresh setSession re-establishes durability.
-      state.persistPositions = false
+      resetDesktopIcons(state)
+      state.hiddenIconIds = []
     })
   },
 })
@@ -183,6 +245,12 @@ export const selectSelectedIconId = (state: RootState): string | null => {
 // to change-detect (by identity) and write positions through to sessionStorage.
 export const selectIconsById = (state: RootState): Record<string, DesktopIcon> => {
   return state.desktop.iconsById
+}
+
+// Category 2 — returns the stored reference; consumed by the desktop context
+// menu (checkbox state) and useDesktopPersistence (identity change-detect).
+export const selectHiddenIconIds = (state: RootState): string[] => {
+  return state.desktop.hiddenIconIds
 }
 
 // Category 2 — O(1) lookup, higher-order (parameterized by id), mirrors selectWindowById.
@@ -217,6 +285,9 @@ export const {
   setSelectedIcon,
   clearSelection,
   resetGuestPositions,
+  arrangeIcons,
+  setIconHidden,
+  hydrateHiddenIcons,
   hydrateIconPositions,
 } = desktopSlice.actions
 

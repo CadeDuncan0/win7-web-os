@@ -2,8 +2,8 @@
 
 import login from '../Login.module.css'
 import styles from './AccountSelection.module.css'
-import { AccountIcon } from '@/components/windows7/AccountIcon'
-import { OsBranding } from '@/components/windows7/OsBranding'
+import { AccountIcon } from '@/components/ui/AccountIcon'
+import { OsBranding } from '@/components/ui/OsBranding'
 
 export type AccountId = 'guest' | 'admin'
 

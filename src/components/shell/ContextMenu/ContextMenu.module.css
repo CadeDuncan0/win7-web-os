@@ -1,0 +1,8 @@
+/* The ContextMenu floats at the right-click point. 7.css draws all menu chrome
+   (surface, rows, hover, submenu chevron, checkbox); this module only takes the
+   menu out of flow at the anchor and re-enables pointer events inside the
+   Desktop's pointer-events:none overlay slot. */
+.menu {
+  position: fixed;
+  pointer-events: auto;
+}

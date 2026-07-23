@@ -1,0 +1,52 @@
+/* Home-page specifics only — the page shell, header band, columns, sidebar and
+   content module come from IEPortal.module.css. All colours/measures are
+   `--ie-*` tokens from globals.css. */
+.lede {
+  margin: 0 0 12px;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+/* Glossy "Web 2.0" feature tile — a beveled glass panel with a title + blurb. */
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+  min-height: 0;
+  padding: 10px 12px;
+  background: var(--ie-tile-bg);
+  border: var(--ie-tile-border);
+  border-radius: var(--ie-tile-radius);
+  box-shadow: var(--ie-tile-shadow);
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Reset the 7.css button pseudo-element chrome so the tile reads as a panel. */
+.tile::before,
+.tile::after {
+  display: none;
+}
+
+.tile:hover {
+  background: var(--ie-tile-bg-hover);
+}
+
+.tileTitle {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--ie-tile-title-color);
+  text-decoration: underline;
+}
+
+.tileDesc {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ie-tile-desc-color);
+}

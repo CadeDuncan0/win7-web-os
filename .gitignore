@@ -43,26 +43,33 @@ CLAUDE.md
 .husky/
 .vscode/
 .github/
-.prettierrc
-.prettierignore
-eslint.config.mjs
-commitlint.config.js
-lint-staged.config.*
 dockerfile
 docker-compose.yml
 .dockerignore
 scripts/
 
-# testing (removed from the template; ignore local re-additions)
+# formatting / linting (local-only, never tracked; forks provide their own)
+.prettierrc*
+.prettierignore
+prettier.config.*
+eslint.config.*
+.eslintrc*
+commitlint.config.js
+lint-staged.config.*
+
+# testing (local-only, never tracked; forks provide their own)
 /coverage
+*.test.*
+*.spec.*
+__tests__/
+vitest.config.*
+vitest.setup.*
 cypress/
 cypress.config.ts
 cypress.env.json
 .storybook/
 *storybook.log
 storybook-static
-vitest.config.ts
-vitest.setup.ts
 
 # vercel
 .vercel

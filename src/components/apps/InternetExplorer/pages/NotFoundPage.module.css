@@ -1,0 +1,17 @@
+/* Not-found specifics only — shell, header band and content module come from
+   IEPortal.module.css. Colours/measures are `--ie-*` tokens from globals.css. */
+.para {
+  margin: 0 0 10px;
+}
+
+.addr {
+  font-family: Consolas, monospace;
+  color: var(--ie-module-header-color);
+  word-break: break-all;
+}
+
+.tips {
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.6;
+}

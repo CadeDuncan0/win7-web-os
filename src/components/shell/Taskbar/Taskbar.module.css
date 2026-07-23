@@ -1,0 +1,83 @@
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--tb-height);
+  z-index: var(--tb-z);
+  display: flex;
+  padding: 0 var(--space-1);
+  gap: var(--space-1);
+  background: var(--tb-bg);
+  border-top: var(--tb-border-top);
+  box-shadow: var(--tb-shadow);
+}
+
+.taskbar * {
+  margin-bottom: 1px;
+}
+
+.taskbar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(var(--tb-glass-blur));
+  -webkit-backdrop-filter: blur(var(--tb-glass-blur));
+  z-index: -1;
+  pointer-events: none;
+}
+
+.orbWrapper {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0 var(--space-1);
+}
+
+/* Aero Peek "Show desktop" sliver at the taskbar's far right edge — white
+   glossy glass over the taskbar gradient, brightening on hover. */
+.showDesktop {
+  all: unset;
+  flex-shrink: 0;
+  width: 14px;
+  align-self: stretch;
+  box-sizing: border-box;
+  margin-left: var(--space-1);
+  /* Bleed to the screen edge past the taskbar's right padding. */
+  margin-right: calc(var(--space-1) * -1);
+  border: 1px solid var(--tb-peek-border);
+  border-top: 0;
+  border-radius: var(--tb-peek-radius);
+  background: var(--tb-peek-bg);
+  box-shadow: var(--tb-peek-shadow);
+}
+
+/* `all: unset` drops 7.css's `position: relative`, so its button-gloss ::before
+   (position: absolute, 100%×100%) would anchor to the fixed .taskbar and fade a
+   blue gradient across the whole bar on hover. This button paints its own hover
+   glass, so remove the 7.css pseudos entirely. */
+.showDesktop::before,
+.showDesktop::after {
+  content: none;
+}
+
+.showDesktop:hover {
+  background: var(--tb-peek-bg-hover);
+  box-shadow: var(--tb-peek-shadow-hover);
+}
+
+.showDesktop:active {
+  background: var(--tb-peek-bg-active);
+}
+
+.buttonGroup {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  /* visible (not hidden): grouping keeps the button count low, and the
+     per-app popup is positioned above the taskbar and must not be clipped. */
+  overflow: visible;
+  height: 100%;
+  padding: 4px 0;
+}

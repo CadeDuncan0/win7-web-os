@@ -1,0 +1,15 @@
+/* Getting-Started specifics only — the shell, header band, columns, sidebar and
+   content module come from IEPortal.module.css. Colours/measures are `--ie-*`
+   tokens from globals.css. */
+.para {
+  margin: 0 0 10px;
+}
+
+.para:last-child {
+  margin-bottom: 0;
+}
+
+.path {
+  font-family: Consolas, monospace;
+  color: var(--ie-module-header-color);
+}

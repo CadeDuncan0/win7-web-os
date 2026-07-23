@@ -5,7 +5,7 @@ import type { NextConfig } from 'next'
 // The root path is not in this list: it is *rewritten* (not redirected) to
 // /win7 below, so the URL the visitor entered at — the domain root, or the
 // mount point under a BASE_PATH deployment — never changes in the address bar.
-const legacyRedirects = ['/hub', '/login', '/desktop']
+const legacyRedirects = ['/login', '/desktop']
 
 // Optional subpath mount, e.g. '/desktop' to serve the app at
 // example.com/desktop behind a rewrite zone. Empty = served at the domain root.

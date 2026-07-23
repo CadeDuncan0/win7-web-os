@@ -288,31 +288,80 @@
   --mw-min-height: 160px;
   /* Bottom-right corner resize hit target (invisible — no grip icon). */
   --mw-resize-handle-size: 16px;
+  /* Aero Peek: diagonal glass sheen laid over each sheet while peeking — a
+     bright top-left highlight thinning to a faint cool-tinted reflection. */
+  --mw-peek-gloss: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(255, 255, 255, 0.15) 24%,
+    rgba(255, 255, 255, 0.05) 48%,
+    rgba(210, 230, 250, 0.04) 56%,
+    rgba(255, 255, 255, 0.13) 100%
+  );
 
   /* ─── SEMANTIC: Taskbar ────────────────────────────────────────── */
   --tb-height: 40px;
   --tb-height-fill: 41px;
-  /* Aero glass: a light, translucent blue body the backdrop blur (below)
-     shows through — bright at the top edge, faintly deeper at the base.
-     Low alphas let the wallpaper tint it so it reads as glass, not paint. */
+  /* Aero glass: a translucent blue body the backdrop blur (below) shows
+     through — bright at the top edge, deepening toward the base (matched to
+     references/taskbar-full.png, which reads darker than pure glass).
+     Alphas stay low enough for the wallpaper to tint it. */
   --tb-bg: linear-gradient(
     to bottom,
-    rgba(188, 214, 238, 0.5) 0%,
-    rgba(138, 178, 214, 0.42) 9%,
-    rgba(104, 150, 195, 0.4) 52%,
-    rgba(86, 132, 180, 0.48) 100%
+    rgba(160, 190, 220, 0.52) 0%,
+    rgba(106, 148, 192, 0.46) 9%,
+    rgba(68, 110, 158, 0.48) 52%,
+    rgba(44, 78, 118, 0.58) 100%
   );
   --tb-glass-blur: 12px;
   --tb-border-top: 1px solid rgba(255, 255, 255, 0.6);
   --tb-shadow: 0 -1px 0px rgba(0, 0, 0, 1);
 
-  /* Square, grouped app-icon buttons. No chrome at rest — a soft frame
-     appears only on hover/active (never a persistent solid white border). */
+  /* Aero Peek "Show desktop" sliver past the clock: a white glossy glass pane
+     over the taskbar gradient (a bright sheen fading to a gloss break at the
+     midline), lightening under the pointer and dimming on press. */
+  --tb-peek-border: rgba(255, 255, 255, 0.45);
+  --tb-peek-radius: 0px;
+  --tb-peek-bg:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.42) 0%,
+      rgba(255, 255, 255, 0.1) 26%,
+      rgba(255, 255, 255, 0.03) 50%,
+      rgba(255, 255, 255, 0.14) 74%,
+      rgba(255, 255, 255, 0.24) 100%
+    ),
+    var(--tb-bg);
+  --tb-peek-bg-hover:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.65) 0%,
+      rgba(255, 255, 255, 0.22) 46%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.26) 54%,
+      rgba(255, 255, 255, 0.4) 100%
+    ),
+    var(--tb-bg);
+  --tb-peek-bg-active:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.06) 50%,
+      rgba(255, 255, 255, 0.16) 100%
+    ),
+    var(--tb-bg);
+  --tb-peek-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  --tb-peek-shadow-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 0 7px rgba(185, 218, 248, 0.5);
+
+  /* Square, grouped app-icon buttons. No chrome at rest — a frame appears only
+     for the active app (hovering is not highlighted). --tb-item-selector-hover
+     also draws the tray icons' keyboard focus ring. */
   --tb-item-width: 58px;
   --tb-item-height: 40px;
   --tb-item-icon-size: 36px;
   --tb-item-radius: 3px;
-  --tb-item-bg-hover: rgba(255, 255, 255, 0.22);
   --tb-item-bg-active: rgba(255, 255, 255, 0.3);
   --tb-item-selector-hover: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
   --tb-item-selector-active: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
@@ -383,6 +432,19 @@
   --tb-orb-glow: brightness(1.15) saturate(1.4) drop-shadow(0 0 6px rgba(140, 215, 255, 0.95));
   --tb-z: var(--dsk-z-taskbar);
 
+  /* ─── SEMANTIC: Tray notifications ────────────────────────────── */
+  /* Persistent notification icons beside the clock + their balloon. */
+  --ntf-icon-size: 16px;
+  --ntf-icon-button-size: 24px;
+  --ntf-icon-radius: 3px;
+  --ntf-icon-bg-active: var(--tb-item-bg-active);
+  /* Win7 balloon headers: a glyph beside a title in the deep balloon blue. */
+  --ntf-header-icon-size: 16px;
+  --ntf-title-c: #00339a;
+
+  --ntf-balloon-width: 350px;
+  --ntf-balloon-height: 95px;
+
   /* ─── SEMANTIC: Internet Explorer chrome ──────────────────────── */
   /* The toolbar sits inside the glass title bar (transparent background). No
      horizontal padding so it spans the same width as the window body; 8px above
@@ -396,7 +458,10 @@
   --ie-nav-btn-disabled-filter: grayscale(0.9) brightness(1.2) opacity(0.55);
   --ie-titlebar-icon-size: var(--tb-popup-icon-size);
   --ie-address-height: 24px;
-  --ie-address-bg: #fff;
+  /* Vertical glass gradient sampled from internet-explorer-addressbar-gradient.png:
+     1px bright edge highlights, cool blue-gray body, green-tinted midline. Slight
+     alpha lets the toolbar glass show through (see internet-explorer-OG.png). */
+  --ie-address-bg: rgba(255, 255, 255, 0.9);
   /* Flat 1px hairline, square corners — IE7's address field sits flush on the
      glass rather than sunken (the 2px inset read as IE6/XP). */
   --ie-address-border: 1px solid rgba(130, 146, 162, 0.9);
@@ -410,10 +475,6 @@
   --ie-action-divider-color: rgb(101, 115, 115);
   --ie-action-btn-bg: transparent;
   --ie-action-btn-bg-hover: rgba(101, 115, 115, 0.15);
-  --ie-refresh-color: rgba(40, 110, 160, 0.85);
-  --ie-refresh-color-hover: rgba(25, 90, 140, 1);
-  --ie-clear-color: rgba(170, 50, 45, 0.85);
-  --ie-clear-color-hover: rgba(150, 30, 25, 1);
   /* Address autocomplete dropdown. */
   --ie-dropdown-z: 20;
   --ie-dropdown-max-height: 220px;
@@ -458,15 +519,66 @@
   --ie-status-text: #3b4b5c;
   --ie-status-font-size: 11px;
   --ie-status-divider: 1px solid rgba(150, 168, 190, 0.6);
+
+  /* IE7 retro page body — the in-page "portal" look for the default IE pages.
+     A restrained mid-2000s Web 2.0 vocabulary (glossy gradient bands, boxed
+     modules, glass tiles, a boxed side rail) layered over the content area so
+     the pages read as a period web page rather than a blank document. Kept
+     subtle on purpose — over-glossy reads cartoonish. */
+  --ie-page-bg: linear-gradient(180deg, #eef4fb 0%, #dfe9f4 100%);
+  --ie-page-padding: 16px;
+  --ie-columns-gap: 14px;
+  /* Glossy blue header band — evokes the "Welcome to Internet Explorer" tour
+     banner. The stop break at ~50% is the classic glass reflection line. */
+  --ie-band-bg: linear-gradient(180deg, #6fb1e2 0%, #3f8ac6 49%, #2f76b3 51%, #27689e 100%);
+  --ie-band-border: 1px solid rgba(28, 72, 112, 0.65);
+  --ie-band-radius: 5px;
+  --ie-band-padding: 14px 18px;
+  --ie-band-shadow: 0 1px 3px rgba(20, 50, 80, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  --ie-band-title-color: #ffffff;
+  --ie-band-title-shadow: 0 1px 1px rgba(0, 28, 56, 0.6);
+  --ie-band-tagline-color: rgba(255, 255, 255, 0.92);
+  /* Boxed content module — white body under a titled header strip. */
+  --ie-module-bg: #ffffff;
+  --ie-module-border: 1px solid rgba(150, 172, 196, 0.7);
+  --ie-module-radius: 5px;
+  --ie-module-shadow: 0 1px 3px rgba(40, 70, 100, 0.12);
+  --ie-module-header-bg: linear-gradient(#f4f9fd, #e2edf8);
+  --ie-module-header-border: 1px solid rgba(160, 182, 205, 0.7);
+  --ie-module-header-color: #17456f;
+  --ie-module-body-color: #333333;
+  --ie-module-padding: 14px 16px;
+  /* Boxed side rail with per-group titled boxes. */
+  --ie-sidebar-width: 176px;
+  --ie-sidebox-bg: linear-gradient(#ffffff, #f3f8fc);
+  --ie-sidebox-border: 1px solid rgba(150, 172, 196, 0.65);
+  --ie-sidebox-radius: 5px;
+  --ie-sidebox-shadow: 0 1px 2px rgba(40, 70, 100, 0.1);
+  --ie-sidebox-title-bg: linear-gradient(#eaf3fb, #d3e3f3);
+  --ie-sidebox-title-border: 1px solid rgba(160, 182, 205, 0.7);
+  --ie-sidebox-title-color: #17456f;
+  --ie-sidebox-link-color: #0066cc;
+  --ie-sidebox-link-hover-color: #003d99;
+  --ie-sidebox-link-divider: 1px solid rgba(200, 214, 230, 0.8);
+  --ie-sidebox-text-color: #4a5b6c;
+  /* Glossy "Web 2.0" feature tiles (Home page). */
+  --ie-tile-bg: linear-gradient(#ffffff, #e9f2fb);
+  --ie-tile-bg-hover: linear-gradient(#f2f8ff, #d7e8fa);
+  --ie-tile-border: 1px solid rgba(140, 165, 195, 0.75);
+  --ie-tile-radius: 5px;
+  --ie-tile-shadow: 0 1px 2px rgba(40, 70, 100, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --ie-tile-title-color: #17456f;
+  --ie-tile-desc-color: #5a6b7c;
+  /* Glossy call-out badge ("New" / "Tip") — used sparingly. */
+  --ie-badge-bg: linear-gradient(#ffe07a, #f2a733);
+  --ie-badge-border: 1px solid rgba(198, 138, 22, 0.85);
+  --ie-badge-color: #6b4300;
+  --ie-badge-radius: 9px;
 }
 
 /* =====================================================================
    Document baseline
    ===================================================================== */
-
-html {
-  font-size: 16px;
-}
 
 body {
   margin: 0;
@@ -486,16 +598,5 @@ body {
   *::before,
   *::after {
     box-sizing: border-box;
-  }
-
-  ul,
-  ol {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  button {
-    font-family: inherit;
   }
 }

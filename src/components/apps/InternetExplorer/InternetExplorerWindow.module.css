@@ -1,0 +1,85 @@
+/* The IE window body is edge-to-edge (bodySpace=false): a fixed page-links row
+   above a scrolling content area. */
+.ieBody {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--ie-content-bg);
+}
+
+/* App logo in the window title bar — sized to match the taskbar window-stack
+   popup icon, per the design reference. */
+.titleBarIcon {
+  width: var(--ie-titlebar-icon-size);
+  height: var(--ie-titlebar-icon-size);
+  object-fit: contain;
+  display: block;
+}
+
+/* ── IE7 retro chrome ─────────────────────────────────────────────── */
+
+/* Single-tab strip under the address bar. */
+.tabStrip {
+  display: flex;
+  align-items: flex-end;
+  height: var(--ie-tab-height);
+  padding: 2px 4px 0;
+  background: var(--ie-chrome-band-bg);
+  border-bottom: var(--ie-chrome-band-border);
+  flex-shrink: 0;
+}
+
+/* Favorites star pinned left of the tabs, like IE7's Favorites Center. */
+.favStar {
+  align-self: center;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0 6px 0 2px;
+  color: var(--ie-tab-star-color);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 100%;
+  min-width: 120px;
+  max-width: 220px;
+  padding: 0 10px;
+  background: var(--ie-tab-bg);
+  border: var(--ie-tab-border);
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+}
+
+.tabFavicon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+.tabTitle {
+  font-size: var(--ie-tab-font-size);
+  color: var(--ie-tab-title-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Short empty nub after the active tab — IE7's new-tab stub. */
+.tabStub {
+  width: 24px;
+  height: calc(100% - 2px);
+  background: var(--ie-tab-bg);
+  border: var(--ie-tab-border);
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  opacity: 0.7;
+}
