@@ -1,7 +1,7 @@
 import { createSelector, createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { RootState } from '@/store'
-import { clearSession, setSession } from '@/store/slices/sessionSlice'
+import { clearSession } from '@/store/slices/sessionSlice'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -29,15 +29,13 @@ export interface NotificationState {
   items: TrayNotification[]
   // Ids the user removed via the tray icon's context menu (the runtime
   // "disabled" flag). Removed items keep their slot in `items` but render
-  // nothing. Persisted to sessionStorage (admin only) by useDesktopPersistence;
-  // guest removals live only here, so a reload restores every notification.
+  // nothing. Persisted per role by useDesktopPersistence when the role's
+  // NotificationData flag is on; with it off, removals live only here, so a
+  // reload restores every notification.
   removedIds: string[]
   // The notification whose balloon is open; null when none. One balloon at a
   // time (Win7 behavior) — opening another replaces it.
   openId: string | null
-  // Role-derived, mirrors desktopSlice.persistPositions: admin removals
-  // survive sign-out, guest removals reset with the rest of the layout.
-  persistRemovals: boolean
 }
 
 // ─── Initial State ──────────────────────────────────────────────────────────
@@ -46,7 +44,6 @@ const initialState: NotificationState = {
   items: [],
   removedIds: [],
   openId: null,
-  persistRemovals: false,
 }
 
 const notificationSlice = createSlice({
@@ -118,17 +115,11 @@ const notificationSlice = createSlice({
   },
 
   extraReducers: (builder) => {
-    // Mirrors desktopSlice: translate the session role into the durability
-    // fact this slice cares about, and reset guest removals on sign-out.
-    builder.addCase(setSession, (state, action) => {
-      state.persistRemovals = action.payload.role === 'admin'
-    })
-
+    // Sign-out clears removals and the open balloon so the next account starts
+    // clean; each role's own removals are restored from sessionStorage at desktop
+    // boot (useDesktopPersistence) when its NotificationData flag is on.
     builder.addCase(clearSession, (state) => {
-      if (!state.persistRemovals) {
-        state.removedIds = []
-      }
-      state.persistRemovals = false
+      state.removedIds = []
       state.openId = null
     })
   },

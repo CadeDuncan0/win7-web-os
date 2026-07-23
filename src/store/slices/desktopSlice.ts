@@ -2,7 +2,7 @@ import { createSlice, createSelector, type PayloadAction } from '@reduxjs/toolki
 
 import { findNextFreeCell } from '@/lib/gridMath'
 import type { RootState } from '@/store'
-import { setSession, clearSession } from '@/store/slices/sessionSlice'
+import { clearSession } from '@/store/slices/sessionSlice'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -27,7 +27,6 @@ export interface DesktopState {
   iconsById: Record<string, DesktopIcon> // O(1) lookup, mirrors windowSlice.byId
   iconIds: string[] // stable registration order for rendering
   selectedIconId: string | null // single-selection model
-  persistPositions: boolean // role-derived: is the current layout durable?
   // Positions hydrated from sessionStorage (useDesktopPersistence). Kept as a
   // standalone map — not merged into iconsById — because hydration and icon
   // registration race at boot: whichever runs second consults the other.
@@ -40,14 +39,11 @@ export interface DesktopState {
 
 // ─── Initial State ──────────────────────────────────────────────────────────
 // No icons until the desktop mounts and dispatches registerIcon for each.
-// persistPositions starts false — no session yet, so treat the layout as
-// ephemeral until a setSession tells us otherwise.
 
 const initialState: DesktopState = {
   iconsById: {},
   iconIds: [],
   selectedIconId: null,
-  persistPositions: false,
   savedPositions: {},
   hiddenIconIds: [],
 }
@@ -227,27 +223,13 @@ const desktopSlice = createSlice({
     },
   },
 
-  // extraReducers added in Step 4.
   extraReducers: (builder) => {
-    // ── capture the persistence intent when a session begins ──────────────
-    // setSession is the ONLY moment the role is observable to this slice.
-    // Translate it immediately into the durability fact this slice cares about.
-    builder.addCase(setSession, (state, action) => {
-      state.persistPositions = action.payload.role === 'admin'
-    })
-
+    // Sign-out clears the live layout so the next account starts clean; each
+    // role's own arrangement is restored from its namespaced sessionStorage
+    // markers at desktop boot (useDesktopPersistence), never inherited here.
     builder.addCase(clearSession, (state) => {
-      // 1. If persistPositions is false (Guest): reuse the reset helper from
-      //    Step 3 — positions ⟵ defaults, selection ⟵ null, hidden icons
-      //    restored. If persistPositions is true (Admin): leave the layout
-      //    untouched.
-      if (!state.persistPositions) {
-        resetDesktopIcons(state)
-        state.hiddenIconIds = []
-      }
-      // 2. Always reset persistPositions back to false. The next boot starts
-      //    ephemeral until a fresh setSession re-establishes durability.
-      state.persistPositions = false
+      resetDesktopIcons(state)
+      state.hiddenIconIds = []
     })
   },
 })

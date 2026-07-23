@@ -1,6 +1,7 @@
 import { createSelector, createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 import type { RootState } from '@/store'
+import { clearSession } from '@/store/slices/sessionSlice'
 
 // ─── Constants ──────────────────────────────────────────────────────────────────
 
@@ -22,6 +23,17 @@ export interface WindowGeometry {
   y: number
   width: number
   height: number
+}
+
+// The serializable projection of an open window — just enough to reopen it.
+// Geometry is intentionally omitted: a restored window pulls its size/position
+// from the per-kind maps. Persisted per role by useDesktopPersistence.
+export interface PersistableWindow {
+  kind: WindowKind
+  appKey: string
+  title: string
+  isMinimized: boolean
+  isMaximized: boolean
 }
 
 export interface WindowInstance {
@@ -328,6 +340,72 @@ const windowSlice = createSlice({
     ) {
       state.positionByKind = action.payload
     },
+
+    // ── hydrateOpenWindows ────────────────────────────────────────────────
+    // Payload: the persisted open-window set + the current viewport. Dispatched
+    // once at desktop boot (useDesktopPersistence), AFTER the size/position maps
+    // so each restored window pulls its own per-kind geometry. Reopens each
+    // entry exactly as openWindow would; a maximized entry is rebuilt against the
+    // passed viewport (the reducer has no DOM access of its own). Guarded to a
+    // clean desktop so a StrictMode remount can't double-open the set.
+    hydrateOpenWindows(
+      state,
+      action: PayloadAction<{
+        windows: PersistableWindow[]
+        viewport: { width: number; height: number }
+      }>
+    ) {
+      if (state.ids.length > 0) {
+        return
+      }
+      action.payload.windows.forEach((persisted) => {
+        state.nextIdSeed++
+        const id = `win-${state.nextIdSeed}`
+        state.zCounter++
+        const position = { ...(state.positionByKind[persisted.kind] ?? DEFAULT_WINDOW_POSITION) }
+        const size = { ...(state.sizeByKind[persisted.kind] ?? DEFAULT_WINDOW_SIZE) }
+        const instance: WindowInstance = {
+          id,
+          kind: persisted.kind,
+          appKey: persisted.appKey,
+          title: persisted.title,
+          position,
+          size,
+          zIndex: state.zCounter,
+          isMinimized: persisted.isMinimized,
+          isMaximized: false,
+          prevGeometry: null,
+        }
+        // Maximize stores the pre-maximize geometry so Restore returns there, and
+        // fills the window to the viewport — mirrors toggleMaximize.
+        if (persisted.isMaximized) {
+          instance.prevGeometry = { ...position, width: size.width, height: size.height }
+          instance.position = { x: 0, y: 0 }
+          instance.size = { ...action.payload.viewport }
+          instance.isMaximized = true
+        }
+        state.byId[id] = instance
+        state.ids.push(id)
+      })
+    },
+  },
+
+  extraReducers: (builder) => {
+    // Sign-out clears the live window set AND the remembered per-kind geometry so
+    // the next account starts with a bare desktop; each role's own windows and
+    // geometry are restored from its namespaced sessionStorage markers at desktop
+    // boot (useDesktopPersistence). The open set must reset here too — it lives
+    // only in Redux, which survives the router.refresh() a role switch triggers,
+    // so without this the previous account's windows would linger on-screen.
+    builder.addCase(clearSession, (state) => {
+      state.byId = {}
+      state.ids = []
+      state.zCounter = 0
+      state.nextIdSeed = 0
+      state.sizeByKind = {}
+      state.positionByKind = {}
+      state.isPeeking = false
+    })
   },
 })
 
@@ -381,6 +459,23 @@ export const selectOpenWindows = createSelector(
   }
 )
 
+// Category 3 — derived array; consumed by useDesktopPersistence to change-detect
+// (by identity) and write the open set through to sessionStorage. Memoized on
+// selectOpenWindows, so it only recomputes when a window is opened/closed or a
+// tracked field changes — not on unrelated dispatches. Shape mirrors
+// PersistedOpenWindow so it round-trips through the marker unchanged.
+export const selectPersistableWindows = createSelector(
+  [selectOpenWindows],
+  (windows): PersistableWindow[] =>
+    windows.map((window) => ({
+      kind: window.kind,
+      appKey: window.appKey,
+      title: window.title,
+      isMinimized: window.isMinimized,
+      isMaximized: window.isMaximized,
+    }))
+)
+
 // Returns: WindowInstance[] of windows where isMinimized === false.
 // Used by the WindowManager renderer (Task 17) to decide what to mount.
 // Minimized windows are intentionally unmounted from the DOM — their state
@@ -419,5 +514,6 @@ export const {
   resizeWindow,
   hydrateWindowSizes,
   hydrateWindowPositions,
+  hydrateOpenWindows,
 } = windowSlice.actions
 export default windowSlice.reducer
