@@ -12,8 +12,6 @@ interface HomePageProps {
   onOpentab: (nickname: string) => void
 }
 
-const featurePages = IE_TOP_PAGES.filter((page) => page.nickname !== DEFAULT_ROUTE)
-
 // Generic period blurbs for the feature tiles, keyed by nickname. Unknown pages
 // fall back to a neutral line — no branding, so a fork can add pages freely.
 const TILE_BLURB: Record<string, string> = {
@@ -21,6 +19,10 @@ const TILE_BLURB: Record<string, string> = {
 }
 
 export function HomePage({ onNavigate, onOpentab }: HomePageProps) {
+  // Computed in-body, not at module load: ieRoutes imports this page for its
+  // registry `component`, so reading IE_TOP_PAGES at import time would hit the
+  // circular-init temporal dead zone.
+  const featurePages = IE_TOP_PAGES.filter((page) => page.nickname !== DEFAULT_ROUTE)
   return (
     <div className={portal.pageShell}>
       <header className={portal.headerBand}>

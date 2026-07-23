@@ -13,10 +13,26 @@
  *   navigates to an in-app redirect page (spinner + manual fallback link).
  */
 
+import type { ComponentType } from 'react'
+
+import { GettingStartedPage, HomePage } from '@/components/apps/InternetExplorer/pages'
+
+/** Props every in-app IE page component receives from the IE window. */
+export interface IEPageProps {
+  onNavigate: (nickname: string) => void
+  /** Redirect entries: open the real URL in a new browser tab and show the
+   *  in-app redirect page. */
+  onOpentab: (nickname: string) => void
+}
+
 export interface IEPage {
   nickname: string // id
   url: string
   title: string // search dropdown label
+  /** In-app page renderer. Carrying the component here makes this registry the
+   *  single place a route is defined (redirect entries omit it and render the
+   *  shared redirect page). */
+  component?: ComponentType<IEPageProps>
   redirect?: boolean // opens in new tab
   disabled?: boolean
 }
@@ -24,12 +40,19 @@ export interface IEPage {
 const SITE = 'www.win7webos.com'
 
 export const IE_PAGES: IEPage[] = [
-  { nickname: 'about:home', url: `${SITE}/home`, title: 'Home', redirect: false },
+  {
+    nickname: 'about:home',
+    url: `${SITE}/home`,
+    title: 'Home',
+    redirect: false,
+    component: HomePage,
+  },
   {
     nickname: 'about:getting-started',
     url: `${SITE}/getting-started`,
     title: 'Getting Started',
     redirect: false,
+    component: GettingStartedPage,
   },
   {
     nickname: 'about:source-code',

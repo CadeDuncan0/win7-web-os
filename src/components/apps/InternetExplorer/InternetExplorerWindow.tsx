@@ -3,7 +3,7 @@
 import { IEPageLinks } from './IEPageLinks'
 import { IEToolbar } from './IEToolbar'
 import styles from './InternetExplorerWindow.module.css'
-import { GettingStartedPage, HomePage, NotFoundPage, RedirectPage } from './pages'
+import { NotFoundPage, RedirectPage } from './pages'
 import { useIENavigation } from './useIENavigation'
 import { WindowWrapper } from '@/components/shell/WindowWrapper'
 import { DEFAULT_ROUTE, resolvePage } from '@/config/ieRoutes'
@@ -40,14 +40,11 @@ export function InternetExplorerWindow({ windowId, initialRoute }: InternetExplo
     if (page?.redirect) {
       return <RedirectPage page={page} />
     }
-    switch (nav.currentUrl) {
-      case 'about:home':
-        return <HomePage onNavigate={nav.navigate} onOpentab={handleOpentab} />
-      case 'about:getting-started':
-        return <GettingStartedPage onNavigate={nav.navigate} onOpentab={handleOpentab} />
-      default:
-        return <NotFoundPage url={page?.url ?? nav.currentUrl} />
+    if (page?.component) {
+      const Page = page.component
+      return <Page onNavigate={nav.navigate} onOpentab={handleOpentab} />
     }
+    return <NotFoundPage url={page?.url ?? nav.currentUrl} />
   }
 
   const toolbar = (
